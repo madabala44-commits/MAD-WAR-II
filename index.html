@@ -6,258 +6,173 @@
 <title>MAD WAR II - الحرب المجنونة أونلاين</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Tajawal:wght@500;800;900&display=swap');
-
-:root {
---neon-red: #ff3344;
---neon-blue: #00ccff;
---cyber-gold: #ffcc00;
---dark-bg: #0d1117;
---panel-bg: #161b22;
---grid-bg: #1a202c;
---grid-border: #2d3748;
-}
-
-* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Tajawal', sans-serif; }
-
-body {
-  background: var(--dark-bg); color: #e2e8f0; height: 100dvh; width: 100vw;
-  overflow: hidden; display: flex; flex-direction: column;
-  background-image: radial-gradient(circle at 50% 0%, rgba(0,204,255,0.05) 0%, transparent 50%),
-                    radial-gradient(circle at 50% 100%, rgba(255,51,68,0.05) 0%, transparent 50%);
-}
-
-.screen { display: none; height: 100%; width: 100%; }
-.screen.active { display: flex; flex-direction: column; }
-
-/* ===== شاشة الدخول ===== */
-#login-screen { align-items: center; justify-content: center; text-align: center; padding: 20px; flex-direction: column; gap: 20px; }
-.login-logo { font-family: 'Cinzel', serif; font-size: 42px; font-weight: 900; background: linear-gradient(135deg, #fff, var(--cyber-gold), #ff6600); -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: pulseGlow 2s ease-in-out infinite; }
-.login-sub { color: #718096; font-size: 14px; }
-.login-box { background: var(--panel-bg); border: 1px solid var(--grid-border); border-radius: 12px; padding: 24px; width: 100%; max-width: 320px; display: flex; flex-direction: column; gap: 12px; }
-.login-field { background: var(--dark-bg); border: 1px solid #4a5568; border-radius: 8px; padding: 10px 14px; color: #fff; font-size: 15px; font-family: 'Tajawal', sans-serif; width: 100%; text-align: right; }
-.login-field:focus { outline: none; border-color: var(--cyber-gold); }
-.login-btn { padding: 12px; border-radius: 8px; border: none; font-size: 16px; font-weight: 900; cursor: pointer; font-family: 'Tajawal', sans-serif; transition: 0.2s; }
-.btn-google { background: linear-gradient(135deg, #4285f4, #357abd); color: #fff; }
-.btn-guest { background: #2d3748; color: #a0aec0; border: 1px solid #4a5568; }
-.login-divider { color: #4a5568; font-size: 12px; text-align: center; }
-.login-status { font-size: 12px; color: var(--cyber-gold); text-align: center; min-height: 18px; }
-
-/* ===== قائمة رئيسية ===== */
-#menu-screen { align-items: center; justify-content: center; text-align: center; padding: 20px; }
-.logo-container { margin-bottom: 20px; animation: pulseGlow 2s ease-in-out infinite; }
-.game-title { font-family: 'Cinzel', serif; font-size: 45px; font-weight: 900; background: linear-gradient(135deg, #fff, var(--cyber-gold), #ff6600); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-.user-badge { background: var(--panel-bg); border: 1px solid var(--grid-border); border-radius: 8px; padding: 8px 16px; margin-bottom: 12px; font-size: 13px; display: flex; align-items: center; gap: 8px; justify-content: center; }
-.user-badge .uname { color: var(--cyber-gold); font-weight: 900; }
-.user-badge .uwallet { color: #a0aec0; font-size: 11px; }
-.menu-btn { width: 240px; margin: 8px auto; padding: 14px; border: 2px solid var(--cyber-gold); background: linear-gradient(135deg, rgba(255,204,0,0.1), transparent); color: #fff; font-size: 17px; font-weight: 900; cursor: pointer; border-radius: 8px; transition: all 0.2s; font-family: 'Tajawal', sans-serif; }
-.menu-btn.primary { border-color: var(--neon-red); background: linear-gradient(135deg, rgba(255,51,68,0.2), transparent); }
-.menu-btn:active { transform: scale(0.97); }
-
-/* ===== رأس اللعبة ===== */
-.game-header { background: var(--panel-bg); border-bottom: 2px solid var(--grid-border); padding: 5px; display: flex; justify-content: space-between; align-items: center; gap: 4px; z-index: 10; flex-shrink: 0; }
-.player-card { background: rgba(0,0,0,0.5); padding: 4px 6px; border-radius: 6px; border-left: 3px solid #fff; flex: 1; }
-.player-card.p1 { border-left-color: var(--neon-red); box-shadow: inset 2px 0 10px rgba(255,51,68,0.2); }
-.player-card.p2 { border-left-color: var(--neon-blue); box-shadow: inset 2px 0 10px rgba(0,204,255,0.2); }
-.p-name { font-weight: 900; font-size: 11px; margin-bottom: 2px; }
-.p1 .p-name { color: var(--neon-red); } .p2 .p-name { color: var(--neon-blue); }
-.p-stats { display: flex; flex-direction: column; font-size: 11px; font-weight: bold; gap: 1px; }
-.coins-row { display: flex; justify-content: space-between; }
-.turn-box { text-align: center; min-width: 45px; }
-.turn-box .num { font-family: 'Cinzel', serif; font-size: 18px; font-weight: 900; color: var(--cyber-gold); }
-.level-badge { font-size: 9px; color: var(--cyber-gold); display: block; }
-
-/* ===== تخطيط اللعبة ===== */
-.main-layout { display: flex; flex: 1; flex-direction: column; padding: 4px; gap: 4px; overflow: hidden; max-width: 800px; margin: 0 auto; width: 100%; }
-
-.sidebar-shop { background: var(--panel-bg); border: 1px solid var(--grid-border); border-radius: 8px; padding: 4px; display: flex; justify-content: center; gap: 4px; flex-shrink: 0; flex-wrap: wrap; }
-.shop-item { background: var(--dark-bg); border: 1px solid #4a5568; border-radius: 6px; padding: 4px; cursor: pointer; display: flex; align-items: center; gap: 4px; flex: 1; min-width: 75px; justify-content: center; transition: 0.2s; }
-.shop-item:hover:not(.disabled) { border-color: var(--cyber-gold); background: #2d3748; }
-.shop-item.disabled { opacity: 0.3; cursor: not-allowed; filter: grayscale(1); }
-.shop-item .item-icon { font-size: 16px; }
-.shop-item .item-info { display: flex; flex-direction: column; align-items: center; }
-.shop-item .item-name { font-size: 9px; font-weight: 900; color: #fff; }
-.shop-item .item-cost { font-size: 9px; color: #a0aec0; font-family: monospace; }
-.shop-item.ultra-prince { border-color: #ff8c00; background: linear-gradient(135deg, rgba(255,140,0,0.15), rgba(0,0,0,0.8)); }
-.shop-item.ultra-prince:hover:not(.disabled) { border-color: #ffcc00; background: linear-gradient(135deg, rgba(255,204,0,0.25), rgba(0,0,0,0.6)); box-shadow: 0 0 12px rgba(255,140,0,0.5); }
-
-.game-area { flex: 1; display: flex; flex-direction: column; gap: 3px; background: rgba(0,0,0,0.2); border: 1px solid var(--grid-border); border-radius: 8px; padding: 4px; overflow: hidden; min-height: 0; position: relative; }
-.field-title { font-size: 10px; font-weight: 800; color: #718096; text-align: center; background: rgba(0,0,0,0.5); border-radius: 4px; padding: 2px; flex-shrink: 0; }
-.grid { display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(3, 1fr); gap: 3px; width: 100%; flex: 1; min-height: 0; position: relative; }
-
-.grid.grid-wall-active::after { content: ''; position: absolute; left: 0; right: 0; height: 10px; background: repeating-linear-gradient(45deg, #c0392b, #c0392b 10px, #e74c3c 10px, #e74c3c 20px); border: 2px solid #8e44ad; border-radius: 5px; z-index: 5; box-shadow: 0 0 10px rgba(192,57,43,0.8); }
-#p1-grid.grid-wall-active::after { top: -6px; }
-#p2-grid.grid-wall-active::after { bottom: -6px; }
-
-.cell { background: var(--grid-bg); border: 1px solid var(--grid-border); border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; position: relative; transition: all 0.2s; box-shadow: inset 0 0 10px rgba(0,0,0,0.8); height: 100%; z-index: 1; }
-.cell.p1-box { border-bottom: 2px solid rgba(255,51,68,0.6); }
-.cell.p2-box { border-bottom: 2px solid rgba(0,204,255,0.6); }
-.cell.selected { border: 2px solid var(--cyber-gold) !important; box-shadow: inset 0 0 15px rgba(255,204,0,0.5); background: #2d3748; }
-.cell.valid-target { border: 2px solid #e53e3e !important; animation: pulseRed 1s infinite; background: rgba(229,62,62,0.1); }
-.cell.blocked-target { border: 2px solid #4a5568 !important; opacity: 0.4; cursor: not-allowed; }
-.cell.valid-spawn { border: 2px solid #38a169 !important; animation: pulseGreen 1s infinite; background: rgba(56,161,105,0.1); }
-.hp-badge { position: absolute; bottom: 2px; background: rgba(0,0,0,0.9); color: #fff; font-size: 10px; padding: 1px 4px; border-radius: 4px; font-weight: bold; border: 1px solid #4a5568; }
-.type-label { position: absolute; top: 1px; font-size: 8px; color: #a0aec0; background: rgba(0,0,0,0.6); padding: 0 3px; border-radius: 2px; }
-.shield-badge { position: absolute; top: 1px; left: 2px; font-size: 9px; padding: 1px 4px; border-radius: 4px; font-weight: 900; border: 1px solid #fff; box-shadow: 0 0 5px rgba(0,0,0,0.6); z-index: 5; }
-.shield-2 { background: #cbd5e0; color: #1a202c; border-color: #fff; }
-.shield-3 { background: var(--cyber-gold); color: #1a202c; border-color: #fff; }
-.shield-4 { background: var(--neon-blue); color: #fff; border-color: #fff; }
-.cell.survivor-unit { box-shadow: inset 0 0 10px rgba(255,204,0,0.4); }
-.survivor-badge { position: absolute; bottom: 14px; right: 2px; font-size: 8px; background: rgba(255,204,0,0.9); color: #000; padding: 1px 3px; border-radius: 3px; font-weight: 900; z-index: 5; }
-.cell.ai-guardian { box-shadow: inset 0 0 12px rgba(138,43,226,0.6); border-color: #8a2be2 !important; }
-.cell.ultra-prince-cell { box-shadow: inset 0 0 18px rgba(255,140,0,0.8); border-color: #ff8c00 !important; animation: ultraPrincePulse 1.5s infinite; }
-.cell.vizier-cell { box-shadow: inset 0 0 14px rgba(0,255,200,0.7); border-color: #00ffc8 !important; animation: vizierPulse 2s infinite; }
-.cell.king-guard-cell { box-shadow: inset 0 0 14px rgba(255,165,0,0.7); border-color: #ff8c00 !important; }
-.counter-badge { position: absolute; top: 1px; right: 2px; font-size: 8px; background: rgba(138,43,226,0.9); color: #fff; padding: 1px 3px; border-radius: 3px; font-weight: 900; z-index: 5; }
-.ultra-counter-badge { position: absolute; top: 1px; right: 2px; font-size: 8px; background: linear-gradient(135deg, #ff8c00, #ffcc00); color: #000; padding: 1px 3px; border-radius: 3px; font-weight: 900; z-index: 5; }
-.heal-aura-badge { position: absolute; bottom: 14px; left: 2px; font-size: 8px; background: rgba(0,255,200,0.9); color: #000; padding: 1px 3px; border-radius: 3px; font-weight: 900; z-index: 5; }
-
-.control-panel { background: var(--panel-bg); border-radius: 8px; padding: 5px; border: 1px solid var(--grid-border); z-index: 10; flex-shrink: 0; }
-.log-bar { background: var(--dark-bg); padding: 5px; border-radius: 4px; text-align: center; font-size: 12px; font-weight: bold; color: var(--cyber-gold); margin-bottom: 5px; border: 1px solid var(--grid-border); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.actions-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
-.act-btn { background: #2d3748; border: 1px solid #4a5568; color: #fff; padding: 6px 2px; border-radius: 6px; cursor: pointer; font-weight: 800; font-size: 11px; display: flex; flex-direction: column; align-items: center; gap: 2px; font-family: 'Tajawal', sans-serif; }
-.act-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-.act-btn.full-width { grid-column: span 4; color: white; border: none; padding: 8px; font-size: 13px; margin-top: 2px; }
-.btn-end { background: linear-gradient(135deg, #2f855a, #22543d); border: 1px solid #48bb78; }
-.btn-cancel { background: linear-gradient(135deg, #c53030, #9b2c2c); border: 1px solid #fc8181; display: none; }
-.submenu { display: none; grid-template-columns: repeat(2, 1fr); gap: 4px; margin-top: 6px; padding-top: 6px; border-top: 1px dashed var(--grid-border); }
-.sub-opt { background: var(--dark-bg); border: 1px solid var(--cyber-gold); color: #fff; padding: 4px; border-radius: 4px; font-size: 11px; cursor: pointer; text-align: center; font-weight: bold; font-family: 'Tajawal', sans-serif; }
-.sub-opt span { display: block; font-size: 16px; margin-bottom: 2px; }
-
-/* ===== Matchmaking ===== */
-#matchmaking-screen { align-items: center; justify-content: center; flex-direction: column; gap: 20px; padding: 20px; }
-.mm-box { background: var(--panel-bg); border: 2px solid var(--neon-blue); border-radius: 12px; padding: 30px; text-align: center; max-width: 320px; width: 100%; }
-.mm-title { font-size: 20px; font-weight: 900; color: var(--neon-blue); margin-bottom: 12px; }
-.mm-status { font-size: 14px; color: #a0aec0; margin-bottom: 20px; }
-.mm-spinner { font-size: 40px; animation: spin 1s linear infinite; display: block; margin: 0 auto 16px; }
-@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-/* ===== Modals ===== */
-.projectile { position: fixed; font-size: 22px; z-index: 9999; pointer-events: none; transition: all 0.35s ease-in; filter: drop-shadow(0 0 5px rgba(255,204,0,0.8)); }
-.overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; }
-.overlay.hidden { display: none; }
-.modal { background: var(--panel-bg); border: 2px solid var(--cyber-gold); border-radius: 12px; padding: 20px; text-align: center; width: 100%; max-width: 340px; box-shadow: 0 0 20px rgba(255,204,0,0.2); max-height: 90vh; overflow-y: auto; }
-.modal-title { font-size: 22px; font-weight: 900; margin-bottom: 10px; color: var(--cyber-gold); }
-.modal-body { font-size: 14px; color: #cbd5e0; line-height: 1.6; margin-bottom: 15px; }
-
-/* ===== Animations ===== */
-@keyframes pulseGlow { 0%,100% { filter: drop-shadow(0 0 10px rgba(255,204,0,0.3)); } 50% { filter: drop-shadow(0 0 25px rgba(255,204,0,0.7)); } }
-@keyframes pulseRed { 0%,100% { box-shadow: inset 0 0 5px rgba(229,62,62,0.3); border-color: rgba(229,62,62,0.5) !important; } 50% { box-shadow: inset 0 0 15px rgba(229,62,62,0.8); border-color: #fc8181 !important; } }
-@keyframes pulseGreen { 0%,100% { box-shadow: inset 0 0 5px rgba(56,161,105,0.3); border-color: rgba(56,161,105,0.5) !important; } 50% { box-shadow: inset 0 0 15px rgba(56,161,105,0.8); border-color: #68d391 !important; } }
-@keyframes vizierPulse { 0%,100% { box-shadow: inset 0 0 8px rgba(0,255,200,0.4); } 50% { box-shadow: inset 0 0 20px rgba(0,255,200,0.9); } }
-@keyframes ultraPrincePulse { 0%,100% { box-shadow: inset 0 0 10px rgba(255,140,0,0.5); } 50% { box-shadow: inset 0 0 25px rgba(255,204,0,1); } }
-@keyframes counterFlash { 0% { opacity:1; transform:scale(1); } 50% { opacity:0.5; transform:scale(1.3); } 100% { opacity:1; transform:scale(1); } }
-
-/* input styling */
-input[type=text] { font-family: 'Tajawal', sans-serif; }
+:root{--neon-red:#ff3344;--neon-blue:#00ccff;--cyber-gold:#ffcc00;--dark-bg:#0d1117;--panel-bg:#161b22;--grid-bg:#1a202c;--grid-border:#2d3748;}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;font-family:'Tajawal',sans-serif;}
+body{background:var(--dark-bg);color:#e2e8f0;height:100dvh;width:100vw;overflow:hidden;display:flex;flex-direction:column;background-image:radial-gradient(circle at 50% 0%,rgba(0,204,255,0.05) 0%,transparent 50%),radial-gradient(circle at 50% 100%,rgba(255,51,68,0.05) 0%,transparent 50%);}
+.screen{display:none;height:100%;width:100%;}
+.screen.active{display:flex;flex-direction:column;}
+#login-screen{align-items:center;justify-content:center;text-align:center;padding:20px;flex-direction:column;gap:20px;}
+.login-logo{font-family:'Cinzel',serif;font-size:42px;font-weight:900;background:linear-gradient(135deg,#fff,var(--cyber-gold),#ff6600);-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:pulseGlow 2s ease-in-out infinite;}
+.login-sub{color:#718096;font-size:14px;}
+.login-box{background:var(--panel-bg);border:1px solid var(--grid-border);border-radius:12px;padding:24px;width:100%;max-width:320px;display:flex;flex-direction:column;gap:12px;}
+.login-field{background:var(--dark-bg);border:1px solid #4a5568;border-radius:8px;padding:10px 14px;color:#fff;font-size:15px;font-family:'Tajawal',sans-serif;width:100%;text-align:right;}
+.login-field:focus{outline:none;border-color:var(--cyber-gold);}
+.login-btn{padding:12px;border-radius:8px;border:none;font-size:16px;font-weight:900;cursor:pointer;font-family:'Tajawal',sans-serif;transition:0.2s;}
+.btn-google{background:linear-gradient(135deg,#4285f4,#357abd);color:#fff;}
+.btn-guest{background:#2d3748;color:#a0aec0;border:1px solid #4a5568;}
+.login-divider{color:#4a5568;font-size:12px;text-align:center;}
+.login-status{font-size:12px;color:var(--cyber-gold);text-align:center;min-height:18px;}
+#menu-screen{align-items:center;justify-content:center;text-align:center;padding:20px;}
+.logo-container{margin-bottom:20px;animation:pulseGlow 2s ease-in-out infinite;}
+.game-title{font-family:'Cinzel',serif;font-size:45px;font-weight:900;background:linear-gradient(135deg,#fff,var(--cyber-gold),#ff6600);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.user-badge{background:var(--panel-bg);border:1px solid var(--grid-border);border-radius:8px;padding:8px 16px;margin-bottom:12px;font-size:13px;display:flex;align-items:center;gap:8px;justify-content:center;}
+.user-badge .uname{color:var(--cyber-gold);font-weight:900;}
+.user-badge .uwallet{color:#a0aec0;font-size:11px;}
+.menu-btn{width:240px;margin:8px auto;padding:14px;border:2px solid var(--cyber-gold);background:linear-gradient(135deg,rgba(255,204,0,0.1),transparent);color:#fff;font-size:17px;font-weight:900;cursor:pointer;border-radius:8px;transition:all 0.2s;font-family:'Tajawal',sans-serif;}
+.menu-btn.primary{border-color:var(--neon-red);background:linear-gradient(135deg,rgba(255,51,68,0.2),transparent);}
+.menu-btn:active{transform:scale(0.97);}
+.game-header{background:var(--panel-bg);border-bottom:2px solid var(--grid-border);padding:5px;display:flex;justify-content:space-between;align-items:center;gap:4px;z-index:10;flex-shrink:0;}
+.player-card{background:rgba(0,0,0,0.5);padding:4px 6px;border-radius:6px;border-left:3px solid #fff;flex:1;}
+.player-card.p1{border-left-color:var(--neon-red);box-shadow:inset 2px 0 10px rgba(255,51,68,0.2);}
+.player-card.p2{border-left-color:var(--neon-blue);box-shadow:inset 2px 0 10px rgba(0,204,255,0.2);}
+.p-name{font-weight:900;font-size:11px;margin-bottom:2px;}
+.p1 .p-name{color:var(--neon-red);}.p2 .p-name{color:var(--neon-blue);}
+.p-stats{display:flex;flex-direction:column;font-size:11px;font-weight:bold;gap:1px;}
+.coins-row{display:flex;justify-content:space-between;}
+.turn-box{text-align:center;min-width:45px;}
+.turn-box .num{font-family:'Cinzel',serif;font-size:18px;font-weight:900;color:var(--cyber-gold);}
+.level-badge{font-size:9px;color:var(--cyber-gold);display:block;}
+.main-layout{display:flex;flex:1;flex-direction:column;padding:4px;gap:4px;overflow:hidden;max-width:800px;margin:0 auto;width:100%;}
+.sidebar-shop{background:var(--panel-bg);border:1px solid var(--grid-border);border-radius:8px;padding:4px;display:flex;justify-content:center;gap:4px;flex-shrink:0;flex-wrap:wrap;}
+.shop-item{background:var(--dark-bg);border:1px solid #4a5568;border-radius:6px;padding:4px;cursor:pointer;display:flex;align-items:center;gap:4px;flex:1;min-width:75px;justify-content:center;transition:0.2s;}
+.shop-item:hover:not(.disabled){border-color:var(--cyber-gold);background:#2d3748;}
+.shop-item.disabled{opacity:0.3;cursor:not-allowed;filter:grayscale(1);}
+.shop-item .item-icon{font-size:16px;}
+.shop-item .item-info{display:flex;flex-direction:column;align-items:center;}
+.shop-item .item-name{font-size:9px;font-weight:900;color:#fff;}
+.shop-item .item-cost{font-size:9px;color:#a0aec0;font-family:monospace;}
+.shop-item.ultra-prince{border-color:#ff8c00;background:linear-gradient(135deg,rgba(255,140,0,0.15),rgba(0,0,0,0.8));}
+.shop-item.ultra-prince:hover:not(.disabled){border-color:#ffcc00;background:linear-gradient(135deg,rgba(255,204,0,0.25),rgba(0,0,0,0.6));box-shadow:0 0 12px rgba(255,140,0,0.5);}
+.game-area{flex:1;display:flex;flex-direction:column;gap:3px;background:rgba(0,0,0,0.2);border:1px solid var(--grid-border);border-radius:8px;padding:4px;overflow:hidden;min-height:0;position:relative;}
+.field-title{font-size:10px;font-weight:800;color:#718096;text-align:center;background:rgba(0,0,0,0.5);border-radius:4px;padding:2px;flex-shrink:0;}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(3,1fr);gap:3px;width:100%;flex:1;min-height:0;position:relative;}
+.grid.grid-wall-active::after{content:'';position:absolute;left:0;right:0;height:10px;background:repeating-linear-gradient(45deg,#c0392b,#c0392b 10px,#e74c3c 10px,#e74c3c 20px);border:2px solid #8e44ad;border-radius:5px;z-index:5;box-shadow:0 0 10px rgba(192,57,43,0.8);}
+#p1-grid.grid-wall-active::after{top:-6px;}
+#p2-grid.grid-wall-active::after{bottom:-6px;}
+.cell{background:var(--grid-bg);border:1px solid var(--grid-border);border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:24px;cursor:pointer;position:relative;transition:all 0.2s;box-shadow:inset 0 0 10px rgba(0,0,0,0.8);height:100%;z-index:1;}
+.cell.p1-box{border-bottom:2px solid rgba(255,51,68,0.6);}
+.cell.p2-box{border-bottom:2px solid rgba(0,204,255,0.6);}
+.cell.selected{border:2px solid var(--cyber-gold)!important;box-shadow:inset 0 0 15px rgba(255,204,0,0.5);background:#2d3748;}
+.cell.valid-target{border:2px solid #e53e3e!important;animation:pulseRed 1s infinite;background:rgba(229,62,62,0.1);}
+.cell.blocked-target{border:2px solid #4a5568!important;opacity:0.4;cursor:not-allowed;}
+.cell.valid-spawn{border:2px solid #38a169!important;animation:pulseGreen 1s infinite;background:rgba(56,161,105,0.1);}
+.hp-badge{position:absolute;bottom:2px;background:rgba(0,0,0,0.9);color:#fff;font-size:10px;padding:1px 4px;border-radius:4px;font-weight:bold;border:1px solid #4a5568;}
+.type-label{position:absolute;top:1px;font-size:8px;color:#a0aec0;background:rgba(0,0,0,0.6);padding:0 3px;border-radius:2px;}
+.shield-badge{position:absolute;top:1px;left:2px;font-size:9px;padding:1px 4px;border-radius:4px;font-weight:900;border:1px solid #fff;box-shadow:0 0 5px rgba(0,0,0,0.6);z-index:5;}
+.shield-2{background:#cbd5e0;color:#1a202c;border-color:#fff;}
+.shield-3{background:var(--cyber-gold);color:#1a202c;border-color:#fff;}
+.shield-4{background:var(--neon-blue);color:#fff;border-color:#fff;}
+.cell.survivor-unit{box-shadow:inset 0 0 10px rgba(255,204,0,0.4);}
+.survivor-badge{position:absolute;bottom:14px;right:2px;font-size:8px;background:rgba(255,204,0,0.9);color:#000;padding:1px 3px;border-radius:3px;font-weight:900;z-index:5;}
+.cell.ai-guardian{box-shadow:inset 0 0 12px rgba(138,43,226,0.6);border-color:#8a2be2!important;}
+.cell.ultra-prince-cell{box-shadow:inset 0 0 18px rgba(255,140,0,0.8);border-color:#ff8c00!important;animation:ultraPrincePulse 1.5s infinite;}
+.cell.vizier-cell{box-shadow:inset 0 0 14px rgba(0,255,200,0.7);border-color:#00ffc8!important;animation:vizierPulse 2s infinite;}
+.cell.king-guard-cell{box-shadow:inset 0 0 14px rgba(255,165,0,0.7);border-color:#ff8c00!important;}
+.counter-badge{position:absolute;top:1px;right:2px;font-size:8px;background:rgba(138,43,226,0.9);color:#fff;padding:1px 3px;border-radius:3px;font-weight:900;z-index:5;}
+.ultra-counter-badge{position:absolute;top:1px;right:2px;font-size:8px;background:linear-gradient(135deg,#ff8c00,#ffcc00);color:#000;padding:1px 3px;border-radius:3px;font-weight:900;z-index:5;}
+.heal-aura-badge{position:absolute;bottom:14px;left:2px;font-size:8px;background:rgba(0,255,200,0.9);color:#000;padding:1px 3px;border-radius:3px;font-weight:900;z-index:5;}
+.control-panel{background:var(--panel-bg);border-radius:8px;padding:5px;border:1px solid var(--grid-border);z-index:10;flex-shrink:0;}
+.log-bar{background:var(--dark-bg);padding:5px;border-radius:4px;text-align:center;font-size:12px;font-weight:bold;color:var(--cyber-gold);margin-bottom:5px;border:1px solid var(--grid-border);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.actions-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;}
+.act-btn{background:#2d3748;border:1px solid #4a5568;color:#fff;padding:6px 2px;border-radius:6px;cursor:pointer;font-weight:800;font-size:11px;display:flex;flex-direction:column;align-items:center;gap:2px;font-family:'Tajawal',sans-serif;}
+.act-btn:disabled{opacity:0.3;cursor:not-allowed;}
+.act-btn.full-width{grid-column:span 4;color:white;border:none;padding:8px;font-size:13px;margin-top:2px;}
+.btn-end{background:linear-gradient(135deg,#2f855a,#22543d);border:1px solid #48bb78;}
+.btn-cancel{background:linear-gradient(135deg,#c53030,#9b2c2c);border:1px solid #fc8181;display:none;}
+.submenu{display:none;grid-template-columns:repeat(2,1fr);gap:4px;margin-top:6px;padding-top:6px;border-top:1px dashed var(--grid-border);}
+.sub-opt{background:var(--dark-bg);border:1px solid var(--cyber-gold);color:#fff;padding:4px;border-radius:4px;font-size:11px;cursor:pointer;text-align:center;font-weight:bold;font-family:'Tajawal',sans-serif;}
+.sub-opt span{display:block;font-size:16px;margin-bottom:2px;}
+#matchmaking-screen{align-items:center;justify-content:center;flex-direction:column;gap:20px;padding:20px;}
+.mm-box{background:var(--panel-bg);border:2px solid var(--neon-blue);border-radius:12px;padding:30px;text-align:center;max-width:320px;width:100%;}
+.mm-title{font-size:20px;font-weight:900;color:var(--neon-blue);margin-bottom:12px;}
+.mm-status{font-size:14px;color:#a0aec0;margin-bottom:20px;}
+.mm-spinner{font-size:40px;animation:spin 1s linear infinite;display:block;margin:0 auto 16px;}
+@keyframes spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+.projectile{position:fixed;font-size:22px;z-index:9999;pointer-events:none;transition:all 0.35s ease-in;filter:drop-shadow(0 0 5px rgba(255,204,0,0.8));}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;}
+.overlay.hidden{display:none;}
+.modal{background:var(--panel-bg);border:2px solid var(--cyber-gold);border-radius:12px;padding:20px;text-align:center;width:100%;max-width:340px;box-shadow:0 0 20px rgba(255,204,0,0.2);max-height:90vh;overflow-y:auto;}
+.modal-title{font-size:22px;font-weight:900;margin-bottom:10px;color:var(--cyber-gold);}
+.modal-body{font-size:14px;color:#cbd5e0;line-height:1.6;margin-bottom:15px;}
+@keyframes pulseGlow{0%,100%{filter:drop-shadow(0 0 10px rgba(255,204,0,0.3));}50%{filter:drop-shadow(0 0 25px rgba(255,204,0,0.7));}}
+@keyframes pulseRed{0%,100%{box-shadow:inset 0 0 5px rgba(229,62,62,0.3);border-color:rgba(229,62,62,0.5)!important;}50%{box-shadow:inset 0 0 15px rgba(229,62,62,0.8);border-color:#fc8181!important;}}
+@keyframes pulseGreen{0%,100%{box-shadow:inset 0 0 5px rgba(56,161,105,0.3);border-color:rgba(56,161,105,0.5)!important;}50%{box-shadow:inset 0 0 15px rgba(56,161,105,0.8);border-color:#68d391!important;}}
+@keyframes vizierPulse{0%,100%{box-shadow:inset 0 0 8px rgba(0,255,200,0.4);}50%{box-shadow:inset 0 0 20px rgba(0,255,200,0.9);}}
+@keyframes ultraPrincePulse{0%,100%{box-shadow:inset 0 0 10px rgba(255,140,0,0.5);}50%{box-shadow:inset 0 0 25px rgba(255,204,0,1);}}
+@keyframes counterFlash{0%{opacity:1;transform:scale(1);}50%{opacity:0.5;transform:scale(1.3);}100%{opacity:1;transform:scale(1);}}
+input[type=text]{font-family:'Tajawal',sans-serif;}
 </style>
 
-<!-- Firebase -->
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getDatabase, ref, set, onValue, update, push, remove, get, child, serverTimestamp, query, orderByChild, equalTo, limitToFirst } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-  import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import{getDatabase,ref,set,onValue,update,push,remove,get,child,serverTimestamp,query,orderByChild,equalTo,limitToFirst}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+import{getAuth,signInWithPopup,GoogleAuthProvider,onAuthStateChanged,signInAnonymously}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyAyURdlxwUQUh7csVUz8wkkoQVd1XDFlN8",
-    authDomain: "madwargame-8b1a6.firebaseapp.com",
-    projectId: "madwargame-8b1a6",
-    storageBucket: "madwargame-8b1a6.firebasestorage.app",
-    messagingSenderId: "860575335695",
-    appId: "1:860575335695:web:16a300d85b50f611952a7a",
-    databaseURL: "https://madwargame-8b1a6-default-rtdb.firebaseio.com"
-  };
+const firebaseConfig={apiKey:"AIzaSyAyURdlxwUQUh7csVUz8wkkoQVd1XDFlN8",authDomain:"madwargame-8b1a6.firebaseapp.com",projectId:"madwargame-8b1a6",storageBucket:"madwargame-8b1a6.firebasestorage.app",messagingSenderId:"860575335695",appId:"1:860575335695:web:16a300d85b50f611952a7a",databaseURL:"https://madwargame-8b1a6-default-rtdb.firebaseio.com"};
+const app=initializeApp(firebaseConfig);
+window._db=getDatabase(app);
+window._auth=getAuth(app);
+window._provider=new GoogleAuthProvider();
+window._ref=ref;window._set=set;window._onValue=onValue;
+window._update=update;window._push=push;window._remove=remove;
+window._get=get;window._child=child;window._serverTimestamp=serverTimestamp;
+window._query=query;window._orderByChild=orderByChild;
+window._equalTo=equalTo;window._limitToFirst=limitToFirst;
+window._signInWithPopup=signInWithPopup;
+window._signInAnonymously=signInAnonymously;
+window._onAuthStateChanged=onAuthStateChanged;
+window.myUID=null;window.myName=null;window.currentRoomId=null;window.activeInvite=null;
+window._mmWatcherOff=null;window._roomWatcherOff=null;
 
-  const app = initializeApp(firebaseConfig);
-  window._db = getDatabase(app);
-  window._auth = getAuth(app);
-  window._provider = new GoogleAuthProvider();
+window._onAuthStateChanged(window._auth,async(user)=>{
+  if(user){
+    window.myUID=user.uid;
+    const snap=await window._get(window._ref(window._db,'users/'+user.uid+'/profile'));
+    if(snap.exists()){const p=snap.val();window.myName=p.displayName||p.name||user.displayName||'مجهول';}
+    else{window.myName=user.displayName||'مجهول';}
+    window._update(window._ref(window._db,'users/'+user.uid+'/profile'),{name:window.myName,lastActive:Date.now(),isAnon:user.isAnonymous||false});
+    await loadWalletFromFirebase();
+    listenForInvites();
+    showMenuScreen();
+  }
+});
 
-  // expose firebase methods
-  window._ref = ref; window._set = set; window._onValue = onValue;
-  window._update = update; window._push = push; window._remove = remove;
-  window._get = get; window._child = child; window._serverTimestamp = serverTimestamp;
-  window._query = query; window._orderByChild = orderByChild;
-  window._equalTo = equalTo; window._limitToFirst = limitToFirst;
-  window._signInWithPopup = signInWithPopup;
-  window._signInAnonymously = signInAnonymously;
-  window._onAuthStateChanged = onAuthStateChanged;
+window.loadWalletFromFirebase=async function(){
+  const snap=await window._get(window._ref(window._db,'users/'+window.myUID+'/wallet'));
+  if(snap.exists()){const w=snap.val();PersistentWallet.p1Silver=w.silver||0;PersistentWallet.p1Diamonds=w.diamonds||0;}
+  else{PersistentWallet.p1Silver=0;PersistentWallet.p1Diamonds=0;}
+};
 
-  window.myUID = null;
-  window.myName = null;
-  window.currentRoomId = null;
-  window.activeInvite = null;
-  window._mmWatcherOff = null;
-  window._roomWatcherOff = null;
+window.saveWalletToFirebase=function(){
+  if(!window.myUID)return;
+  window._update(window._ref(window._db,'users/'+window.myUID+'/wallet'),{silver:PersistentWallet.p1Silver,diamonds:PersistentWallet.p1Diamonds});
+};
 
-  // Auth state listener
-  window._onAuthStateChanged(window._auth, async (user) => {
-    if (user) {
-      window.myUID = user.uid;
-      // Load profile from Firebase
-      const snap = await window._get(window._ref(window._db, 'users/' + user.uid + '/profile'));
-      if (snap.exists()) {
-        const profile = snap.val();
-        window.myName = profile.displayName || profile.name || user.displayName || 'مجهول';
-      } else {
-        window.myName = user.displayName || 'مجهول';
-      }
-      // Save last active
-      window._update(window._ref(window._db, 'users/' + user.uid + '/profile'), {
-        name: window.myName,
-        lastActive: Date.now(),
-        isAnon: user.isAnonymous || false
-      });
-      // Load wallet from Firebase
-      await loadWalletFromFirebase();
-      // Listen for invites
-      listenForInvites();
-      // Go to menu
-      showMenuScreen();
-    }
+window.listenForInvites=function(){
+  window._onValue(window._ref(window._db,'users/'+window.myUID+'/invites'),(snapshot)=>{
+    const invites=snapshot.val();
+    if(invites){
+      const inviteId=Object.keys(invites)[0];
+      window.activeInvite={id:inviteId,...invites[inviteId]};
+      document.getElementById('invite-text').innerText=`⚔️ اللاعب (${window.activeInvite.fromName}) يتحداك في مباراة خاصة!`;
+      toggleModal('invite-popup',false);
+    }else{toggleModal('invite-popup',true);window.activeInvite=null;}
   });
-
-  // Load wallet from Firebase into PersistentWallet
-  window.loadWalletFromFirebase = async function() {
-    const snap = await window._get(window._ref(window._db, 'users/' + window.myUID + '/wallet'));
-    if (snap.exists()) {
-      const w = snap.val();
-      PersistentWallet.p1Silver = w.silver || 0;
-      PersistentWallet.p1Diamonds = w.diamonds || 0;
-    } else {
-      PersistentWallet.p1Silver = 0;
-      PersistentWallet.p1Diamonds = 0;
-    }
-  };
-
-  // Save wallet to Firebase
-  window.saveWalletToFirebase = function() {
-    if (!window.myUID) return;
-    window._update(window._ref(window._db, 'users/' + window.myUID + '/wallet'), {
-      silver: PersistentWallet.p1Silver,
-      diamonds: PersistentWallet.p1Diamonds
-    });
-  };
-
-  // Listen for incoming invites
-  window.listenForInvites = function() {
-    window._onValue(window._ref(window._db, 'users/' + window.myUID + '/invites'), (snapshot) => {
-      const invites = snapshot.val();
-      if (invites) {
-        const inviteId = Object.keys(invites)[0];
-        window.activeInvite = { id: inviteId, ...invites[inviteId] };
-        document.getElementById('invite-text').innerText = `⚔️ اللاعب (${window.activeInvite.fromName}) يتحداك في مباراة خاصة!`;
-        toggleModal('invite-popup', false);
-      } else {
-        toggleModal('invite-popup', true);
-        window.activeInvite = null;
-      }
-    });
-  };
+};
 </script>
 </head>
 <body>
 
-<!-- ===== شاشة الدخول ===== -->
 <div id="login-screen" class="screen active">
   <div class="login-logo">MAD WAR II</div>
   <div class="login-sub">سجل دخول للحفاظ على تقدمك</div>
@@ -270,17 +185,15 @@ input[type=text] { font-family: 'Tajawal', sans-serif; }
   </div>
 </div>
 
-<!-- ===== القائمة الرئيسية ===== -->
 <div id="menu-screen" class="screen">
-  <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; padding:20px; gap:4px;">
+  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:20px;gap:4px;">
     <div class="logo-container"><h1 class="game-title">MAD WAR II</h1></div>
     <div class="user-badge">
-      <span>👤</span>
-      <span class="uname" id="menu-username">...</span>
+      <span>👤</span><span class="uname" id="menu-username">...</span>
       <span class="uwallet" id="menu-wallet">🥈0 | 💎0</span>
-      <button onclick="openEditName()" style="background:none; border:1px solid #4a5568; border-radius:4px; color:#a0aec0; font-size:10px; padding:2px 6px; cursor:pointer;">✏️</button>
+      <button onclick="openEditName()" style="background:none;border:1px solid #4a5568;border-radius:4px;color:#a0aec0;font-size:10px;padding:2px 6px;cursor:pointer;">✏️</button>
     </div>
-    <div style="font-size:11px; color:#4a5568; margin-bottom:4px; user-select:all; direction:ltr;" id="menu-uid-display"></div>
+    <div style="font-size:11px;color:#4a5568;margin-bottom:4px;user-select:all;direction:ltr;" id="menu-uid-display"></div>
     <button class="menu-btn primary" id="btn-continue" onclick="continueGame()" style="display:none;">▶️ استمرار</button>
     <button class="menu-btn" id="btn-new-game" onclick="startNewGameClick()">🤖 تحدي الكمبيوتر</button>
     <button class="menu-btn" style="background:linear-gradient(135deg,rgba(0,204,255,0.2),transparent);border-color:var(--neon-blue);" onclick="initGlobalMatch()">🌐 مباراة عامة</button>
@@ -289,7 +202,6 @@ input[type=text] { font-family: 'Tajawal', sans-serif; }
   </div>
 </div>
 
-<!-- ===== شاشة الانتظار Matchmaking ===== -->
 <div id="matchmaking-screen" class="screen">
   <div class="mm-box">
     <span class="mm-spinner">⚙️</span>
@@ -299,7 +211,6 @@ input[type=text] { font-family: 'Tajawal', sans-serif; }
   </div>
 </div>
 
-<!-- ===== شاشة اللعب ===== -->
 <div id="game-screen" class="screen">
   <div class="game-header">
     <div class="player-card p1">
@@ -332,16 +243,13 @@ input[type=text] { font-family: 'Tajawal', sans-serif; }
       <div class="shop-item" id="shop-cannon" onclick="preparePremiumSpawn('cannon')"><div class="item-icon">🚀</div><div class="item-info"><span class="item-name">مدفع</span><span class="item-cost">500🥈</span></div></div>
       <div class="shop-item ultra-prince" id="shop-ultra_prince" onclick="preparePremiumSpawn('ultra_prince')"><div class="item-icon">👑⚔️</div><div class="item-info"><span class="item-name">أمير خارق</span><span class="item-cost">500💎</span></div></div>
     </div>
-
     <div class="game-area">
-      <!-- أرض الخصم فوق دايماً -->
       <div class="field-title" id="p2-field-lbl">أرض العدو</div>
       <div class="grid" id="p2-grid"></div>
       <div style="text-align:center;color:#4a5568;font-size:10px;font-weight:900;letter-spacing:2px;">⚡ خط النار ⚡</div>
       <div class="grid" id="p1-grid"></div>
       <div class="field-title" id="p1-field-lbl">حصنك الدفاعي</div>
     </div>
-
     <div class="control-panel">
       <div class="log-bar" id="log-bar">استعد للمعركة!</div>
       <div class="actions-grid">
@@ -365,17 +273,17 @@ input[type=text] { font-family: 'Tajawal', sans-serif; }
       </div>
       <button class="act-btn full-width btn-end" id="btn-end-turn" onclick="endTurn(false)">✓ إنهاء الدور</button>
       <button class="act-btn full-width btn-cancel" id="btn-cancel-action" onclick="cancelAction()">❌ إلغاء والرجوع</button>
-      <button class="act-btn full-width" style="background:#c53030;border:none;margin-top:5px;display:none;grid-column:span 4;" id="btn-leave-match" onclick="leaveOnlineMatch()">🚪 الخروج من المباراة</button>
+      <button class="act-btn full-width" style="background:#c53030;border:none;margin-top:5px;display:none;" id="btn-leave-match" onclick="leaveOnlineMatch()">🚪 الخروج من المباراة</button>
     </div>
   </div>
 </div>
 
-<!-- ===== Modal: الأصدقاء ===== -->
+<!-- Modals -->
 <div id="friends-modal" class="overlay hidden">
   <div class="modal">
     <h2 class="modal-title">الأصدقاء 👥</h2>
     <div style="background:#0d1117;border-radius:6px;padding:8px;margin-bottom:10px;font-size:11px;">
-      <div style="color:#718096;margin-bottom:4px;">كود حسابك (أرسله لصديقك):</div>
+      <div style="color:#718096;margin-bottom:4px;">كود حسابك:</div>
       <div id="my-player-id" style="color:var(--cyber-gold);font-weight:bold;font-size:10px;word-break:break-all;user-select:all;text-align:center;"></div>
     </div>
     <div style="display:flex;gap:6px;margin-bottom:12px;">
@@ -383,14 +291,11 @@ input[type=text] { font-family: 'Tajawal', sans-serif; }
       <button onclick="addFriendById()" style="background:var(--neon-red);border:none;border-radius:6px;color:#fff;padding:8px 12px;font-weight:bold;cursor:pointer;font-family:Tajawal,sans-serif;">إضافة</button>
     </div>
     <div style="text-align:right;font-size:12px;font-weight:bold;color:#cbd5e0;margin-bottom:6px;">قائمة الأصدقاء:</div>
-    <div id="friends-list" style="max-height:180px;overflow-y:auto;border:1px solid #2d3748;border-radius:6px;padding:6px;margin-bottom:12px;background:rgba(0,0,0,0.3);">
-      <div style="color:#718096;text-align:center;font-size:11px;padding:10px;">جاري التحميل...</div>
-    </div>
+    <div id="friends-list" style="max-height:180px;overflow-y:auto;border:1px solid #2d3748;border-radius:6px;padding:6px;margin-bottom:12px;background:rgba(0,0,0,0.3);"><div style="color:#718096;text-align:center;font-size:11px;padding:10px;">جاري التحميل...</div></div>
     <button class="menu-btn" style="width:100%;margin:0;" onclick="toggleModal('friends-modal',true)">رجوع</button>
   </div>
 </div>
 
-<!-- ===== Modal: تعديل الاسم ===== -->
 <div id="edit-name-modal" class="overlay hidden">
   <div class="modal">
     <h2 class="modal-title">تغيير الاسم ✏️</h2>
@@ -402,7 +307,6 @@ input[type=text] { font-family: 'Tajawal', sans-serif; }
   </div>
 </div>
 
-<!-- ===== Modal: دعوة ===== -->
 <div id="invite-popup" class="overlay hidden" style="z-index:2000;">
   <div class="modal" style="border-color:var(--neon-blue);box-shadow:0 0 20px rgba(0,204,255,0.4);">
     <h2 class="modal-title" style="color:var(--neon-blue);">تحدي جديد! ⚔️</h2>
@@ -414,7 +318,6 @@ input[type=text] { font-family: 'Tajawal', sans-serif; }
   </div>
 </div>
 
-<!-- ===== Modal: الفوز/الخسارة ===== -->
 <div id="win-modal" class="overlay hidden">
   <div class="modal">
     <div class="modal-title" id="win-title">النهاية</div>
@@ -424,7 +327,6 @@ input[type=text] { font-family: 'Tajawal', sans-serif; }
   </div>
 </div>
 
-<!-- ===== Modal: الشرح ===== -->
 <div id="tutorial-modal" class="overlay hidden">
   <div class="modal">
     <div class="modal-title" style="font-size:20px;">كيف تلعب؟</div>
@@ -435,8 +337,8 @@ input[type=text] { font-family: 'Tajawal', sans-serif; }
       - <b>💎 نظام الألماس:</b> كل قتل = 5💎. كل 20💎 تقوي ملكك 10%.<br>
       - <b>🛡️ درع الحماية (Lv.5+):</b> يحمي جندي من ضربات العدو.<br>
       - <b>⭐ الناجون:</b> جنودك الأحياء بعد الفوز ينتقلون معك!<br>
-      - <b>🤴🏽 الأمير (Lv.5+):</b> يرد على من يضرب الملك، وعلى من يضربه هو.<br>
-      - <b>👑⚔️ الأمير الخارق (500💎):</b> جندي هجومي يرد فوراً على كل من يضربه!<br>
+      - <b>🤴🏽 الأمير (Lv.5+):</b> يرد على من يضرب الملك.<br>
+      - <b>👑⚔️ الأمير الخارق (500💎):</b> يرد فوراً على كل من يضربه!<br>
       - <b>🧙‍♂️ الوزير (Lv.10+):</b> يعالج أضعف جندي كل دور تلقائياً.<br>
       - <b>🛡️ حراس الملك (Lv.20+):</b> حراس بقوة عالية يدافعون عن الملك.<br><br>
       <b>الهدف:</b> دمر <b>ملك العدو</b> قبل أن يدمر ملكك!
@@ -446,1113 +348,1231 @@ input[type=text] { font-family: 'Tajawal', sans-serif; }
 </div>
 
 <script>
-// =================== بيانات اللعبة ===================
-const DATA_TYPES = {
-  main:          { icon:'🤴',  hp:80,  maxHp:80,  atk:0,  cost:0,   label:'الملك' },
-  mine:          { icon:'⛏️',  hp:15,  maxHp:15,  atk:0,  cost:10,  label:'منجم' },
-  infantry:      { icon:'⚔️',  hp:40,  maxHp:40,  atk:10, cost:10,  label:'مشاة',    proj:'🗡️' },
-  archer:        { icon:'🏹',  hp:18,  maxHp:18,  atk:18, cost:15,  label:'رامي',    proj:'🏹' },
-  super_infantry:{ icon:'🪖',  hp:90,  maxHp:90,  atk:16, cost:100, label:'خارق',    proj:'🗡️' },
-  witch:         { icon:'🧙‍♀️', hp:30,  maxHp:30,  atk:25, cost:150, label:'ساحرة',   proj:'⚡' },
-  catapult:      { icon:'☄️',  hp:50,  maxHp:50,  atk:35, cost:200, label:'منجنيق', proj:'🔥' },
-  cannon:        { icon:'🚀',  hp:60,  maxHp:60,  atk:50, cost:500, label:'مدفع',    proj:'💥' },
-  ultra_prince:  { icon:'👑⚔️',hp:150, maxHp:150, atk:60, cost:500, label:'أمير خارق', proj:'⚔️', isUltraPrince:true, isCounter:true, costType:'diamonds' },
-  prince:        { icon:'🤴🏽', hp:70,  maxHp:70,  atk:30, cost:0,   label:'الأمير', proj:'⚔️', isGuardian:true, isCounter:true },
-  vizier:        { icon:'🧙‍♂️', hp:80,  maxHp:80,  atk:35, cost:0,   label:'الوزير', proj:'🔮', isGuardian:true, isHealer:true },
-  king_guard:    { icon:'🛡️',  hp:120, maxHp:120, atk:45, cost:0,   label:'حارس',   proj:'⚔️', isGuardian:true, isKingGuard:true },
-  med_small:     { cost:10, heal:20, label:'حقنة صغيرة' },
-  med_large:     { cost:30, heal:60, label:'حقنة كبيرة' }
+// =================== DATA ===================
+const DATA_TYPES={
+  main:{icon:'🤴',hp:80,maxHp:80,atk:0,cost:0,label:'الملك'},
+  mine:{icon:'⛏️',hp:15,maxHp:15,atk:0,cost:10,label:'منجم'},
+  infantry:{icon:'⚔️',hp:40,maxHp:40,atk:10,cost:10,label:'مشاة',proj:'🗡️'},
+  archer:{icon:'🏹',hp:18,maxHp:18,atk:18,cost:15,label:'رامي',proj:'🏹'},
+  super_infantry:{icon:'🪖',hp:90,maxHp:90,atk:16,cost:100,label:'خارق',proj:'🗡️'},
+  witch:{icon:'🧙‍♀️',hp:30,maxHp:30,atk:25,cost:150,label:'ساحرة',proj:'⚡'},
+  catapult:{icon:'☄️',hp:50,maxHp:50,atk:35,cost:200,label:'منجنيق',proj:'🔥'},
+  cannon:{icon:'🚀',hp:60,maxHp:60,atk:50,cost:500,label:'مدفع',proj:'💥'},
+  ultra_prince:{icon:'👑⚔️',hp:150,maxHp:150,atk:60,cost:500,label:'أمير خارق',proj:'⚔️',isUltraPrince:true,isCounter:true,costType:'diamonds'},
+  prince:{icon:'🤴🏽',hp:70,maxHp:70,atk:30,cost:0,label:'الأمير',proj:'⚔️',isGuardian:true,isCounter:true},
+  vizier:{icon:'🧙‍♂️',hp:80,maxHp:80,atk:35,cost:0,label:'الوزير',proj:'🔮',isGuardian:true,isHealer:true},
+  king_guard:{icon:'🛡️',hp:120,maxHp:120,atk:45,cost:0,label:'حارس',proj:'⚔️',isGuardian:true,isKingGuard:true},
+  med_small:{cost:10,heal:20,label:'حقنة صغيرة'},
+  med_large:{cost:30,heal:60,label:'حقنة كبيرة'}
 };
 
-let G = {
-  mode:'pvc', level:1, turn:1, round:1, phase:'idle', locked:false,
-  p1:{ gold:40, actions:4, maxActions:4, healUses:0, healCooldown:0, harvestedThisTurn:false, hasWall:false },
-  p2:{ gold:40, actions:4, maxActions:4, healUses:0, healCooldown:0, harvestedThisTurn:false, hasWall:false },
-  grid:{ p1:[], p2:[] }, myPlayerNum:1, selectedCell:null, pendingAction:null, pendingItem:null
+// =================== GAME STATE ===================
+let G={
+  mode:'pvc',level:1,turn:1,round:1,phase:'idle',locked:false,
+  // p1 = اللاعب الأول (أنا في PVC، وأنا في PVP أيضاً من منظوري)
+  // p2 = الخصم (كمبيوتر في PVC، أو الخصم في PVP من منظوري)
+  p1:{gold:40,actions:4,maxActions:4,healUses:0,healCooldown:0,harvestedThisTurn:false,hasWall:false},
+  p2:{gold:40,actions:4,maxActions:4,healUses:0,healCooldown:0,harvestedThisTurn:false,hasWall:false},
+  grid:{p1:[],p2:[]},
+  // في PVP:
+  // myPlayerNum: 1 أو 2 (رقمي الحقيقي في Firebase)
+  // myTurnInFirebase: عندما يكون دوري حسب Firebase
+  myPlayerNum:1,
+  selectedCell:null,pendingAction:null,pendingItem:null
 };
 
-// المحفظة المستدامة - تتزامن مع Firebase
-let PersistentWallet = {
-  p1Silver:0, p2Silver:0, p1Diamonds:0, p2Diamonds:0,
-  save(mode) {
-    if (mode === 'pvc' && window.myUID) {
-      window.saveWalletToFirebase();
-    }
-  },
-  load(mode) {
-    // p1 محملة من Firebase مسبقاً في loadWalletFromFirebase
-    if (mode === 'pvc') {
-      this.p2Silver = G.level >= 5 ? 50 + (G.level * 5) : 0;
-    } else {
-      this.p2Silver = 0;
-    }
-    this.p2Diamonds = 0;
+let PersistentWallet={
+  p1Silver:0,p2Silver:0,p1Diamonds:0,p2Diamonds:0,
+  save(mode){if(mode==='pvc'&&window.myUID)window.saveWalletToFirebase();},
+  load(mode){
+    if(mode==='pvc'){this.p2Silver=G.level>=5?50+(G.level*5):0;}
+    else{this.p2Silver=0;}
+    this.p2Diamonds=0;
   }
 };
 
-// =================== الناجون ===================
-let SurvivorsSystem = {
-  p1:[], p2:[],
-  saveFromGrid(pKey) {
-    let survivors = [];
-    G.grid[pKey].forEach(cell => {
-      if (cell.entity && cell.entity.type !== 'main' && cell.entity.type !== 'mine' &&
-          cell.entity.type !== 'prince' && cell.entity.type !== 'vizier' && cell.entity.type !== 'king_guard') {
-        survivors.push({ ...cell.entity, isSurvivor:true });
+let SurvivorsSystem={
+  p1:[],p2:[],
+  saveFromGrid(pKey){
+    let survivors=[];
+    G.grid[pKey].forEach(cell=>{
+      if(cell.entity&&cell.entity.type!=='main'&&cell.entity.type!=='mine'&&
+         cell.entity.type!=='prince'&&cell.entity.type!=='vizier'&&cell.entity.type!=='king_guard'){
+        survivors.push({...cell.entity,isSurvivor:true});
       }
     });
-    this[pKey] = survivors;
-    if (pKey === 'p1' && window.myUID) {
-      window._set(window._ref(window._db, 'users/' + window.myUID + '/survivors'), survivors);
-    }
+    this[pKey]=survivors;
+    if(pKey==='p1'&&window.myUID)window._set(window._ref(window._db,'users/'+window.myUID+'/survivors'),survivors);
   },
-  async load() {
-    if (window.myUID) {
-      const snap = await window._get(window._ref(window._db, 'users/' + window.myUID + '/survivors'));
-      this.p1 = snap.exists() ? (snap.val() || []) : [];
-    } else {
-      this.p1 = [];
-    }
-    this.p2 = [];
+  async load(){
+    if(window.myUID){
+      const snap=await window._get(window._ref(window._db,'users/'+window.myUID+'/survivors'));
+      this.p1=snap.exists()?(snap.val()||[]):[];
+    }else{this.p1=[];}
+    this.p2=[];
   },
-  clear() {
-    this.p1 = []; this.p2 = [];
-    if (window.myUID) window._remove(window._ref(window._db, 'users/' + window.myUID + '/survivors'));
+  clear(){
+    this.p1=[];this.p2=[];
+    if(window.myUID)window._remove(window._ref(window._db,'users/'+window.myUID+'/survivors'));
   },
-  getAIStartingTroopsCount(level) {
-    if (level < 5) return 0;
-    return Math.min(2 + Math.floor((level - 5) / 5), 6);
-  }
+  getAIStartingTroopsCount(level){if(level<5)return 0;return Math.min(2+Math.floor((level-5)/5),6);}
 };
 
 // =================== Audio ===================
-const AudioFX = {
+const AudioFX={
   ctx:null,
-  init() { if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); },
-  play(type) {
-    try {
-      this.init(); if (!this.ctx) return;
-      const ctx = this.ctx; const now = ctx.currentTime;
-      if (type==='click') { let o=ctx.createOscillator(),g=ctx.createGain(); o.frequency.setValueAtTime(400,now); o.frequency.exponentialRampToValueAtTime(700,now+0.04); g.gain.setValueAtTime(0.08,now); g.gain.linearRampToValueAtTime(0,now+0.04); o.connect(g); g.connect(ctx.destination); o.start(now); o.stop(now+0.04); }
-      if (type==='spawn') { let o=ctx.createOscillator(),g=ctx.createGain(); o.type='triangle'; o.frequency.setValueAtTime(180,now); o.frequency.exponentialRampToValueAtTime(550,now+0.15); g.gain.setValueAtTime(0.12,now); g.gain.linearRampToValueAtTime(0,now+0.15); o.connect(g); g.connect(ctx.destination); o.start(now); o.stop(now+0.15); }
-      if (type==='hit') { let o=ctx.createOscillator(),g=ctx.createGain(); o.type='sawtooth'; o.frequency.setValueAtTime(180,now); o.frequency.linearRampToValueAtTime(50,now+0.08); g.gain.setValueAtTime(0.12,now); g.gain.linearRampToValueAtTime(0,now+0.08); o.connect(g); g.connect(ctx.destination); o.start(now); o.stop(now+0.08); }
-      if (type==='counter') { let o=ctx.createOscillator(),g=ctx.createGain(); o.type='square'; o.frequency.setValueAtTime(600,now); o.frequency.linearRampToValueAtTime(200,now+0.12); g.gain.setValueAtTime(0.15,now); g.gain.linearRampToValueAtTime(0,now+0.12); o.connect(g); g.connect(ctx.destination); o.start(now); o.stop(now+0.12); }
-      if (type==='ultra_counter') { let o=ctx.createOscillator(),g=ctx.createGain(); o.type='sawtooth'; o.frequency.setValueAtTime(800,now); o.frequency.exponentialRampToValueAtTime(150,now+0.2); g.gain.setValueAtTime(0.25,now); g.gain.linearRampToValueAtTime(0,now+0.2); o.connect(g); g.connect(ctx.destination); o.start(now); o.stop(now+0.2); }
-      if (type==='heal') { let o=ctx.createOscillator(),g=ctx.createGain(); o.type='sine'; o.frequency.setValueAtTime(300,now); o.frequency.exponentialRampToValueAtTime(900,now+0.2); g.gain.setValueAtTime(0.1,now); g.gain.linearRampToValueAtTime(0,now+0.2); o.connect(g); g.connect(ctx.destination); o.start(now); o.stop(now+0.2); }
-      if (type==='explosion') { let bufferSize=ctx.sampleRate*0.4,buffer=ctx.createBuffer(1,bufferSize,ctx.sampleRate),data=buffer.getChannelData(0); for(let i=0;i<bufferSize;i++)data[i]=Math.random()*2-1; let noise=ctx.createBufferSource(),filter=ctx.createBiquadFilter(),g=ctx.createGain(); noise.buffer=buffer; filter.type='lowpass'; filter.frequency.setValueAtTime(400,now); filter.frequency.exponentialRampToValueAtTime(40,now+0.4); g.gain.setValueAtTime(0.3,now); g.gain.exponentialRampToValueAtTime(0.01,now+0.4); noise.connect(filter); filter.connect(g); g.connect(ctx.destination); noise.start(now); noise.stop(now+0.4); }
-    } catch(e){}
+  init(){if(!this.ctx)this.ctx=new(window.AudioContext||window.webkitAudioContext)();},
+  play(type){
+    try{
+      this.init();if(!this.ctx)return;
+      const ctx=this.ctx;const now=ctx.currentTime;
+      if(type==='click'){let o=ctx.createOscillator(),g=ctx.createGain();o.frequency.setValueAtTime(400,now);o.frequency.exponentialRampToValueAtTime(700,now+0.04);g.gain.setValueAtTime(0.08,now);g.gain.linearRampToValueAtTime(0,now+0.04);o.connect(g);g.connect(ctx.destination);o.start(now);o.stop(now+0.04);}
+      if(type==='spawn'){let o=ctx.createOscillator(),g=ctx.createGain();o.type='triangle';o.frequency.setValueAtTime(180,now);o.frequency.exponentialRampToValueAtTime(550,now+0.15);g.gain.setValueAtTime(0.12,now);g.gain.linearRampToValueAtTime(0,now+0.15);o.connect(g);g.connect(ctx.destination);o.start(now);o.stop(now+0.15);}
+      if(type==='hit'){let o=ctx.createOscillator(),g=ctx.createGain();o.type='sawtooth';o.frequency.setValueAtTime(180,now);o.frequency.linearRampToValueAtTime(50,now+0.08);g.gain.setValueAtTime(0.12,now);g.gain.linearRampToValueAtTime(0,now+0.08);o.connect(g);g.connect(ctx.destination);o.start(now);o.stop(now+0.08);}
+      if(type==='counter'){let o=ctx.createOscillator(),g=ctx.createGain();o.type='square';o.frequency.setValueAtTime(600,now);o.frequency.linearRampToValueAtTime(200,now+0.12);g.gain.setValueAtTime(0.15,now);g.gain.linearRampToValueAtTime(0,now+0.12);o.connect(g);g.connect(ctx.destination);o.start(now);o.stop(now+0.12);}
+      if(type==='ultra_counter'){let o=ctx.createOscillator(),g=ctx.createGain();o.type='sawtooth';o.frequency.setValueAtTime(800,now);o.frequency.exponentialRampToValueAtTime(150,now+0.2);g.gain.setValueAtTime(0.25,now);g.gain.linearRampToValueAtTime(0,now+0.2);o.connect(g);g.connect(ctx.destination);o.start(now);o.stop(now+0.2);}
+      if(type==='heal'){let o=ctx.createOscillator(),g=ctx.createGain();o.type='sine';o.frequency.setValueAtTime(300,now);o.frequency.exponentialRampToValueAtTime(900,now+0.2);g.gain.setValueAtTime(0.1,now);g.gain.linearRampToValueAtTime(0,now+0.2);o.connect(g);g.connect(ctx.destination);o.start(now);o.stop(now+0.2);}
+      if(type==='explosion'){let bufferSize=ctx.sampleRate*0.4,buffer=ctx.createBuffer(1,bufferSize,ctx.sampleRate),data=buffer.getChannelData(0);for(let i=0;i<bufferSize;i++)data[i]=Math.random()*2-1;let noise=ctx.createBufferSource(),filter=ctx.createBiquadFilter(),g=ctx.createGain();noise.buffer=buffer;filter.type='lowpass';filter.frequency.setValueAtTime(400,now);filter.frequency.exponentialRampToValueAtTime(40,now+0.4);g.gain.setValueAtTime(0.3,now);g.gain.exponentialRampToValueAtTime(0.01,now+0.4);noise.connect(filter);filter.connect(g);g.connect(ctx.destination);noise.start(now);noise.stop(now+0.4);}
+    }catch(e){}
   }
 };
 
-// =================== تسجيل الدخول ===================
-function loginWithGoogle() {
-  let name = document.getElementById('display-name-input').value.trim();
-  document.getElementById('login-status').textContent = 'جاري تسجيل الدخول...';
-  window._signInWithPopup(window._auth, window._provider).then(async (result) => {
-    if (name) {
-      window.myName = name;
-      await window._update(window._ref(window._db, 'users/' + result.user.uid + '/profile'), {
-        displayName: name, name: name
-      });
-    }
-  }).catch(err => {
-    document.getElementById('login-status').textContent = 'فشل: ' + err.message;
-  });
+// =================== LOGIN ===================
+function loginWithGoogle(){
+  let name=document.getElementById('display-name-input').value.trim();
+  document.getElementById('login-status').textContent='جاري تسجيل الدخول...';
+  window._signInWithPopup(window._auth,window._provider).then(async(result)=>{
+    if(name){window.myName=name;await window._update(window._ref(window._db,'users/'+result.user.uid+'/profile'),{displayName:name,name:name});}
+  }).catch(err=>{document.getElementById('login-status').textContent='فشل: '+err.message;});
 }
 
-function loginAsGuest() {
-  let name = document.getElementById('display-name-input').value.trim() || 'ضيف';
-  document.getElementById('login-status').textContent = 'جاري الدخول كضيف...';
-  window._signInAnonymously(window._auth).then(async (result) => {
-    window.myName = name;
-    await window._update(window._ref(window._db, 'users/' + result.user.uid + '/profile'), {
-      displayName: name, name: name, isAnon: true
-    });
-  }).catch(err => {
-    document.getElementById('login-status').textContent = 'فشل: ' + err.message;
-  });
+function loginAsGuest(){
+  let name=document.getElementById('display-name-input').value.trim()||'ضيف';
+  document.getElementById('login-status').textContent='جاري الدخول كضيف...';
+  window._signInAnonymously(window._auth).then(async(result)=>{
+    window.myName=name;
+    await window._update(window._ref(window._db,'users/'+result.user.uid+'/profile'),{displayName:name,name:name,isAnon:true});
+  }).catch(err=>{document.getElementById('login-status').textContent='فشل: '+err.message;});
 }
 
-function showMenuScreen() {
+function showMenuScreen(){
   toggleScreen('menu-screen');
-  document.getElementById('menu-username').textContent = window.myName || 'مجهول';
-  document.getElementById('menu-wallet').textContent = `🥈${PersistentWallet.p1Silver} | 💎${PersistentWallet.p1Diamonds}`;
-  document.getElementById('menu-uid-display').textContent = window.myUID ? 'ID: ' + window.myUID.substring(0,12) + '...' : '';
-  let savedLevel = parseInt(localStorage.getItem('mw_highest_pvc_level_' + window.myUID)) || 1;
-  if (savedLevel > 1) {
-    document.getElementById('btn-continue').style.display = 'block';
-    document.getElementById('btn-continue').innerHTML = `▶️ استمرار (Lv.${savedLevel})`;
-    document.getElementById('btn-new-game').innerHTML = "🆕 معركة جديدة";
+  document.getElementById('menu-username').textContent=window.myName||'مجهول';
+  document.getElementById('menu-wallet').textContent=`🥈${PersistentWallet.p1Silver} | 💎${PersistentWallet.p1Diamonds}`;
+  document.getElementById('menu-uid-display').textContent=window.myUID?'ID: '+window.myUID.substring(0,12)+'...':'';
+  let savedLevel=parseInt(localStorage.getItem('mw_highest_pvc_level_'+window.myUID))||1;
+  if(savedLevel>1){
+    document.getElementById('btn-continue').style.display='block';
+    document.getElementById('btn-continue').innerHTML=`▶️ استمرار (Lv.${savedLevel})`;
+    document.getElementById('btn-new-game').innerHTML="🆕 معركة جديدة";
   }
 }
 
-function openEditName() {
+function openEditName(){AudioFX.play('click');document.getElementById('new-name-input').value=window.myName||'';toggleModal('edit-name-modal',false);}
+async function saveNewName(){
+  let newName=document.getElementById('new-name-input').value.trim();
+  if(!newName)return;
+  window.myName=newName;
+  if(window.myUID)await window._update(window._ref(window._db,'users/'+window.myUID+'/profile'),{displayName:newName,name:newName});
+  document.getElementById('menu-username').textContent=newName;
+  toggleModal('edit-name-modal',true);AudioFX.play('spawn');
+}
+
+// =================== FRIENDS ===================
+function openFriendsMenu(){
   AudioFX.play('click');
-  document.getElementById('new-name-input').value = window.myName || '';
-  toggleModal('edit-name-modal', false);
+  document.getElementById('my-player-id').textContent=window.myUID||'—';
+  toggleModal('friends-modal',false);loadFriendsList();
 }
 
-async function saveNewName() {
-  let newName = document.getElementById('new-name-input').value.trim();
-  if (!newName) return;
-  window.myName = newName;
-  if (window.myUID) {
-    await window._update(window._ref(window._db, 'users/' + window.myUID + '/profile'), {
-      displayName: newName, name: newName
-    });
-  }
-  document.getElementById('menu-username').textContent = newName;
-  toggleModal('edit-name-modal', true);
-  AudioFX.play('spawn');
-}
-
-// =================== نظام الأصدقاء ===================
-function openFriendsMenu() {
-  AudioFX.play('click');
-  document.getElementById('my-player-id').textContent = window.myUID || '—';
-  toggleModal('friends-modal', false);
-  loadFriendsList();
-}
-
-function addFriendById() {
-  let fid = document.getElementById('friend-id-input').value.trim();
-  if (!fid || fid === window.myUID) { alert('كود غير صالح!'); return; }
-  window._get(window._ref(window._db, `users/${fid}/profile`)).then((snap) => {
-    if (snap.exists()) {
-      let friendName = snap.val().displayName || snap.val().name || 'مجهول';
-      window._set(window._ref(window._db, `users/${window.myUID}/friends/${fid}`), friendName);
-      window._set(window._ref(window._db, `users/${fid}/friends/${window.myUID}`), window.myName);
+function addFriendById(){
+  let fid=document.getElementById('friend-id-input').value.trim();
+  if(!fid||fid===window.myUID){alert('كود غير صالح!');return;}
+  window._get(window._ref(window._db,`users/${fid}/profile`)).then((snap)=>{
+    if(snap.exists()){
+      let friendName=snap.val().displayName||snap.val().name||'مجهول';
+      window._set(window._ref(window._db,`users/${window.myUID}/friends/${fid}`),friendName);
+      window._set(window._ref(window._db,`users/${fid}/friends/${window.myUID}`),window.myName);
       alert(`✅ تمت إضافة ${friendName} كصديق!`);
-      document.getElementById('friend-id-input').value = '';
-      loadFriendsList();
-    } else { alert('❌ لم يتم العثور على لاعب بهذا الكود.'); }
+      document.getElementById('friend-id-input').value='';loadFriendsList();
+    }else{alert('❌ لم يتم العثور على لاعب بهذا الكود.');}
   });
 }
 
-function loadFriendsList() {
-  const list = document.getElementById('friends-list');
-  list.innerHTML = '<div style="color:#718096;text-align:center;font-size:11px;padding:10px;">جاري التحميل...</div>';
-  window._onValue(window._ref(window._db, `users/${window.myUID}/friends`), (snap) => {
-    list.innerHTML = '';
-    if (snap.exists()) {
-      let friends = snap.val();
-      for (let fid in friends) {
-        let fname = friends[fid];
-        let div = document.createElement('div');
-        div.style.cssText = "display:flex;justify-content:space-between;align-items:center;background:#1a202c;padding:8px;margin-bottom:5px;border-radius:6px;border-left:3px solid var(--neon-blue);";
-        div.innerHTML = `<span style="font-weight:bold;color:#fff;font-size:13px;">👤 ${fname}</span>
+function loadFriendsList(){
+  const list=document.getElementById('friends-list');
+  list.innerHTML='<div style="color:#718096;text-align:center;font-size:11px;padding:10px;">جاري التحميل...</div>';
+  window._onValue(window._ref(window._db,`users/${window.myUID}/friends`),(snap)=>{
+    list.innerHTML='';
+    if(snap.exists()){
+      let friends=snap.val();
+      for(let fid in friends){
+        let fname=friends[fid];
+        let div=document.createElement('div');
+        div.style.cssText="display:flex;justify-content:space-between;align-items:center;background:#1a202c;padding:8px;margin-bottom:5px;border-radius:6px;border-left:3px solid var(--neon-blue);";
+        div.innerHTML=`<span style="font-weight:bold;color:#fff;font-size:13px;">👤 ${fname}</span>
           <div style="display:flex;gap:4px;">
             <button onclick="inviteFriend('${fid}','${fname}')" style="background:linear-gradient(135deg,#1D4ED8,#1E40AF);border:none;border-radius:4px;color:#fff;padding:5px 10px;cursor:pointer;font-size:11px;font-family:Tajawal,sans-serif;font-weight:bold;">⚔️ تحدي</button>
             <button onclick="removeFriend('${fid}')" style="background:#c53030;border:none;border-radius:4px;color:#fff;padding:5px 8px;cursor:pointer;font-size:11px;">🗑️</button>
           </div>`;
         list.appendChild(div);
       }
-    } else {
-      list.innerHTML = '<div style="color:#718096;text-align:center;font-size:11px;padding:10px;">لا يوجد أصدقاء بعد.</div>';
-    }
+    }else{list.innerHTML='<div style="color:#718096;text-align:center;font-size:11px;padding:10px;">لا يوجد أصدقاء بعد.</div>';}
   });
 }
 
-function removeFriend(fid) {
-  if (!confirm('حذف الصديق؟')) return;
-  window._remove(window._ref(window._db, `users/${window.myUID}/friends/${fid}`));
-  window._remove(window._ref(window._db, `users/${fid}/friends/${window.myUID}`));
+function removeFriend(fid){
+  if(!confirm('حذف الصديق؟'))return;
+  window._remove(window._ref(window._db,`users/${window.myUID}/friends/${fid}`));
+  window._remove(window._ref(window._db,`users/${fid}/friends/${window.myUID}`));
 }
 
-function inviteFriend(fid, fname) {
+function inviteFriend(fid,fname){
   AudioFX.play('click');
-  let roomId = 'private_' + Date.now() + '_' + window.myUID.substring(0, 6);
-  window.currentRoomId = roomId;
-  G.myPlayerNum = 1;
-  G.mode = 'pvp';
-
-  let invRef = window._push(window._ref(window._db, `users/${fid}/invites`));
-  window._set(invRef, { fromUid: window.myUID, fromName: window.myName, roomId: roomId });
-
-  createPvpRoomData(roomId, window.myName, '⏳ في انتظار ' + fname);
-  toggleModal('friends-modal', true);
-  document.getElementById('btn-leave-match').style.display = 'block';
+  let roomId='private_'+Date.now()+'_'+window.myUID.substring(0,6);
+  window.currentRoomId=roomId;
+  G.myPlayerNum=1;G.mode='pvp';
+  let invRef=window._push(window._ref(window._db,`users/${fid}/invites`));
+  window._set(invRef,{fromUid:window.myUID,fromName:window.myName,roomId:roomId});
+  createPvpRoomData(roomId);
+  toggleModal('friends-modal',true);
+  document.getElementById('btn-leave-match').style.display='block';
   PersistentWallet.load('pvp');
   toggleScreen('game-screen');
-  initPvpGrids(roomId);
+  listenToRoom(roomId);
 }
 
-function acceptInvite() {
-  if (!window.activeInvite) return;
+function acceptInvite(){
+  if(!window.activeInvite)return;
   AudioFX.play('click');
-  window.currentRoomId = window.activeInvite.roomId;
-  window._remove(window._ref(window._db, `users/${window.myUID}/invites/${window.activeInvite.id}`));
-  G.myPlayerNum = 2;
-  G.mode = 'pvp';
+  window.currentRoomId=window.activeInvite.roomId;
+  window._remove(window._ref(window._db,`users/${window.myUID}/invites/${window.activeInvite.id}`));
+  G.myPlayerNum=2;G.mode='pvp';
   PersistentWallet.load('pvp');
-  window._update(window._ref(window._db, `rooms/${window.currentRoomId}`), {
-    status: 'playing', p2_name: window.myName, p2_uid: window.myUID
-  });
+  window._update(window._ref(window._db,`rooms/${window.currentRoomId}`),{status:'playing',p2_name:window.myName,p2_uid:window.myUID});
   listenToRoom(window.currentRoomId);
-  document.getElementById('btn-leave-match').style.display = 'block';
-  toggleModal('invite-popup', true);
+  document.getElementById('btn-leave-match').style.display='block';
+  toggleModal('invite-popup',true);
   toggleScreen('game-screen');
 }
 
-function declineInvite() {
-  if (!window.activeInvite) return;
+function declineInvite(){
+  if(!window.activeInvite)return;
   AudioFX.play('click');
-  window._remove(window._ref(window._db, `users/${window.myUID}/invites/${window.activeInvite.id}`));
-  toggleModal('invite-popup', true);
+  window._remove(window._ref(window._db,`users/${window.myUID}/invites/${window.activeInvite.id}`));
+  toggleModal('invite-popup',true);
 }
 
-// =================== Matchmaking عام ===================
-function initGlobalMatch() {
+// =================== MATCHMAKING ===================
+function initGlobalMatch(){
   AudioFX.play('click');
   toggleScreen('matchmaking-screen');
-  document.getElementById('mm-status').textContent = 'جاري البحث عن لاعب...';
-
-  // البحث عن غرفة انتظار
-  const roomsRef = window._ref(window._db, 'rooms');
-  window._get(roomsRef).then((snap) => {
-    if (snap.exists()) {
-      let rooms = snap.val();
-      let waitingRoom = null;
-      for (let rid in rooms) {
-        let r = rooms[rid];
-        if (r.status === 'waiting_for_p2' && r.p1_uid !== window.myUID && rid.startsWith('global_')) {
-          waitingRoom = { id: rid, ...r };
-          break;
+  document.getElementById('mm-status').textContent='جاري البحث عن لاعب...';
+  window._get(window._ref(window._db,'rooms')).then((snap)=>{
+    let waitingRoom=null;
+    if(snap.exists()){
+      let rooms=snap.val();
+      for(let rid in rooms){
+        let r=rooms[rid];
+        if(r.status==='waiting_for_p2'&&r.p1_uid!==window.myUID&&rid.startsWith('global_')){
+          waitingRoom={id:rid,...r};break;
         }
       }
-      if (waitingRoom) {
-        // انضم كـ p2
-        window.currentRoomId = waitingRoom.id;
-        G.myPlayerNum = 2;
-        G.mode = 'pvp';
-        PersistentWallet.load('pvp');
-        window._update(window._ref(window._db, `rooms/${waitingRoom.id}`), {
-          status: 'playing', p2_name: window.myName, p2_uid: window.myUID
-        });
-        document.getElementById('mm-status').textContent = 'وجدنا منافسك! جاري التحميل...';
-        listenToRoom(waitingRoom.id);
-        document.getElementById('btn-leave-match').style.display = 'block';
-        setTimeout(() => toggleScreen('game-screen'), 800);
-      } else {
-        // افتح غرفة جديدة وانتظر
-        let newRoomId = 'global_' + Date.now() + '_' + window.myUID.substring(0, 6);
-        window.currentRoomId = newRoomId;
-        G.myPlayerNum = 1;
-        G.mode = 'pvp';
-        PersistentWallet.load('pvp');
-        createPvpRoomData(newRoomId, window.myName, '⏳ في انتظار منافس...');
-        document.getElementById('mm-status').textContent = 'تم فتح غرفة... في انتظار منافس';
-        // انتظر حتى يأتي p2
-        window._mmWatcherOff = window._onValue(window._ref(window._db, `rooms/${newRoomId}`), (s) => {
-          let d = s.val();
-          if (d && d.status === 'playing') {
-            document.getElementById('mm-status').textContent = 'وُجد منافس! جاري البدء...';
-            if (window._mmWatcherOff) { window._mmWatcherOff(); window._mmWatcherOff = null; }
-            listenToRoom(newRoomId);
-            document.getElementById('btn-leave-match').style.display = 'block';
-            setTimeout(() => toggleScreen('game-screen'), 800);
-          }
-        });
-      }
-    } else {
-      // أول غرفة
-      let newRoomId = 'global_' + Date.now() + '_' + window.myUID.substring(0, 6);
-      window.currentRoomId = newRoomId;
-      G.myPlayerNum = 1;
-      G.mode = 'pvp';
+    }
+    if(waitingRoom){
+      window.currentRoomId=waitingRoom.id;G.myPlayerNum=2;G.mode='pvp';
       PersistentWallet.load('pvp');
-      createPvpRoomData(newRoomId, window.myName, '⏳ في انتظار منافس...');
-      document.getElementById('mm-status').textContent = 'تم فتح غرفة... في انتظار منافس';
-      window._mmWatcherOff = window._onValue(window._ref(window._db, `rooms/${newRoomId}`), (s) => {
-        let d = s.val();
-        if (d && d.status === 'playing') {
-          if (window._mmWatcherOff) { window._mmWatcherOff(); window._mmWatcherOff = null; }
+      window._update(window._ref(window._db,`rooms/${waitingRoom.id}`),{status:'playing',p2_name:window.myName,p2_uid:window.myUID});
+      document.getElementById('mm-status').textContent='وجدنا منافسك! جاري التحميل...';
+      listenToRoom(waitingRoom.id);
+      document.getElementById('btn-leave-match').style.display='block';
+      setTimeout(()=>toggleScreen('game-screen'),800);
+    }else{
+      let newRoomId='global_'+Date.now()+'_'+window.myUID.substring(0,6);
+      window.currentRoomId=newRoomId;G.myPlayerNum=1;G.mode='pvp';
+      PersistentWallet.load('pvp');
+      createPvpRoomData(newRoomId);
+      document.getElementById('mm-status').textContent='تم فتح غرفة... في انتظار منافس';
+      window._mmWatcherOff=window._onValue(window._ref(window._db,`rooms/${newRoomId}`),(s)=>{
+        let d=s.val();
+        if(d&&d.status==='playing'){
+          if(window._mmWatcherOff){window._mmWatcherOff();window._mmWatcherOff=null;}
           listenToRoom(newRoomId);
-          document.getElementById('btn-leave-match').style.display = 'block';
-          setTimeout(() => toggleScreen('game-screen'), 800);
+          document.getElementById('btn-leave-match').style.display='block';
+          setTimeout(()=>toggleScreen('game-screen'),800);
         }
       });
     }
   });
 }
 
-function cancelMatchmaking() {
+function cancelMatchmaking(){
   AudioFX.play('click');
-  if (window._mmWatcherOff) { window._mmWatcherOff(); window._mmWatcherOff = null; }
-  if (window.currentRoomId) {
-    window._remove(window._ref(window._db, `rooms/${window.currentRoomId}`));
-    window.currentRoomId = null;
-  }
+  if(window._mmWatcherOff){window._mmWatcherOff();window._mmWatcherOff=null;}
+  if(window.currentRoomId){window._remove(window._ref(window._db,`rooms/${window.currentRoomId}`));window.currentRoomId=null;}
   toggleScreen('menu-screen');
 }
 
-function createPvpRoomData(roomId, p1Name, p2Name) {
-  let emptyGrid = Array.from({length:12}, (_,i) => ({ id:i, entity:null }));
-  let g1 = JSON.parse(JSON.stringify(emptyGrid));
-  let g2 = JSON.parse(JSON.stringify(emptyGrid));
+// =================== PVP ROOM DATA ===================
+// الإصلاح الجوهري: الشبكة تُخزن موحدة في Firebase
+// p1 في Firebase = اللاعب الأول دائماً
+// كل لاعب يرى أرضه تحت وأرض الخصم فوق
+// الملك في الصف الثالث (الخلفي) = indices 8-11
+// في Firebase: p1_grid[8..11] = صف الخلف لـ p1, p2_grid[0..3] = صف الأمام (قريب من p1) = خلف p2
+//
+// المنظور:
+// p1 يرى: p2-grid فوق (معكوس: صف 0 أعلى شاشته = أمامه), p1-grid تحت (صف 8-11 أسفل شاشته = خلفه)
+// p2 يرى: p1-grid فوق (معكوس), p2-grid تحت
+//
+// الحل: نستخدم "myGrid" و"enemyGrid" دائماً بدلاً من p1/p2
+// ونعكس ترتيب الصفوف لكل لاعب عند العرض
+//
+// خطة العناوين:
+// p1-grid في Firebase: indices 0-3=صف أمامي (نحو p2), 4-7=وسط, 8-11=خلفي (الملك هنا)
+// p2-grid في Firebase: indices 0-3=صف أمامي (نحو p1 = أقرب لـ p1), 4-7=وسط, 8-11=خلفي (الملك هنا)
+//
+// عرض p1: p2-grid مقلوب فوق (عرض: idx 0-3=صف3, 4-7=صف2, 8-11=صف1), p1-grid تحت عادي
+// عرض p2: p1-grid مقلوب فوق, p2-grid تحت عادي
 
-  // الملك دايماً في موضعه الثابت
-  g1[10].entity = { ...DATA_TYPES.main, type:'main', hp:80, maxHp:80, icon:'🤴' };
-  g2[1].entity  = { ...DATA_TYPES.main, type:'main', hp:80, maxHp:80, icon:'🤴' };
-
-  window._set(window._ref(window._db, `rooms/${roomId}`), {
-    status: 'waiting_for_p2',
-    turn: 1, round: 1,
-    p1_name: p1Name, p2_name: p2Name,
-    p1_uid: window.myUID, p2_uid: '',
-    p1_gold: 40, p2_gold: 40,
-    p1_actions: 4, p2_actions: 4,
-    p1_healUses: 0, p2_healUses: 0,
-    p1_healCooldown: 0, p2_healCooldown: 0,
-    p1_wall: false, p2_wall: false,
-    p1_silver: 0, p2_silver: 0,
-    p1_diamonds: 0, p2_diamonds: 0,
-    grid_p1: g1, grid_p2: g2,
-    createdAt: Date.now()
+function createPvpRoomData(roomId){
+  let makeGrid=()=>Array.from({length:12},(_,i)=>({id:i,entity:null}));
+  let g1=makeGrid(),g2=makeGrid();
+  // الملك في الصف الأخير (indices 8-11)، وسط الصف = index 9 أو 10
+  g1[9].entity={...DATA_TYPES.main,type:'main',hp:80,maxHp:80,icon:'🤴'};
+  g2[9].entity={...DATA_TYPES.main,type:'main',hp:80,maxHp:80,icon:'🤴'};
+  window._set(window._ref(window._db,`rooms/${roomId}`),{
+    status:'waiting_for_p2',
+    turn:1,round:1,
+    p1_name:window.myName,p2_name:'⏳ في انتظار خصم',
+    p1_uid:window.myUID,p2_uid:'',
+    p1_gold:40,p2_gold:40,
+    p1_actions:4,p2_actions:4,
+    p1_healUses:0,p2_healUses:0,
+    p1_healCooldown:0,p2_healCooldown:0,
+    p1_wall:false,p2_wall:false,
+    p1_silver:0,p2_silver:0,
+    p1_diamonds:0,p2_diamonds:0,
+    p1_maxActions:4,p2_maxActions:4,
+    grid_p1:g1,grid_p2:g2,
+    last_action:null,
+    game_result:null,
+    createdAt:Date.now()
   });
 }
 
-function initPvpGrids(roomId) {
-  listenToRoom(roomId);
-}
-
-function listenToRoom(roomId) {
-  if (window._roomWatcherOff) { window._roomWatcherOff(); window._roomWatcherOff = null; }
-  window._roomWatcherOff = window._onValue(window._ref(window._db, `rooms/${roomId}`), (snap) => {
-    const data = snap.val();
-    if (!data) { pushLog("تم إغلاق الغرفة."); exitToMenu(); return; }
-    if (data.status === 'playing' || data.status === 'waiting_for_p2') {
+// =================== PVP ROOM LISTENER ===================
+function listenToRoom(roomId){
+  if(window._roomWatcherOff){window._roomWatcherOff();window._roomWatcherOff=null;}
+  window._roomWatcherOff=window._onValue(window._ref(window._db,`rooms/${roomId}`),(snap)=>{
+    const data=snap.val();
+    if(!data){pushLog("تم إغلاق الغرفة.");exitToMenu();return;}
+    if(data.status==='playing'||data.status==='waiting_for_p2'){
       syncDataFromFirebase(data);
     }
-    if (data.status === 'ended') {
-      pushLog("المباراة انتهت."); disableControls(true);
+    if(data.status==='ended'){
+      // إذا كانت اللعبة انتهت وفيه نتيجة
+      if(data.game_result){
+        let winner=data.game_result;
+        // هل أنا الفائز؟
+        let iWon=(G.myPlayerNum===1&&winner===1)||(G.myPlayerNum===2&&winner===2);
+        showPvpResult(iWon,data);
+      }else{
+        pushLog("المباراة انتهت.");disableControls(true);
+      }
     }
   });
 }
 
-function syncDataFromFirebase(data) {
-  G.turn = data.turn; G.round = data.round;
-  G.p1.gold = data.p1_gold; G.p2.gold = data.p2_gold;
-  G.p1.actions = data.p1_actions; G.p2.actions = data.p2_actions;
-  G.p1.healUses = data.p1_healUses || 0; G.p2.healUses = data.p2_healUses || 0;
-  G.p1.healCooldown = data.p1_healCooldown || 0; G.p2.healCooldown = data.p2_healCooldown || 0;
-  G.p1.hasWall = data.p1_wall || false; G.p2.hasWall = data.p2_wall || false;
+function showPvpResult(iWon,data){
+  disableControls(true);
+  let title=document.getElementById('win-title'),body=document.getElementById('win-body'),btn=document.getElementById('modal-action-btn');
+  if(iWon){
+    title.innerHTML='نصر ساحق! 🏆';
+    PersistentWallet.p1Silver+=250;PersistentWallet.save('pvp');
+    body.innerHTML='دمرت ملك الخصم!<br>مكافأة: +250🥈';
+  }else{
+    title.innerHTML='خسارة 💀';
+    body.innerHTML='تم تدمير ملكك. حاول مجدداً!';
+  }
+  btn.textContent='القائمة الرئيسية';btn.onclick=exitToMenu;
+  toggleModal('win-modal',false);
+}
 
-  // --- المنظور حسب رقم اللاعب ---
-  // G.myPlayerNum = 1 → أنا p1 (أرضي تحت = p1-grid)
-  // G.myPlayerNum = 2 → أنا p2 (أرضي تحت = p2-grid لكن نعرضها مقلوبة)
-  // الحل: نخزن grid_p1 و grid_p2 من Firebase كما هي
-  // لكن في العرض، "أرضي" دايماً في p1-grid والخصم في p2-grid من وجهة نظري
-  // إذا أنا p2: p1-grid = grid_p2 من firebase, p2-grid = grid_p1 من firebase
+// =================== SYNC FROM FIREBASE ===================
+// الإصلاح الأساسي للمنظور والطاقة والتزامن
+function syncDataFromFirebase(data){
+  // استخراج البيانات الخام
+  let fb_turn=data.turn; // 1=دور p1, 2=دور p2 في Firebase
+  G.round=data.round||1;
 
-  if (G.myPlayerNum === 1) {
-    G.grid.p1 = data.grid_p1 || [];
-    G.grid.p2 = data.grid_p2 || [];
-    PersistentWallet.p1Silver = data.p1_silver || 0;
-    PersistentWallet.p2Silver = data.p2_silver || 0;
-    PersistentWallet.p1Diamonds = data.p1_diamonds || 0;
-    PersistentWallet.p2Diamonds = data.p2_diamonds || 0;
-    document.getElementById('p1-lbl').textContent = (data.p1_name || 'أنت') + ' (أنت)';
-    document.getElementById('p2-lbl').textContent = data.p2_name || 'الخصم';
-  } else {
-    // إذا أنا p2: أرضي (p2 في firebase) تظهر تحت
-    G.grid.p1 = data.grid_p2 || []; // أرضي
-    G.grid.p2 = data.grid_p1 || []; // الخصم
-    PersistentWallet.p1Silver = data.p2_silver || 0;
-    PersistentWallet.p2Silver = data.p1_silver || 0;
-    PersistentWallet.p1Diamonds = data.p2_diamonds || 0;
-    PersistentWallet.p2Diamonds = data.p1_diamonds || 0;
-    document.getElementById('p1-lbl').textContent = (data.p2_name || 'أنت') + ' (أنت)';
-    document.getElementById('p2-lbl').textContent = data.p1_name || 'الخصم';
-    // تحويل رقم الدور: دوري = دور 2 من وجهة نظر Firebase
-    G.turn = data.turn === 1 ? 2 : 1;
+  // الشبكات من Firebase
+  let raw_p1_grid=data.grid_p1||[];
+  let raw_p2_grid=data.grid_p2||[];
+
+  // --- إصلاح المنظور ---
+  // أنا دائماً "أسفل" الشاشة = myGrid
+  // الخصم دائماً "أعلى" الشاشة = enemyGrid
+  // لكن enemyGrid يجب أن يُعكس (صف الخلف يظهر أعلى، صف الأمام أقرب لنا)
+
+  if(G.myPlayerNum===1){
+    // أنا p1: أرضي p1-grid تحت، أرض الخصم p2-grid فوق مقلوبة
+    G.grid.p1=raw_p1_grid;
+    G.grid.p2=reverseGridRows(raw_p2_grid); // عكس صفوف الخصم للعرض
+
+    // إحصائياتي (p1)
+    G.p1.gold=data.p1_gold;G.p1.actions=data.p1_actions;
+    G.p1.maxActions=data.p1_maxActions||4;
+    G.p1.healUses=data.p1_healUses||0;G.p1.healCooldown=data.p1_healCooldown||0;
+    G.p1.hasWall=data.p1_wall||false;G.p1.harvestedThisTurn=data.p1_harvested||false;
+
+    // إحصائيات الخصم (p2)
+    G.p2.gold=data.p2_gold;G.p2.actions=data.p2_actions;
+    G.p2.maxActions=data.p2_maxActions||4;
+    G.p2.healUses=data.p2_healUses||0;G.p2.healCooldown=data.p2_healCooldown||0;
+    G.p2.hasWall=data.p2_wall||false;G.p2.harvestedThisTurn=data.p2_harvested||false;
+
+    // المحفظة
+    PersistentWallet.p1Silver=data.p1_silver||0;
+    PersistentWallet.p2Silver=data.p2_silver||0;
+    PersistentWallet.p1Diamonds=data.p1_diamonds||0;
+    PersistentWallet.p2Diamonds=data.p2_diamonds||0;
+
+    // الأسماء
+    document.getElementById('p1-lbl').textContent=(data.p1_name||'أنت')+' (أنت)';
+    document.getElementById('p2-lbl').textContent=data.p2_name||'الخصم';
+
+    // الدور من وجهة نظري
+    G.turn=fb_turn; // 1=دوري, 2=دور الخصم
+
+  }else{
+    // أنا p2: أرضي p2-grid تحت (G.grid.p1 = أرضي للعرض)
+    // أرض الخصم p1-grid فوق مقلوبة (G.grid.p2 = أرض الخصم مقلوبة)
+    G.grid.p1=raw_p2_grid; // أرضي (تحت)
+    G.grid.p2=reverseGridRows(raw_p1_grid); // أرض الخصم (فوق، مقلوبة)
+
+    // إحصائياتي (p2 في Firebase = p1 في واجهتي)
+    G.p1.gold=data.p2_gold;G.p1.actions=data.p2_actions;
+    G.p1.maxActions=data.p2_maxActions||4;
+    G.p1.healUses=data.p2_healUses||0;G.p1.healCooldown=data.p2_healCooldown||0;
+    G.p1.hasWall=data.p2_wall||false;G.p1.harvestedThisTurn=data.p2_harvested||false;
+
+    // إحصائيات الخصم (p1 في Firebase = p2 في واجهتي)
+    G.p2.gold=data.p1_gold;G.p2.actions=data.p1_actions;
+    G.p2.maxActions=data.p1_maxActions||4;
+    G.p2.healUses=data.p1_healUses||0;G.p2.healCooldown=data.p1_healCooldown||0;
+    G.p2.hasWall=data.p1_wall||false;G.p2.harvestedThisTurn=data.p1_harvested||false;
+
+    // المحفظة (معكوسة)
+    PersistentWallet.p1Silver=data.p2_silver||0;
+    PersistentWallet.p2Silver=data.p1_silver||0;
+    PersistentWallet.p1Diamonds=data.p2_diamonds||0;
+    PersistentWallet.p2Diamonds=data.p1_diamonds||0;
+
+    // الأسماء
+    document.getElementById('p1-lbl').textContent=(data.p2_name||'أنت')+' (أنت)';
+    document.getElementById('p2-lbl').textContent=data.p1_name||'الخصم';
+
+    // الدور: إذا fb_turn=2 فدوري (أنا p2)، إذا fb_turn=1 فدور الخصم
+    // أحول: دوري=1 في واجهتي، دور الخصم=2
+    G.turn=(fb_turn===2)?1:2;
   }
 
-  document.getElementById('level-display').textContent = '⚔️ أونلاين';
-  updateUIHub(); renderGrids();
+  document.getElementById('level-display').textContent='⚔️ أونلاين';
+  document.getElementById('round-display').textContent=G.round;
+  updateUIHub();renderGrids();
 
-  let isMyTurn = (G.myPlayerNum === 1 && data.turn === 1) || (G.myPlayerNum === 2 && data.turn === 2);
-  if (isMyTurn) {
+  // هل دوري؟
+  let isMyTurn=G.turn===1;
+  if(isMyTurn){
     pushLog("🎯 دورك الحالي! العب بحكمة.");
-    disableControls(false);
-  } else {
+    disableControls(false);G.phase='idle';
+  }else{
     pushLog("⏳ انتظار هجوم الخصم...");
-    disableControls(true);
+    disableControls(true);G.phase='waiting';
+  }
+
+  // تحقق من الـ last_action لعرض animation
+  if(data.last_action&&data.last_action.ts){
+    let action=data.last_action;
+    // عرض animation الضربة إذا كانت جديدة (آخر 3 ثوان)
+    if(Date.now()-action.ts<3000&&action.type==='attack'){
+      showAttackAnimationFromFirebase(action);
+    }
   }
 }
 
-function uploadGameStateToFirebase() {
-  if (G.mode !== 'pvp' || !window.currentRoomId) return;
-
-  let payload = { turn: G.turn === 1 ? 2 : 1, round: G.round };
-
-  if (G.myPlayerNum === 1) {
-    payload.p1_gold = G.p1.gold; payload.p2_gold = G.p2.gold;
-    payload.p1_actions = G.p1.actions; payload.p2_actions = G.p2.actions;
-    payload.p1_healUses = G.p1.healUses; payload.p2_healUses = G.p2.healUses;
-    payload.p1_healCooldown = G.p1.healCooldown; payload.p2_healCooldown = G.p2.healCooldown;
-    payload.p1_wall = G.p1.hasWall; payload.p2_wall = G.p2.hasWall;
-    payload.p1_silver = PersistentWallet.p1Silver; payload.p2_silver = PersistentWallet.p2Silver;
-    payload.p1_diamonds = PersistentWallet.p1Diamonds; payload.p2_diamonds = PersistentWallet.p2Diamonds;
-    payload.grid_p1 = G.grid.p1; payload.grid_p2 = G.grid.p2;
-  } else {
-    // أنا p2 في firebase: G.grid.p1 = p2 الفعلي, G.grid.p2 = p1 الفعلي
-    payload.p2_gold = G.p1.gold; payload.p1_gold = G.p2.gold;
-    payload.p2_actions = G.p1.actions; payload.p1_actions = G.p2.actions;
-    payload.p2_healUses = G.p1.healUses; payload.p1_healUses = G.p2.healUses;
-    payload.p2_healCooldown = G.p1.healCooldown; payload.p1_healCooldown = G.p2.healCooldown;
-    payload.p2_wall = G.p1.hasWall; payload.p1_wall = G.p2.hasWall;
-    payload.p2_silver = PersistentWallet.p1Silver; payload.p1_silver = PersistentWallet.p2Silver;
-    payload.p2_diamonds = PersistentWallet.p1Diamonds; payload.p1_diamonds = PersistentWallet.p2Diamonds;
-    payload.grid_p2 = G.grid.p1; payload.grid_p1 = G.grid.p2;
-    // تحويل الدور: لما أنا (p2) خلصت دوري، يصبح دور p1 (=1 في firebase)
-    payload.turn = 1;
-  }
-
-  window._update(window._ref(window._db, `rooms/${window.currentRoomId}`), payload);
+// عكس صفوف الشبكة للعرض (3 صفوف × 4)
+function reverseGridRows(grid){
+  if(!grid||grid.length===0)return grid;
+  let result=[];
+  // صف 2 (indices 8-11) يصبح أعلى (indices 0-3)
+  // صف 1 (indices 4-7) يبقى في الوسط (indices 4-7)
+  // صف 0 (indices 0-3) يصبح أسفل (indices 8-11)
+  for(let i=0;i<4;i++) result.push({...grid[8+i],id:i,_origId:grid[8+i].id});
+  for(let i=0;i<4;i++) result.push({...grid[4+i],id:4+i,_origId:grid[4+i].id});
+  for(let i=0;i<4;i++) result.push({...grid[i],id:8+i,_origId:grid[i].id});
+  return result;
 }
 
-function leaveOnlineMatch() {
+// تحويل index المعكوس إلى index الحقيقي في Firebase
+function unreverseIdx(displayIdx){
+  if(displayIdx<4) return 8+displayIdx;
+  if(displayIdx<8) return displayIdx;
+  return displayIdx-8;
+}
+
+// عرض animation الضربة من Firebase
+function showAttackAnimationFromFirebase(action){
+  // action: {type:'attack', attackerField, attackerIdx, targetField, targetIdx, proj, ts}
+  // نحول الـ indices حسب منظوري
+  let myField='p'+G.myPlayerNum;
+  let enemyField=G.myPlayerNum===1?'p2':'p1';
+
+  let startCellId,endCellId;
+
+  if(action.attackerField===myField){
+    // أنا المهاجم - الهجوم من أرضي (p1-grid في واجهتي)
+    startCellId='cell-p1-'+action.attackerIdx;
+    // الهدف في أرض الخصم - لكنها معكوسة
+    let displayTargetIdx=action.targetIdx<4?action.targetIdx+8:(action.targetIdx<8?action.targetIdx:action.targetIdx-8);
+    endCellId='cell-p2-'+displayTargetIdx;
+  }else{
+    // الخصم يهاجم - من أرض الخصم (p2-grid في واجهتي)
+    let displayAttackerIdx=action.attackerIdx<4?action.attackerIdx+8:(action.attackerIdx<8?action.attackerIdx:action.attackerIdx-8);
+    startCellId='cell-p2-'+displayAttackerIdx;
+    // الهدف في أرضي
+    endCellId='cell-p1-'+action.targetIdx;
+  }
+  shootProjectile(startCellId,endCellId,action.proj||'🗡️',()=>{});
+}
+
+// =================== UPLOAD STATE TO FIREBASE ===================
+function uploadGameStateToFirebase(extraPayload){
+  if(G.mode!=='pvp'||!window.currentRoomId)return;
+
+  // تحويل الشبكات المحلية إلى تنسيق Firebase
+  let fb_p1_grid,fb_p2_grid;
+
+  if(G.myPlayerNum===1){
+    fb_p1_grid=G.grid.p1; // أرضي كما هي
+    fb_p2_grid=reverseGridRows(G.grid.p2); // أرض الخصم أعدنا عكسها
+  }else{
+    // أنا p2: G.grid.p1=أرضي (p2 في Firebase), G.grid.p2=أرض الخصم مقلوبة (p1 في Firebase)
+    fb_p2_grid=G.grid.p1; // أرضي → p2 في Firebase
+    fb_p1_grid=reverseGridRows(G.grid.p2); // أرض الخصم → p1 في Firebase
+  }
+
+  // الدور التالي في Firebase
+  // حالياً G.turn===1 = دوري. بعد انتهاء دوري، يصبح دور الخصم.
+  // إذا أنا p1: الدور التالي = 2
+  // إذا أنا p2: الدور التالي = 1
+  let next_fb_turn=G.myPlayerNum===1?2:1;
+
+  let payload={
+    turn:next_fb_turn,
+    round:G.round,
+    grid_p1:fb_p1_grid,
+    grid_p2:fb_p2_grid
+  };
+
+  if(G.myPlayerNum===1){
+    payload.p1_gold=G.p1.gold;payload.p1_actions=G.p1.actions;
+    payload.p1_maxActions=G.p1.maxActions;
+    payload.p1_healUses=G.p1.healUses;payload.p1_healCooldown=G.p1.healCooldown;
+    payload.p1_wall=G.p1.hasWall;payload.p1_harvested=G.p1.harvestedThisTurn;
+    payload.p2_gold=G.p2.gold;payload.p2_actions=G.p2.actions;
+    payload.p2_maxActions=G.p2.maxActions;
+    payload.p2_healUses=G.p2.healUses;payload.p2_healCooldown=G.p2.healCooldown;
+    payload.p2_wall=G.p2.hasWall;payload.p2_harvested=G.p2.harvestedThisTurn;
+    payload.p1_silver=PersistentWallet.p1Silver;payload.p2_silver=PersistentWallet.p2Silver;
+    payload.p1_diamonds=PersistentWallet.p1Diamonds;payload.p2_diamonds=PersistentWallet.p2Diamonds;
+  }else{
+    // أنا p2
+    payload.p2_gold=G.p1.gold;payload.p2_actions=G.p1.actions;
+    payload.p2_maxActions=G.p1.maxActions;
+    payload.p2_healUses=G.p1.healUses;payload.p2_healCooldown=G.p1.healCooldown;
+    payload.p2_wall=G.p1.hasWall;payload.p2_harvested=G.p1.harvestedThisTurn;
+    payload.p1_gold=G.p2.gold;payload.p1_actions=G.p2.actions;
+    payload.p1_maxActions=G.p2.maxActions;
+    payload.p1_healUses=G.p2.healUses;payload.p1_healCooldown=G.p2.healCooldown;
+    payload.p1_wall=G.p2.hasWall;payload.p1_harvested=G.p2.harvestedThisTurn;
+    payload.p2_silver=PersistentWallet.p1Silver;payload.p1_silver=PersistentWallet.p2Silver;
+    payload.p2_diamonds=PersistentWallet.p1Diamonds;payload.p1_diamonds=PersistentWallet.p2Diamonds;
+  }
+
+  if(extraPayload)Object.assign(payload,extraPayload);
+  window._update(window._ref(window._db,`rooms/${window.currentRoomId}`),payload);
+}
+
+// رفع action للـ Firebase لعرضه عند الخصم
+function uploadActionToFirebase(actionData){
+  if(G.mode!=='pvp'||!window.currentRoomId)return;
+  window._update(window._ref(window._db,`rooms/${window.currentRoomId}`),{
+    last_action:{...actionData,ts:Date.now()}
+  });
+}
+
+function leaveOnlineMatch(){
   AudioFX.play('click');
-  if (window._roomWatcherOff) { window._roomWatcherOff(); window._roomWatcherOff = null; }
-  if (window.currentRoomId) {
-    window._update(window._ref(window._db, `rooms/${window.currentRoomId}`), { status:'ended' });
-    window.currentRoomId = null;
+  if(window._roomWatcherOff){window._roomWatcherOff();window._roomWatcherOff=null;}
+  if(window.currentRoomId){
+    window._update(window._ref(window._db,`rooms/${window.currentRoomId}`),{status:'ended',game_result:G.myPlayerNum===1?2:1});
+    window.currentRoomId=null;
   }
   exitToMenu();
 }
 
-// =================== Row System ===================
-function getRowOf(idx) { return Math.floor(idx / 4); }
+// =================== ROW SYSTEM ===================
+function getRowOf(idx){return Math.floor(idx/4);}
 
-function canAttackP2Cell(targetIdx) {
-  let r = getRowOf(targetIdx);
-  if (r === 2) return true;
-  if (r === 1) return !G.grid.p2.some((c,i) => getRowOf(i)===2 && c.entity && c.entity.type!=='mine');
-  if (r === 0) {
-    let r2 = !G.grid.p2.some((c,i) => getRowOf(i)===2 && c.entity && c.entity.type!=='mine');
-    let r1 = !G.grid.p2.some((c,i) => getRowOf(i)===1 && c.entity && c.entity.type!=='mine');
-    return r2 && r1;
+// في الشبكة المحلية:
+// p1-grid (أرضي): صف 0 (idx 0-3) = أمامي (نحو الخصم), صف 2 (idx 8-11) = خلفي (الملك)
+// p2-grid (الخصم، معكوس للعرض): صف 0 (idx 0-3) = أمام الخصم (أقرب لي), صف 2 (idx 8-11) = خلف الخصم
+
+function canAttackP2Cell(targetIdx){
+  // p2-grid معكوس: الصف 0 هو أقرب صف للخصم (أمامه)
+  // لمهاجمة صف أعمق، يجب إسقاط الصف الأمامي أولاً
+  let r=getRowOf(targetIdx);
+  // صف 0 = أمامي للخصم = يمكن مهاجمته دائماً
+  if(r===0)return true;
+  // صف 1 = وسط الخصم = يستلزم خلو صف 0
+  if(r===1)return!G.grid.p2.some((c,i)=>getRowOf(i)===0&&c.entity&&c.entity.type!=='mine');
+  // صف 2 = خلف الخصم = يستلزم خلو صف 0 و 1
+  if(r===2){
+    let r0=!G.grid.p2.some((c,i)=>getRowOf(i)===0&&c.entity&&c.entity.type!=='mine');
+    let r1=!G.grid.p2.some((c,i)=>getRowOf(i)===1&&c.entity&&c.entity.type!=='mine');
+    return r0&&r1;
   }
   return false;
 }
 
-function canAttackP1Cell(targetIdx) {
-  let r = getRowOf(targetIdx);
-  if (r === 0) return true;
-  if (r === 1) return !G.grid.p1.some((c,i) => getRowOf(i)===0 && c.entity && c.entity.type!=='mine');
-  if (r === 2) {
-    let r0 = !G.grid.p1.some((c,i) => getRowOf(i)===0 && c.entity && c.entity.type!=='mine');
-    let r1 = !G.grid.p1.some((c,i) => getRowOf(i)===1 && c.entity && c.entity.type!=='mine');
-    return r0 && r1;
+function canAttackP1Cell(targetIdx){
+  let r=getRowOf(targetIdx);
+  if(r===0)return true;
+  if(r===1)return!G.grid.p1.some((c,i)=>getRowOf(i)===0&&c.entity&&c.entity.type!=='mine');
+  if(r===2){
+    let r0=!G.grid.p1.some((c,i)=>getRowOf(i)===0&&c.entity&&c.entity.type!=='mine');
+    let r1=!G.grid.p1.some((c,i)=>getRowOf(i)===1&&c.entity&&c.entity.type!=='mine');
+    return r0&&r1;
   }
   return false;
 }
 
-function aiCanSpawnMoreTroops() {
-  return G.grid.p2.some(c => !c.entity) && (G.p2.gold >= 10 || PersistentWallet.p2Silver >= 100);
+function aiCanSpawnMoreTroops(){return G.grid.p2.some(c=>!c.entity)&&(G.p2.gold>=10||PersistentWallet.p2Silver>=100);}
+function canGuardianAttack(){
+  let hasRegular=G.grid.p2.some(c=>c.entity&&c.entity.type!=='main'&&c.entity.type!=='mine'&&c.entity.type!=='prince'&&c.entity.type!=='vizier'&&c.entity.type!=='king_guard');
+  return!hasRegular&&!aiCanSpawnMoreTroops();
+}
+function getFrontmostOccupiedRowP1(){
+  for(let row=0;row<=2;row++){if(G.grid.p1.some((c,i)=>getRowOf(i)===row&&c.entity&&c.entity.type!=='mine'))return row;}
+  return-1;
 }
 
-function canGuardianAttack() {
-  let hasRegular = G.grid.p2.some(c => c.entity && c.entity.type!=='main' && c.entity.type!=='mine' && c.entity.type!=='prince' && c.entity.type!=='vizier' && c.entity.type!=='king_guard');
-  return !hasRegular && !aiCanSpawnMoreTroops();
-}
-
-function getFrontmostOccupiedRowP1() {
-  for (let row=0; row<=2; row++) {
-    if (G.grid.p1.some((c,i) => getRowOf(i)===row && c.entity && c.entity.type!=='mine')) return row;
-  }
-  return -1;
-}
-
-// =================== بدء اللعبة ===================
-function startNewGameClick() {
+// =================== GAME INIT ===================
+function startNewGameClick(){
   AudioFX.play('click');
-  if (window.myUID) {
-    localStorage.setItem('mw_highest_pvc_level_' + window.myUID, 1);
-    // إعادة تعيين المحفظة في Firebase
-    window._set(window._ref(window._db, 'users/' + window.myUID + '/wallet'), { silver:0, diamonds:0 });
-    window._remove(window._ref(window._db, 'users/' + window.myUID + '/survivors'));
+  if(window.myUID){
+    localStorage.setItem('mw_highest_pvc_level_'+window.myUID,1);
+    window._set(window._ref(window._db,'users/'+window.myUID+'/wallet'),{silver:0,diamonds:0});
+    window._remove(window._ref(window._db,'users/'+window.myUID+'/survivors'));
   }
-  PersistentWallet.p1Silver = 0; PersistentWallet.p1Diamonds = 0;
+  PersistentWallet.p1Silver=0;PersistentWallet.p1Diamonds=0;
   SurvivorsSystem.clear();
   initGame('pvc');
 }
 
-function continueGame() {
-  AudioFX.play('click');
-  SurvivorsSystem.load().then(() => initGame('pvc'));
-}
+function continueGame(){AudioFX.play('click');SurvivorsSystem.load().then(()=>initGame('pvc'));}
 
-function initGame(mode) {
+function initGame(mode){
   disableControls(false);
-  document.getElementById('btn-leave-match').style.display = 'none';
-  G.mode = mode; G.turn = 1; G.round = 1;
-  G.level = mode === 'pvc' ? (parseInt(localStorage.getItem('mw_highest_pvc_level_' + window.myUID)) || 1) : 1;
-  G.locked = false; G.phase = 'idle';
-  G.selectedCell = null; G.pendingAction = null; G.pendingItem = null;
+  document.getElementById('btn-leave-match').style.display='none';
+  G.mode=mode;G.turn=1;G.round=1;
+  G.level=mode==='pvc'?(parseInt(localStorage.getItem('mw_highest_pvc_level_'+window.myUID))||1):1;
+  G.locked=false;G.phase='idle';
+  G.selectedCell=null;G.pendingAction=null;G.pendingItem=null;
+  G.myPlayerNum=1;
 
   PersistentWallet.load(mode);
-  if (mode === 'pvc') {
-    // المحفظة محملة من Firebase مسبقاً
+
+  let baseActs=G.level>=5?5:4;
+  G.p1={gold:40,actions:baseActs,maxActions:baseActs,healUses:0,healCooldown:0,harvestedThisTurn:false,hasWall:false};
+  G.p2={gold:40+(mode==='pvc'?(G.level-1)*12:0),actions:baseActs,maxActions:baseActs,healUses:0,healCooldown:0,harvestedThisTurn:false,hasWall:false};
+
+  document.getElementById('p1-lbl').textContent=(window.myName||'أنت')+' (أنت)';
+  document.getElementById('p2-lbl').textContent=mode==='pvc'?'🤖 الكمبيوتر (Lv.'+G.level+')':'الخصم';
+  document.getElementById('level-display').textContent=mode==='pvc'?'Lv.'+G.level:'⚔️';
+  document.getElementById('p1-field-lbl').textContent='حصنك الدفاعي';
+  document.getElementById('p2-field-lbl').textContent=mode==='pvc'?'أرض العدو':'أرض الخصم';
+
+  // في PVC نستخدم نفس منظور: p1=أنا (تحت), p2=الخصم (فوق)
+  // لكن لـ p2 (الكمبيوتر): نرتب الشبكة بحيث الملك في صف الخلف
+  G.grid.p1=Array.from({length:12},(_,i)=>({id:i,entity:null}));
+  G.grid.p2=Array.from({length:12},(_,i)=>({id:i,entity:null}));
+
+  // ملك اللاعب في الصف الخلفي
+  let p1KingIcon=G.level>=7?'👑🔥':(G.level>=4?'👑':'🤴');
+  G.grid.p1[9]={id:9,entity:{...DATA_TYPES.main,type:'main',hp:80,maxHp:80,icon:p1KingIcon}};
+
+  // ملك الكمبيوتر في الصف الخلفي
+  let aiKingHP=80,aiKingIcon='🤴🏻';
+  if(mode==='pvc'){
+    aiKingHP=Math.floor(80*Math.pow(1.2,Math.floor((G.level-1)/3)));
+    if(G.level>=7)aiKingIcon='👑🔥';else if(G.level>=4)aiKingIcon='👑';
   }
+  G.grid.p2[9]={id:9,entity:{...DATA_TYPES.main,type:'main',hp:aiKingHP,maxHp:aiKingHP,icon:aiKingIcon}};
 
-  let baseActs = G.level >= 5 ? 5 : 4;
-  G.p1 = { gold:40, actions:baseActs, maxActions:baseActs, healUses:0, healCooldown:0, harvestedThisTurn:false, hasWall:false };
-  G.p2 = { gold:40 + (mode==='pvc'?(G.level-1)*12:0), actions:baseActs, maxActions:baseActs, healUses:0, healCooldown:0, harvestedThisTurn:false, hasWall:false };
-
-  document.getElementById('p1-lbl').textContent = (window.myName || 'أنت') + ' (أنت)';
-  document.getElementById('p2-lbl').textContent = mode==='pvc' ? '🤖 الكمبيوتر (Lv.'+G.level+')' : 'الخصم';
-  document.getElementById('level-display').textContent = mode==='pvc' ? 'Lv.'+G.level : '⚔️';
-  document.getElementById('p1-field-lbl').textContent = 'حصنك الدفاعي';
-  document.getElementById('p2-field-lbl').textContent = mode==='pvc' ? 'أرض العدو' : 'أرض الخصم';
-
-  G.grid.p1 = Array.from({length:12}, (_,i) => ({ id:i, entity:null }));
-  G.grid.p2 = Array.from({length:12}, (_,i) => ({ id:i, entity:null }));
-
-  // ملك اللاعب
-  let p1KingIcon = G.level>=7 ? '👑🔥' : (G.level>=4 ? '👑' : '🤴');
-  G.grid.p1[10] = { id:10, entity:{ ...DATA_TYPES.main, type:'main', hp:80, maxHp:80, icon:p1KingIcon }};
-
-  // ملك العدو
-  let aiKingHP = 80, aiKingIcon = '🤴🏻';
-  if (mode==='pvc') {
-    aiKingHP = Math.floor(80 * Math.pow(1.2, Math.floor((G.level-1)/3)));
-    if (G.level>=7) aiKingIcon='👑🔥'; else if (G.level>=4) aiKingIcon='👑';
-  }
-  G.grid.p2[1] = { id:1, entity:{ ...DATA_TYPES.main, type:'main', hp:aiKingHP, maxHp:aiKingHP, icon:aiKingIcon }};
-
-  // الأمير (Lv.5+)
-  if (mode==='pvc' && G.level>=5) {
-    let pHP = getPrinceHP();
-    G.grid.p2[0] = { id:0, entity:{ ...DATA_TYPES.prince, type:'prince', hp:pHP, maxHp:pHP, icon:'🤴🏽', atk:30, label:'الأمير', proj:'⚔️', isGuardian:true, isCounter:true }};
+  // الأمير للكمبيوتر (Lv.5+) في وسط الخلف
+  if(mode==='pvc'&&G.level>=5){
+    let pHP=getPrinceHP();
+    G.grid.p2[8]={id:8,entity:{...DATA_TYPES.prince,type:'prince',hp:pHP,maxHp:pHP,icon:'🤴🏽',atk:30,label:'الأمير',proj:'⚔️',isGuardian:true,isCounter:true}};
   }
 
   // الوزير (Lv.10+)
-  if (mode==='pvc' && G.level>=10) {
-    let vHP=getVizierHP(), vAtk=getVizierAtk();
-    G.grid.p2[2] = { id:2, entity:{ ...DATA_TYPES.vizier, type:'vizier', hp:vHP, maxHp:vHP, icon:'🧙‍♂️', atk:vAtk, label:'الوزير', proj:'🔮', isGuardian:true, isHealer:true }};
+  if(mode==='pvc'&&G.level>=10){
+    let vHP=getVizierHP(),vAtk=getVizierAtk();
+    G.grid.p2[10]={id:10,entity:{...DATA_TYPES.vizier,type:'vizier',hp:vHP,maxHp:vHP,icon:'🧙‍♂️',atk:vAtk,label:'الوزير',proj:'🔮',isGuardian:true,isHealer:true}};
   }
 
   // حراس الملك (Lv.20+)
-  if (mode==='pvc' && G.level>=20) {
-    let gc=getKingGuardsCount(), gs=getKingGuardStats();
-    [8,9,10,11].slice(0,gc).forEach(pos => {
-      G.grid.p2[pos] = { id:pos, entity:{ ...DATA_TYPES.king_guard, type:'king_guard', hp:gs.hp, maxHp:gs.hp, atk:gs.atk, icon:'🛡️', label:'حارس', proj:'⚔️', isGuardian:true, isKingGuard:true }};
+  if(mode==='pvc'&&G.level>=20){
+    let gc=getKingGuardsCount(),gs=getKingGuardStats();
+    [4,5,6,7].slice(0,gc).forEach(pos=>{
+      G.grid.p2[pos]={id:pos,entity:{...DATA_TYPES.king_guard,type:'king_guard',hp:gs.hp,maxHp:gs.hp,atk:gs.atk,icon:'🛡️',label:'حارس',proj:'⚔️',isGuardian:true,isKingGuard:true}};
     });
   }
 
-  if (mode==='pvc') placeAIStartingTroops();
+  if(mode==='pvc')placeAIStartingTroops();
 
   // وضع الناجين
-  if (mode==='pvc' && SurvivorsSystem.p1.length > 0) {
-    placeSurvivorsInGrid('p1', SurvivorsSystem.p1);
-    SurvivorsSystem.p1 = [];
+  if(mode==='pvc'&&SurvivorsSystem.p1.length>0){
+    placeSurvivorsInGrid('p1',SurvivorsSystem.p1);SurvivorsSystem.p1=[];
   }
 
-  recalculateMaxActions('p1'); recalculateMaxActions('p2');
-  G.p1.actions = G.p1.maxActions; G.p2.actions = G.p2.maxActions;
+  recalculateMaxActions('p1');recalculateMaxActions('p2');
+  G.p1.actions=G.p1.maxActions;G.p2.actions=G.p2.maxActions;
 
-  toggleScreen('game-screen'); cancelAction(); updateUIHub(); renderGrids();
+  toggleScreen('game-screen');cancelAction();updateUIHub();renderGrids();
 
-  let surv = G.grid.p1.filter(c => c.entity && c.entity.isSurvivor).length;
-  if (surv > 0) pushLog(`⭐ ${surv} من جنودك الناجين انضموا للمعركة!`);
-  else if (G.level>=20) pushLog(`⚠️ Lv.${G.level}: ${getKingGuardsCount()} حراس للملك!`);
-  else if (G.level>=10) pushLog(`⚠️ Lv.${G.level}: الأمير والوزير في الميدان!`);
-  else if (G.level>=5) pushLog(`⚠️ Lv.${G.level}: الأمير الحارس في الميدان!`);
+  let surv=G.grid.p1.filter(c=>c.entity&&c.entity.isSurvivor).length;
+  if(surv>0)pushLog(`⭐ ${surv} من جنودك الناجين انضموا للمعركة!`);
+  else if(G.level>=20)pushLog(`⚠️ Lv.${G.level}: ${getKingGuardsCount()} حراس للملك!`);
+  else if(G.level>=10)pushLog(`⚠️ Lv.${G.level}: الأمير والوزير في الميدان!`);
+  else if(G.level>=5)pushLog(`⚠️ Lv.${G.level}: الأمير الحارس في الميدان!`);
   else pushLog("⚔️ المعركة بدأت!");
 }
 
-function getVizierAtk() { return G.level>=20?70:(G.level>=15?50:35); }
-function getVizierHP() { return G.level>=20?200:(G.level>=15?120:80); }
-function getPrinceHP() { return G.level>=20?150:(G.level>=15?110:(G.level>=10?90:70)); }
-function getKingGuardsCount() { return G.level<20?0:(G.level>=30?4:(G.level>=25?3:2)); }
-function getKingGuardStats() { return G.level>=30?{hp:200,atk:65}:(G.level>=25?{hp:160,atk:55}:{hp:120,atk:45}); }
+function getVizierAtk(){return G.level>=20?70:(G.level>=15?50:35);}
+function getVizierHP(){return G.level>=20?200:(G.level>=15?120:80);}
+function getPrinceHP(){return G.level>=20?150:(G.level>=15?110:(G.level>=10?90:70));}
+function getKingGuardsCount(){return G.level<20?0:(G.level>=30?4:(G.level>=25?3:2));}
+function getKingGuardStats(){return G.level>=30?{hp:200,atk:65}:(G.level>=25?{hp:160,atk:55}:{hp:120,atk:45});}
 
-function placeSurvivorsInGrid(pKey, survivors) {
-  if (!survivors || survivors.length===0) return;
-  let occ = new Set(G.grid[pKey].map((c,i)=>c.entity?i:-1).filter(x=>x!==-1));
+function placeSurvivorsInGrid(pKey,survivors){
+  if(!survivors||survivors.length===0)return;
+  let occ=new Set(G.grid[pKey].map((c,i)=>c.entity?i:-1).filter(x=>x!==-1));
   let placed=0;
-  for (let i=0; i<G.grid[pKey].length && placed<survivors.length; i++) {
-    if (!occ.has(i)) { G.grid[pKey][i]={ id:i, entity:{ ...survivors[placed], isSurvivor:true }}; occ.add(i); placed++; }
+  for(let i=0;i<G.grid[pKey].length&&placed<survivors.length;i++){
+    if(!occ.has(i)){G.grid[pKey][i]={id:i,entity:{...survivors[placed],isSurvivor:true}};occ.add(i);placed++;}
   }
 }
 
-function placeAIStartingTroops() {
-  let cnt = SurvivorsSystem.getAIStartingTroopsCount(G.level);
-  if (cnt===0) return;
-  if (SurvivorsSystem.p2.length>0) { placeSurvivorsInGrid('p2', SurvivorsSystem.p2); return; }
-  let empty = G.grid.p2.map((c,i)=>c.entity?-1:i).filter(x=>x!==-1);
+function placeAIStartingTroops(){
+  let cnt=SurvivorsSystem.getAIStartingTroopsCount(G.level);
+  if(cnt===0)return;
+  if(SurvivorsSystem.p2.length>0){placeSurvivorsInGrid('p2',SurvivorsSystem.p2);return;}
+  let empty=G.grid.p2.map((c,i)=>c.entity?-1:i).filter(x=>x!==-1);
   empty.sort(()=>Math.random()-0.5);
-  for (let i=0; i<Math.min(cnt,empty.length); i++) {
-    let t = (G.level>=15&&i===0)?'archer':(Math.random()>0.4?'infantry':'archer');
-    G.grid.p2[empty[i]] = { id:empty[i], entity:{ ...DATA_TYPES[t], type:t }};
+  for(let i=0;i<Math.min(cnt,empty.length);i++){
+    let t=(G.level>=15&&i===0)?'archer':(Math.random()>0.4?'infantry':'archer');
+    G.grid.p2[empty[i]]={id:empty[i],entity:{...DATA_TYPES[t],type:t}};
   }
 }
 
-// =================== رسم الشبكة ===================
-function renderGrids() { drawField('p1'); drawField('p2'); updateShopButtonsStyle(); }
+// =================== RENDER ===================
+function renderGrids(){drawField('p1');drawField('p2');updateShopButtonsStyle();}
 
-function drawField(pKey) {
-  const container = document.getElementById(pKey+'-grid'); container.innerHTML='';
-  G.grid[pKey].forEach((cell, idx) => {
-    const div = document.createElement('div');
-    div.className = 'cell ' + pKey + '-box';
-    div.id = 'cell-' + pKey + '-' + idx;
-
-    if (cell.entity) {
-      div.innerHTML = cell.entity.icon + '<span class="hp-badge">' + cell.entity.hp + '</span><span class="type-label">' + cell.entity.label + '</span>';
-      if (cell.entity.shield > 0) div.innerHTML += '<span class="shield-badge shield-'+cell.entity.shield+'">🛡️'+cell.entity.shield+'</span>';
-      if (cell.entity.isSurvivor && !cell.entity.isGuardian && !cell.entity.isUltraPrince) {
-        div.innerHTML += '<span class="survivor-badge">⭐</span>'; div.classList.add('survivor-unit');
-      }
-      if (cell.entity.isUltraPrince) {
-        div.classList.add('ultra-prince-cell'); div.innerHTML += '<span class="ultra-counter-badge">👑↩️</span>';
-      } else if (cell.entity.isKingGuard) {
-        div.classList.add('king-guard-cell');
-      } else if (cell.entity.isHealer) {
-        div.classList.add('vizier-cell'); div.innerHTML += '<span class="heal-aura-badge">✨</span>';
-      } else if (cell.entity.isCounter) {
-        div.classList.add('ai-guardian'); div.innerHTML += '<span class="counter-badge">↩️</span>';
-      } else if (cell.entity.isGuardian) {
-        div.classList.add('ai-guardian');
-      }
+function drawField(pKey){
+  const container=document.getElementById(pKey+'-grid');container.innerHTML='';
+  G.grid[pKey].forEach((cell,idx)=>{
+    const div=document.createElement('div');
+    div.className='cell '+pKey+'-box';
+    div.id='cell-'+pKey+'-'+idx;
+    if(cell.entity){
+      div.innerHTML=cell.entity.icon+'<span class="hp-badge">'+cell.entity.hp+'</span><span class="type-label">'+cell.entity.label+'</span>';
+      if(cell.entity.shield>0)div.innerHTML+='<span class="shield-badge shield-'+cell.entity.shield+'">🛡️'+cell.entity.shield+'</span>';
+      if(cell.entity.isSurvivor&&!cell.entity.isGuardian&&!cell.entity.isUltraPrince){div.innerHTML+='<span class="survivor-badge">⭐</span>';div.classList.add('survivor-unit');}
+      if(cell.entity.isUltraPrince){div.classList.add('ultra-prince-cell');div.innerHTML+='<span class="ultra-counter-badge">👑↩️</span>';}
+      else if(cell.entity.isKingGuard){div.classList.add('king-guard-cell');}
+      else if(cell.entity.isHealer){div.classList.add('vizier-cell');div.innerHTML+='<span class="heal-aura-badge">✨</span>';}
+      else if(cell.entity.isCounter){div.classList.add('ai-guardian');div.innerHTML+='<span class="counter-badge">↩️</span>';}
+      else if(cell.entity.isGuardian){div.classList.add('ai-guardian');}
     }
-
-    if (G.selectedCell && G.selectedCell.pKey===pKey && G.selectedCell.idx===idx) div.classList.add('selected');
-
-    if (G.phase==='attack' && pKey!==('p'+G.turn) && cell.entity && cell.entity.type!=='mine') {
-      let can = pKey==='p2' ? canAttackP2Cell(idx) : canAttackP1Cell(idx);
-      div.classList.add(can ? 'valid-target' : 'blocked-target');
+    if(G.selectedCell&&G.selectedCell.pKey===pKey&&G.selectedCell.idx===idx)div.classList.add('selected');
+    if(G.phase==='attack'&&pKey!==('p'+G.turn)&&cell.entity&&cell.entity.type!=='mine'){
+      let can=pKey==='p2'?canAttackP2Cell(idx):canAttackP1Cell(idx);
+      div.classList.add(can?'valid-target':'blocked-target');
     }
-    if ((G.phase==='placing'||G.phase==='premium_placing') && pKey===('p'+G.turn) && !cell.entity) div.classList.add('valid-spawn');
-
-    div.onclick = () => handleCellInteraction(pKey, idx);
+    if((G.phase==='placing'||G.phase==='premium_placing')&&pKey===('p'+G.turn)&&!cell.entity)div.classList.add('valid-spawn');
+    div.onclick=()=>handleCellInteraction(pKey,idx);
     container.appendChild(div);
   });
 }
 
-function isMyTurnNow() {
-  if (G.mode==='pvc') return G.turn===1;
-  return G.turn===1; // في pvp تم تحويل الدور لـ 1 دايماً من وجهة نظري
-}
+function isMyTurnNow(){return G.turn===1;}
 
-function openSubMenu(menuType) {
-  if (G.locked || !isMyTurnNow()) return;
-  if (getCurrentPlayer().actions<=0) { pushLog("طاقة غير كافية!"); return; }
-  AudioFX.play('click'); cancelAction();
-  ['spawn','build','heal'].forEach(m => document.getElementById('sub-'+m).style.display='none');
+function openSubMenu(menuType){
+  if(G.locked||!isMyTurnNow())return;
+  if(getCurrentPlayer().actions<=0){pushLog("طاقة غير كافية!");return;}
+  AudioFX.play('click');cancelAction();
+  ['spawn','build','heal'].forEach(m=>document.getElementById('sub-'+m).style.display='none');
   document.getElementById('sub-'+menuType).style.display='grid';
-  G.phase='select_menu'; toggleCancelButton(true); pushLog('اختر من القائمة...');
+  G.phase='select_menu';toggleCancelButton(true);pushLog('اختر من القائمة...');
 }
 
-function buildWall() {
-  if (G.locked || getCurrentPlayer().actions<=0) return;
-  if (getCurrentPlayer().hasWall) { pushLog("لديك جدار بالفعل!"); return; }
-  if (getCurrentPlayer().gold<15) { pushLog("ذهب غير كافٍ!"); return; }
+function buildWall(){
+  if(G.locked||getCurrentPlayer().actions<=0)return;
+  if(getCurrentPlayer().hasWall){pushLog("لديك جدار بالفعل!");return;}
+  if(getCurrentPlayer().gold<15){pushLog("ذهب غير كافٍ!");return;}
   AudioFX.play('spawn');
-  getCurrentPlayer().gold-=15; getCurrentPlayer().actions--; getCurrentPlayer().hasWall=true;
+  getCurrentPlayer().gold-=15;getCurrentPlayer().actions--;getCurrentPlayer().hasWall=true;
   pushLog('🧱 تم بناء الجدار الدفاعي!');
-  cancelAction(); updateUIHub(); if (G.mode==='pvp') uploadGameStateToFirebase(); checkAutoEndTurn();
+  cancelAction();updateUIHub();
+  if(G.mode==='pvp')uploadGameStateToFirebase();
+  checkAutoEndTurn();
 }
 
-function prepareAction(actionType, itemKey) {
-  if (G.locked) return;
-  const cfg = DATA_TYPES[itemKey];
-  if (getCurrentPlayer().gold < cfg.cost) { pushLog("ذهب غير كافٍ!"); return; }
-  AudioFX.play('click'); G.phase='placing'; G.pendingAction=actionType; G.pendingItem=itemKey;
-  ['spawn','build','heal'].forEach(m => document.getElementById('sub-'+m).style.display='none');
-  pushLog('اختر مربعاً فارغاً...'); renderGrids();
+function prepareAction(actionType,itemKey){
+  if(G.locked)return;
+  const cfg=DATA_TYPES[itemKey];
+  if(getCurrentPlayer().gold<cfg.cost){pushLog("ذهب غير كافٍ!");return;}
+  AudioFX.play('click');G.phase='placing';G.pendingAction=actionType;G.pendingItem=itemKey;
+  ['spawn','build','heal'].forEach(m=>document.getElementById('sub-'+m).style.display='none');
+  pushLog('اختر مربعاً فارغاً...');renderGrids();
 }
 
-function prepareHeal(type) {
-  if (G.locked || getCurrentPlayer().actions<=0) return;
-  let cfg = DATA_TYPES[type];
-  if (getCurrentPlayer().gold<cfg.cost) { pushLog("ذهب غير كافٍ!"); return; }
-  if (getCurrentPlayer().healUses>=3) { pushLog("استنفدت جميع حقن الإسعافات!"); return; }
-  if (getCurrentPlayer().healCooldown>0) { pushLog("لا يمكنك استخدام حقنتين في نفس الدور!"); return; }
-  AudioFX.play('click'); G.phase='healing'; G.pendingItem=type;
-  ['spawn','build','heal'].forEach(m => document.getElementById('sub-'+m).style.display='none');
-  toggleCancelButton(true); pushLog('اختر جندياً لعلاجه...'); renderGrids();
+function prepareHeal(type){
+  if(G.locked||getCurrentPlayer().actions<=0)return;
+  let cfg=DATA_TYPES[type];
+  if(getCurrentPlayer().gold<cfg.cost){pushLog("ذهب غير كافٍ!");return;}
+  if(getCurrentPlayer().healUses>=3){pushLog("استنفدت جميع حقن الإسعافات!");return;}
+  if(getCurrentPlayer().healCooldown>0){pushLog("لا يمكنك استخدام حقنتين في نفس الدور!");return;}
+  AudioFX.play('click');G.phase='healing';G.pendingItem=type;
+  ['spawn','build','heal'].forEach(m=>document.getElementById('sub-'+m).style.display='none');
+  toggleCancelButton(true);pushLog('اختر جندياً لعلاجه...');renderGrids();
 }
 
-function preparePremiumSpawn(uType) {
-  if (G.locked || !isMyTurnNow()) return;
-  if (getCurrentPlayer().actions<=0) { pushLog("طاقة غير كافية!"); return; }
-  const cfg = DATA_TYPES[uType];
-  if (uType==='ultra_prince') {
-    if (PersistentWallet.p1Diamonds<cfg.cost) { pushLog(`💎 تحتاج ${cfg.cost} جوهرة! لديك ${PersistentWallet.p1Diamonds}`); return; }
-  } else {
-    if (PersistentWallet.p1Silver<cfg.cost) { pushLog("فضة غير كافية!"); return; }
+function preparePremiumSpawn(uType){
+  if(G.locked||!isMyTurnNow())return;
+  if(getCurrentPlayer().actions<=0){pushLog("طاقة غير كافية!");return;}
+  const cfg=DATA_TYPES[uType];
+  if(uType==='ultra_prince'){
+    if(PersistentWallet.p1Diamonds<cfg.cost){pushLog(`💎 تحتاج ${cfg.cost} جوهرة! لديك ${PersistentWallet.p1Diamonds}`);return;}
+  }else{
+    if(PersistentWallet.p1Silver<cfg.cost){pushLog("فضة غير كافية!");return;}
   }
-  AudioFX.play('click'); cancelAction(); G.phase='premium_placing'; G.pendingItem=uType;
+  AudioFX.play('click');cancelAction();G.phase='premium_placing';G.pendingItem=uType;
   toggleCancelButton(true);
-  pushLog(uType==='ultra_prince' ? '👑⚔️ اختر مكاناً للأمير الخارق!' : 'اختر مربعاً للقوات الخاصة...');
+  pushLog(uType==='ultra_prince'?'👑⚔️ اختر مكاناً للأمير الخارق!':'اختر مربعاً للقوات الخاصة...');
   renderGrids();
 }
 
-function getShieldPower() { return G.mode==='pvp'?2:(G.level>=15?4:(G.level>=10?3:(G.level>=5?2:0))); }
+function getShieldPower(){return G.mode==='pvp'?2:(G.level>=15?4:(G.level>=10?3:(G.level>=5?2:0)));}
 
-function prepareShield() {
-  if (G.locked || !isMyTurnNow()) return;
-  if (getCurrentPlayer().actions<=0) { pushLog("طاقة غير كافية!"); return; }
-  let power=getShieldPower(); if (power===0) { pushLog("الدرع يفتح من Lv.5 فما فوق!"); return; }
-  AudioFX.play('click'); cancelAction(); G.phase='shielding'; toggleCancelButton(true); pushLog('اختر جندياً لحمايته!'); renderGrids();
+function prepareShield(){
+  if(G.locked||!isMyTurnNow())return;
+  if(getCurrentPlayer().actions<=0){pushLog("طاقة غير كافية!");return;}
+  let power=getShieldPower();if(power===0){pushLog("الدرع يفتح من Lv.5 فما فوق!");return;}
+  AudioFX.play('click');cancelAction();G.phase='shielding';toggleCancelButton(true);pushLog('اختر جندياً لحمايته!');renderGrids();
 }
 
-function handleCellInteraction(pKey, idx) {
-  if (G.locked || !isMyTurnNow()) return;
-  const currentField='p'+G.turn, enemyField=G.turn===1?'p2':'p1';
+function handleCellInteraction(pKey,idx){
+  if(G.locked||!isMyTurnNow())return;
+  const currentField='p1',enemyField='p2';
   const cell=G.grid[pKey][idx];
 
-  if (G.phase==='placing' && pKey===currentField) { if (cell.entity) return; executePlacement(idx); return; }
-  if (G.phase==='premium_placing' && pKey===currentField) { if (cell.entity) return; executePremiumSpawn(idx); return; }
-  if (G.phase==='healing' && pKey===currentField) {
-    if (!cell.entity) return;
-    if (cell.entity.hp>=cell.entity.maxHp) { pushLog("طاقة الجندي مكتملة!"); return; }
+  if(G.phase==='placing'&&pKey===currentField){if(cell.entity)return;executePlacement(idx);return;}
+  if(G.phase==='premium_placing'&&pKey===currentField){if(cell.entity)return;executePremiumSpawn(idx);return;}
+  if(G.phase==='healing'&&pKey===currentField){
+    if(!cell.entity)return;
+    if(cell.entity.hp>=cell.entity.maxHp){pushLog("طاقة الجندي مكتملة!");return;}
     let cfg=DATA_TYPES[G.pendingItem];
-    getCurrentPlayer().gold-=cfg.cost; getCurrentPlayer().actions--;
-    getCurrentPlayer().healUses++; getCurrentPlayer().healCooldown=1;
-    cell.entity.hp=Math.min(cell.entity.hp+cfg.heal, cell.entity.maxHp);
-    AudioFX.play('heal'); pushLog(`💉 تم علاج ${cell.entity.label}!`);
-    cancelAction(); updateUIHub(); if (G.mode==='pvp') uploadGameStateToFirebase(); checkAutoEndTurn(); return;
+    getCurrentPlayer().gold-=cfg.cost;getCurrentPlayer().actions--;
+    getCurrentPlayer().healUses++;getCurrentPlayer().healCooldown=1;
+    cell.entity.hp=Math.min(cell.entity.hp+cfg.heal,cell.entity.maxHp);
+    AudioFX.play('heal');pushLog(`💉 تم علاج ${cell.entity.label}!`);
+    cancelAction();updateUIHub();if(G.mode==='pvp')uploadGameStateToFirebase();checkAutoEndTurn();return;
   }
-  if (G.phase==='shielding' && pKey===currentField) {
-    if (!cell.entity) return;
-    cell.entity.shield=getShieldPower(); getCurrentPlayer().actions--;
-    AudioFX.play('spawn'); pushLog('🛡️ تم تفعيل الدرع!');
-    cancelAction(); updateUIHub(); if (G.mode==='pvp') uploadGameStateToFirebase(); checkAutoEndTurn(); return;
+  if(G.phase==='shielding'&&pKey===currentField){
+    if(!cell.entity)return;
+    cell.entity.shield=getShieldPower();getCurrentPlayer().actions--;
+    AudioFX.play('spawn');pushLog('🛡️ تم تفعيل الدرع!');
+    cancelAction();updateUIHub();if(G.mode==='pvp')uploadGameStateToFirebase();checkAutoEndTurn();return;
   }
-  if (G.phase==='attack') {
-    if (pKey===enemyField && cell.entity && cell.entity.type!=='mine') {
-      let can=pKey==='p2'?canAttackP2Cell(idx):canAttackP1Cell(idx);
-      if (!can) { pushLog("⚠️ يجب إسقاط الصف الأمامي أولاً!"); return; }
+  if(G.phase==='attack'){
+    if(pKey===enemyField&&cell.entity&&cell.entity.type!=='mine'){
+      let can=canAttackP2Cell(idx);
+      if(!can){pushLog("⚠️ يجب إسقاط الصف الأمامي أولاً!");return;}
       executeAttackStrike(idx);
-    } else { pushLog("تم إلغاء الهجوم."); cancelAction(); }
+    }else{pushLog("تم إلغاء الهجوم.");cancelAction();}
     return;
   }
-  if (G.phase==='idle' && pKey===currentField && cell.entity) {
-    if (cell.entity.atk===0) { pushLog("لا يمكن الهجوم بهذا المبنى."); return; }
-    if (getCurrentPlayer().actions<=0) { pushLog("طاقة غير كافية!"); return; }
-    AudioFX.play('click'); G.selectedCell={pKey,idx}; G.phase='attack';
-    toggleCancelButton(true); pushLog('اختر هدفاً للهجوم...'); renderGrids();
+  if(G.phase==='idle'&&pKey===currentField&&cell.entity){
+    if(cell.entity.atk===0){pushLog("لا يمكن الهجوم بهذا المبنى.");return;}
+    if(getCurrentPlayer().actions<=0){pushLog("طاقة غير كافية!");return;}
+    AudioFX.play('click');G.selectedCell={pKey,idx};G.phase='attack';
+    toggleCancelButton(true);pushLog('اختر هدفاً للهجوم...');renderGrids();
   }
 }
 
-function recalculateMaxActions(pKey) { G[pKey].maxActions=G.level>=5?5:4; }
+function recalculateMaxActions(pKey){G[pKey].maxActions=G.mode==='pvp'?4:(G.level>=5?5:4);}
 
-function executePlacement(idx) {
+function executePlacement(idx){
   const cfg=DATA_TYPES[G.pendingItem];
-  if (getCurrentPlayer().gold<cfg.cost) return;
-  AudioFX.play('spawn'); getCurrentPlayer().gold-=cfg.cost; getCurrentPlayer().actions--;
-  G.grid['p'+G.turn][idx].entity={ ...cfg, type:G.pendingItem };
-  pushLog('تم بناء '+cfg.label+'!'); cancelAction(); updateUIHub(); if (G.mode==='pvp') uploadGameStateToFirebase(); checkAutoEndTurn();
+  if(getCurrentPlayer().gold<cfg.cost)return;
+  AudioFX.play('spawn');getCurrentPlayer().gold-=cfg.cost;getCurrentPlayer().actions--;
+  G.grid.p1[idx].entity={...cfg,type:G.pendingItem};
+  pushLog('تم بناء '+cfg.label+'!');cancelAction();updateUIHub();if(G.mode==='pvp')uploadGameStateToFirebase();checkAutoEndTurn();
 }
 
-function executePremiumSpawn(idx) {
+function executePremiumSpawn(idx){
   const cfg=DATA_TYPES[G.pendingItem];
-  if (G.pendingItem==='ultra_prince') {
-    PersistentWallet.p1Diamonds-=cfg.cost; PersistentWallet.save(G.mode);
+  if(G.pendingItem==='ultra_prince'){
+    PersistentWallet.p1Diamonds-=cfg.cost;PersistentWallet.save(G.mode);
     getCurrentPlayer().actions--;
-    G.grid['p'+G.turn][idx].entity={ ...cfg, type:G.pendingItem, isUltraPrince:true, isCounter:true };
-    AudioFX.play('ultra_counter'); pushLog('👑⚔️ الأمير الخارق انضم للمعركة!');
-  } else {
-    PersistentWallet.p1Silver-=cfg.cost; PersistentWallet.save(G.mode);
+    G.grid.p1[idx].entity={...cfg,type:G.pendingItem,isUltraPrince:true,isCounter:true};
+    AudioFX.play('ultra_counter');pushLog('👑⚔️ الأمير الخارق انضم للمعركة!');
+  }else{
+    PersistentWallet.p1Silver-=cfg.cost;PersistentWallet.save(G.mode);
     getCurrentPlayer().actions--;
-    G.grid['p'+G.turn][idx].entity={ ...cfg, type:G.pendingItem };
-    AudioFX.play('spawn'); pushLog('تم إنزال '+cfg.label+'!');
+    G.grid.p1[idx].entity={...cfg,type:G.pendingItem};
+    AudioFX.play('spawn');pushLog('تم إنزال '+cfg.label+'!');
   }
-  cancelAction(); updateUIHub(); if (G.mode==='pvp') uploadGameStateToFirebase(); checkAutoEndTurn();
+  cancelAction();updateUIHub();if(G.mode==='pvp')uploadGameStateToFirebase();checkAutoEndTurn();
 }
 
-function cancelAction() {
-  G.phase='idle'; G.pendingAction=null; G.pendingItem=null; G.selectedCell=null;
-  ['spawn','build','heal'].forEach(m => document.getElementById('sub-'+m).style.display='none');
+function cancelAction(){
+  G.phase='idle';G.pendingAction=null;G.pendingItem=null;G.selectedCell=null;
+  ['spawn','build','heal'].forEach(m=>document.getElementById('sub-'+m).style.display='none');
   toggleCancelButton(false);
-  pushLog(G.mode==='pvp'?'دورك! العب...':(G.turn===1?'استعد.. دورك!':'دور الكمبيوتر...'));
+  if(G.mode==='pvp'){pushLog(isMyTurnNow()?'دورك! العب...':'⏳ انتظار دور الخصم...');}
+  else{pushLog(G.turn===1?'استعد.. دورك!':'دور الكمبيوتر...');}
   renderGrids();
 }
 
-function toggleCancelButton(showCancel) {
-  let endBtn=document.getElementById('btn-end-turn'), cancelBtn=document.getElementById('btn-cancel-action');
-  if (showCancel) { endBtn.style.display='none'; cancelBtn.style.display='block'; }
-  else {
-    cancelBtn.style.display='none'; endBtn.style.display='block';
-    endBtn.style.pointerEvents='none'; endBtn.style.opacity='0.5';
-    setTimeout(()=>{ endBtn.style.pointerEvents='auto'; endBtn.style.opacity='1'; }, 500);
+function toggleCancelButton(showCancel){
+  let endBtn=document.getElementById('btn-end-turn'),cancelBtn=document.getElementById('btn-cancel-action');
+  if(showCancel){endBtn.style.display='none';cancelBtn.style.display='block';}
+  else{
+    cancelBtn.style.display='none';endBtn.style.display='block';
+    endBtn.style.pointerEvents='none';endBtn.style.opacity='0.5';
+    setTimeout(()=>{endBtn.style.pointerEvents='auto';endBtn.style.opacity='1';},500);
   }
 }
 
-function shootProjectile(startId, endId, icon, callback) {
-  const s=document.getElementById(startId), e=document.getElementById(endId);
-  if (!s||!e) { callback(); return; }
-  const rs=s.getBoundingClientRect(), re=e.getBoundingClientRect();
-  const proj=document.createElement('div'); proj.className='projectile'; proj.innerHTML=icon;
-  proj.style.left=(rs.left+rs.width/2-12)+'px'; proj.style.top=(rs.top+rs.height/2-12)+'px';
-  document.body.appendChild(proj); proj.getBoundingClientRect();
-  proj.style.left=(re.left+re.width/2-12)+'px'; proj.style.top=(re.top+re.height/2-12)+'px';
-  setTimeout(()=>{ proj.remove(); callback(); }, 350);
+function shootProjectile(startId,endId,icon,callback){
+  const s=document.getElementById(startId),e=document.getElementById(endId);
+  if(!s||!e){callback();return;}
+  const rs=s.getBoundingClientRect(),re=e.getBoundingClientRect();
+  const proj=document.createElement('div');proj.className='projectile';proj.innerHTML=icon;
+  proj.style.left=(rs.left+rs.width/2-12)+'px';proj.style.top=(rs.top+rs.height/2-12)+'px';
+  document.body.appendChild(proj);proj.getBoundingClientRect();
+  proj.style.left=(re.left+re.width/2-12)+'px';proj.style.top=(re.top+re.height/2-12)+'px';
+  setTimeout(()=>{proj.remove();callback();},350);
 }
 
-// =================== Counter Attack ===================
-function triggerPrinceCounterAttack(attackerIdx, attackerField, princeCellIdx, onDone) {
+// =================== COUNTER ATTACKS ===================
+function triggerPrinceCounterAttack(attackerIdx,princeCellIdx,onDone){
   let prince=G.grid.p2[princeCellIdx].entity;
-  let attackerCell=G.grid[attackerField][attackerIdx];
-  if (!attackerCell||!attackerCell.entity) { onDone(); return; }
-  AudioFX.play('counter'); pushLog(`⚡ الأمير يرد على ${attackerCell.entity.label}!`);
-  let el=document.getElementById('cell-'+attackerField+'-'+attackerIdx);
-  if (el) { el.style.animation='counterFlash 0.3s ease-in-out 2'; setTimeout(()=>el.style.animation='',600); }
-  shootProjectile('cell-p2-'+princeCellIdx, 'cell-'+attackerField+'-'+attackerIdx, '⚔️', () => {
-    let rc=G.grid[attackerField][attackerIdx];
-    if (!rc||!rc.entity) { onDone(); return; }
+  let attackerCell=G.grid.p1[attackerIdx];
+  if(!attackerCell||!attackerCell.entity){onDone();return;}
+  AudioFX.play('counter');pushLog(`⚡ الأمير يرد على ${attackerCell.entity.label}!`);
+  let el=document.getElementById('cell-p1-'+attackerIdx);
+  if(el){el.style.animation='counterFlash 0.3s ease-in-out 2';setTimeout(()=>el.style.animation='',600);}
+  shootProjectile('cell-p2-'+princeCellIdx,'cell-p1-'+attackerIdx,'⚔️',()=>{
+    let rc=G.grid.p1[attackerIdx];
+    if(!rc||!rc.entity){onDone();return;}
     rc.entity.hp-=prince.atk;
-    if (rc.entity.hp<=0) {
-      AudioFX.play('explosion'); let dt=rc.entity.type; rc.entity=null;
-      if (dt==='main') { G.locked=false; triggerWinOutcome(2); return; }
-      PersistentWallet.p2Silver+=50; PersistentWallet.p2Diamonds+=5;
+    if(rc.entity.hp<=0){
+      AudioFX.play('explosion');let dt=rc.entity.type;rc.entity=null;
+      if(dt==='main'){G.locked=false;triggerWinOutcome(2);return;}
+      PersistentWallet.p2Silver+=50;PersistentWallet.p2Diamonds+=5;
       pushLog('💀 الأمير أفنى الجندي المهاجم!');
-    } else { AudioFX.play('hit'); pushLog(`⚔️ الأمير رد بـ ${prince.atk} ضرر!`); }
-    renderGrids(); updateUIHub(); onDone();
+    }else{AudioFX.play('hit');pushLog(`⚔️ الأمير رد بـ ${prince.atk} ضرر!`);}
+    renderGrids();updateUIHub();onDone();
   });
 }
 
-function triggerUltraPrinceCounterAttack(ultraPrinceIdx, ultraField, attackerIdx, attackerField, onDone) {
+function triggerUltraPrinceCounterAttack(ultraPrinceIdx,ultraField,attackerIdx,attackerField,onDone){
   let up=G.grid[ultraField][ultraPrinceIdx].entity;
-  if (!up||up.hp<=0) { onDone(); return; }
+  if(!up||up.hp<=0){onDone();return;}
   let ac=G.grid[attackerField][attackerIdx];
-  if (!ac||!ac.entity) { onDone(); return; }
-  AudioFX.play('ultra_counter'); pushLog(`👑⚔️ الأمير الخارق يثأر من ${ac.entity.label}!`);
+  if(!ac||!ac.entity){onDone();return;}
+  AudioFX.play('ultra_counter');pushLog(`👑⚔️ الأمير الخارق يثأر من ${ac.entity.label}!`);
   let pel=document.getElementById('cell-'+ultraField+'-'+ultraPrinceIdx);
-  if (pel) { pel.style.boxShadow='inset 0 0 30px rgba(255,204,0,1)'; setTimeout(()=>pel.style.boxShadow='',600); }
+  if(pel){pel.style.boxShadow='inset 0 0 30px rgba(255,204,0,1)';setTimeout(()=>pel.style.boxShadow='',600);}
   let ael=document.getElementById('cell-'+attackerField+'-'+attackerIdx);
-  if (ael) { ael.style.animation='counterFlash 0.3s ease-in-out 2'; setTimeout(()=>ael.style.animation='',600); }
-  shootProjectile('cell-'+ultraField+'-'+ultraPrinceIdx, 'cell-'+attackerField+'-'+attackerIdx, '👑⚔️', () => {
+  if(ael){ael.style.animation='counterFlash 0.3s ease-in-out 2';setTimeout(()=>ael.style.animation='',600);}
+  shootProjectile('cell-'+ultraField+'-'+ultraPrinceIdx,'cell-'+attackerField+'-'+attackerIdx,'👑⚔️',()=>{
     let ra=G.grid[attackerField][attackerIdx];
-    if (!ra||!ra.entity) { onDone(); return; }
+    if(!ra||!ra.entity){onDone();return;}
     ra.entity.hp-=up.atk;
-    if (ra.entity.hp<=0) {
-      AudioFX.play('explosion'); let dt=ra.entity.type; ra.entity=null;
-      if (dt==='main') { G.locked=false; triggerWinOutcome(1); return; }
-      PersistentWallet.p1Silver+=50; PersistentWallet.p1Diamonds+=5; PersistentWallet.save(G.mode);
+    if(ra.entity.hp<=0){
+      AudioFX.play('explosion');let dt=ra.entity.type;ra.entity=null;
+      if(dt==='main'){G.locked=false;triggerWinOutcome(ultraField==='p1'?1:2);return;}
+      if(attackerField==='p1'){PersistentWallet.p1Silver+=50;PersistentWallet.p1Diamonds+=5;PersistentWallet.save(G.mode);}
+      else{PersistentWallet.p2Silver+=50;PersistentWallet.p2Diamonds+=5;}
       pushLog('💀 الأمير الخارق أفنى العدو! +50🥈 +5💎');
-    } else { AudioFX.play('hit'); pushLog(`👑 الأمير الخارق رد بـ ${up.atk} ضرر!`); }
-    renderGrids(); updateUIHub(); onDone();
+    }else{AudioFX.play('hit');pushLog(`👑 الأمير الخارق رد بـ ${up.atk} ضرر!`);}
+    renderGrids();updateUIHub();onDone();
   });
 }
 
-// =================== الوزير ===================
-function vizierDoSupport(onDone) {
+// =================== VIZIER ===================
+function vizierDoSupport(onDone){
   let vi=-1;
-  G.grid.p2.forEach((c,i) => { if (c.entity&&c.entity.type==='vizier'&&c.entity.hp>0) vi=i; });
-  if (vi===-1) { onDone(); return; }
+  G.grid.p2.forEach((c,i)=>{if(c.entity&&c.entity.type==='vizier'&&c.entity.hp>0)vi=i;});
+  if(vi===-1){onDone();return;}
   let vizier=G.grid.p2[vi].entity;
   let heal=G.level>=15?25:(G.level>=10?15:10);
-  let wi=-1, wr=1.0;
-  G.grid.p2.forEach((c,i) => {
-    if (i===vi||!c.entity||c.entity.type==='main'||c.entity.type==='mine') return;
+  let wi=-1,wr=1.0;
+  G.grid.p2.forEach((c,i)=>{
+    if(i===vi||!c.entity||c.entity.type==='main'||c.entity.type==='mine')return;
     let r=c.entity.hp/c.entity.maxHp;
-    if (r<wr&&c.entity.hp<c.entity.maxHp) { wr=r; wi=i; }
+    if(r<wr&&c.entity.hp<c.entity.maxHp){wr=r;wi=i;}
   });
-  if (!vizier.shield||vizier.shield<1) vizier.shield=1;
-  let target = wi!==-1 ? G.grid.p2[wi] : G.grid.p2.find(c=>c.entity&&c.entity.type==='main'&&c.entity.hp<c.entity.maxHp);
-  if (target&&target.entity) {
-    let old=target.entity.hp; target.entity.hp=Math.min(target.entity.hp+heal,target.entity.maxHp);
-    AudioFX.play('heal'); pushLog(`🧙‍♂️ الوزير يعالج ${target.entity.label} بـ ${target.entity.hp-old} نقطة!`);
+  if(!vizier.shield||vizier.shield<1)vizier.shield=1;
+  let target=wi!==-1?G.grid.p2[wi]:G.grid.p2.find(c=>c.entity&&c.entity.type==='main'&&c.entity.hp<c.entity.maxHp);
+  if(target&&target.entity){
+    let old=target.entity.hp;target.entity.hp=Math.min(target.entity.hp+heal,target.entity.maxHp);
+    AudioFX.play('heal');pushLog(`🧙‍♂️ الوزير يعالج ${target.entity.label} بـ ${target.entity.hp-old} نقطة!`);
     let el=document.getElementById('cell-p2-'+(wi!==-1?wi:G.grid.p2.indexOf(target)));
-    if (el) { el.style.boxShadow='inset 0 0 20px rgba(0,255,100,0.9)'; setTimeout(()=>el.style.boxShadow='',600); }
-    renderGrids(); setTimeout(onDone,500);
-  } else { onDone(); }
+    if(el){el.style.boxShadow='inset 0 0 20px rgba(0,255,100,0.9)';setTimeout(()=>el.style.boxShadow='',600);}
+    renderGrids();setTimeout(onDone,500);
+  }else{onDone();}
 }
 
-// =================== الهجوم ===================
-function playAttackSound(type) { AudioFX.play(type==='infantry'||type==='super_infantry'||type==='prince'||type==='king_guard'?'hit':'explosion'); }
+// =================== ATTACK ===================
+function playAttackSound(type){AudioFX.play(type==='infantry'||type==='super_infantry'||type==='prince'||type==='king_guard'?'hit':'explosion');}
 
-function executeAttackStrike(targetIdx) {
-  const activeField='p'+G.turn, enemyField=G.turn===1?'p2':'p1';
-  const attacker=G.grid[activeField][G.selectedCell.idx].entity;
-  const targetCell=G.grid[enemyField][targetIdx];
+function executeAttackStrike(targetIdx){
+  // targetIdx = index في p2-grid (الخصم، كما يظهر على شاشتي)
+  const attacker=G.grid.p1[G.selectedCell.idx].entity;
+  const targetCell=G.grid.p2[targetIdx];
   const attackerIdx=G.selectedCell.idx;
 
-  G.locked=true; getCurrentPlayer().actions--; disableControls(true); playAttackSound(attacker.type);
+  G.locked=true;getCurrentPlayer().actions--;disableControls(true);playAttackSound(attacker.type);
 
-  shootProjectile('cell-'+activeField+'-'+attackerIdx, 'cell-'+enemyField+'-'+targetIdx, attacker.proj||'🗡️', () => {
-    let enemy=G[enemyField];
+  // تسجيل الـ action في Firebase لعرضه عند الخصم
+  // في Firebase: إذا أنا p1، الخصم هو p2، والـ targetIdx في Firebase هو معكوس targetIdx المحلي
+  // إذا أنا p2، الخصم هو p1، والـ targetIdx في Firebase = unreverse(targetIdx)
+  if(G.mode==='pvp'){
+    let fb_attackerField='p'+G.myPlayerNum;
+    let fb_targetField=G.myPlayerNum===1?'p2':'p1';
+    // الـ target في Firebase (قبل العكس)
+    let fb_targetIdx=unreverseIdx(targetIdx);
+    uploadActionToFirebase({
+      type:'attack',
+      attackerField:fb_attackerField,
+      attackerIdx:attackerIdx,
+      targetField:fb_targetField,
+      targetIdx:fb_targetIdx,
+      proj:attacker.proj||'🗡️'
+    });
+  }
 
-    if (enemy.hasWall) {
-      enemy.hasWall=false; AudioFX.play('hit'); pushLog('🧱 الجدار الدفاعي صد الضربة وتدمر!');
-      G.locked=false; disableControls(false); cancelAction(); updateUIHub();
-      if (G.mode==='pvp') uploadGameStateToFirebase(); checkAutoEndTurn(); return;
+  shootProjectile('cell-p1-'+attackerIdx,'cell-p2-'+targetIdx,attacker.proj||'🗡️',()=>{
+    // التحقق من الجدار
+    if(G.p2.hasWall){
+      G.p2.hasWall=false;AudioFX.play('hit');pushLog('🧱 الجدار الدفاعي صد الضربة وتدمر!');
+      G.locked=false;disableControls(false);cancelAction();updateUIHub();
+      if(G.mode==='pvp')uploadGameStateToFirebase();checkAutoEndTurn();return;
     }
-
-    if (targetCell.entity&&targetCell.entity.shield>0) {
-      targetCell.entity.shield--; AudioFX.play('hit');
-      if (targetCell.entity.shield<=0) delete targetCell.entity.shield;
-      pushLog('🛡️ الدرع امتص الضربة!');
-      G.locked=false; disableControls(false); cancelAction(); updateUIHub();
-      if (G.mode==='pvp') uploadGameStateToFirebase(); checkAutoEndTurn(); return;
+    // التحقق من الدرع
+    if(targetCell.entity&&targetCell.entity.shield>0){
+      targetCell.entity.shield--;if(targetCell.entity.shield<=0)delete targetCell.entity.shield;
+      AudioFX.play('hit');pushLog('🛡️ الدرع امتص الضربة!');
+      G.locked=false;disableControls(false);cancelAction();updateUIHub();
+      if(G.mode==='pvp')uploadGameStateToFirebase();checkAutoEndTurn();return;
     }
 
     targetCell.entity.hp-=attacker.atk;
 
-    if (targetCell.entity.hp<=0) {
-      AudioFX.play('explosion'); let dt=targetCell.entity.type; targetCell.entity=null;
-      if (dt==='main') {
+    if(targetCell.entity.hp<=0){
+      AudioFX.play('explosion');let dt=targetCell.entity.type;targetCell.entity=null;
+      if(dt==='main'){
         G.locked=false;
-        if (G.mode==='pvp') window._update(window._ref(window._db,`rooms/${window.currentRoomId}`),{status:'ended'});
-        triggerWinOutcome(G.turn); return;
+        if(G.mode==='pvp')window._update(window._ref(window._db,`rooms/${window.currentRoomId}`),{status:'ended',game_result:G.myPlayerNum});
+        triggerWinOutcome(1);return;
       }
       let sr=50,dr=5;
-      if (dt==='prince'){sr=80;dr=8;pushLog('👑 القضاء على الأمير! +80🥈 +8💎');}
-      else if (dt==='vizier'){sr=100;dr=10;pushLog('🧙‍♂️ القضاء على الوزير! +100🥈 +10💎');}
-      else if (dt==='king_guard'){sr=120;dr=12;pushLog('🛡️ القضاء على حارس! +120🥈 +12💎');}
-      else { pushLog('تم القضاء على الوحدة! +50🥈 +5💎'); }
-      if (G.turn===1){PersistentWallet.p1Silver+=sr;PersistentWallet.p1Diamonds+=dr;}
-      else{PersistentWallet.p2Silver+=sr;PersistentWallet.p2Diamonds+=dr;}
-      PersistentWallet.save(G.mode);
-      G.locked=false; disableControls(false); cancelAction(); updateUIHub();
-      if (G.mode==='pvp') uploadGameStateToFirebase(); checkAutoEndTurn();
-    } else {
+      if(dt==='prince'){sr=80;dr=8;pushLog('👑 القضاء على الأمير! +80🥈 +8💎');}
+      else if(dt==='vizier'){sr=100;dr=10;pushLog('🧙‍♂️ القضاء على الوزير! +100🥈 +10💎');}
+      else if(dt==='king_guard'){sr=120;dr=12;pushLog('🛡️ القضاء على حارس! +120🥈 +12💎');}
+      else{pushLog('تم القضاء على الوحدة! +50🥈 +5💎');}
+      PersistentWallet.p1Silver+=sr;PersistentWallet.p1Diamonds+=dr;PersistentWallet.save(G.mode);
+      G.locked=false;disableControls(false);cancelAction();updateUIHub();
+      if(G.mode==='pvp')uploadGameStateToFirebase();checkAutoEndTurn();
+    }else{
       AudioFX.play('hit');
-      let done=()=>{ G.locked=false; disableControls(false); cancelAction(); updateUIHub(); if (G.mode==='pvp') uploadGameStateToFirebase(); checkAutoEndTurn(); };
+      let done=()=>{G.locked=false;disableControls(false);cancelAction();updateUIHub();if(G.mode==='pvp')uploadGameStateToFirebase();checkAutoEndTurn();};
 
-      if (G.mode==='pvc'&&G.turn===1) {
-        // ضرب ملك الكمبيوتر والأمير موجود
+      if(G.mode==='pvc'){
+        // تحقق من الأمير (في p2-grid)
         let princeIdx=-1;
-        G.grid.p2.forEach((c,i)=>{ if(c.entity&&c.entity.type==='prince'&&c.entity.hp>0) princeIdx=i; });
+        G.grid.p2.forEach((c,i)=>{if(c.entity&&c.entity.type==='prince'&&c.entity.hp>0)princeIdx=i;});
         let hitKing=targetCell.entity&&targetCell.entity.type==='main';
-        let hitPrince=targetIdx!==undefined && G.grid.p2[targetIdx]&&G.grid.p2[targetIdx].entity&&G.grid.p2[targetIdx].entity.type==='prince';
+        let hitPrince=G.grid.p2[targetIdx]&&G.grid.p2[targetIdx].entity&&G.grid.p2[targetIdx].entity.type==='prince';
 
-        if (hitKing&&princeIdx!==-1) {
-          setTimeout(()=>triggerPrinceCounterAttack(attackerIdx,activeField,princeIdx,done),400);
-        } else if (hitPrince&&princeIdx!==-1) {
-          setTimeout(()=>triggerPrinceCounterAttack(attackerIdx,activeField,targetIdx,done),400);
-        } else { done(); }
-      } else if (G.turn===2) {
+        if(hitKing&&princeIdx!==-1){
+          setTimeout(()=>triggerPrinceCounterAttack(attackerIdx,princeIdx,done),400);
+        }else if(hitPrince&&princeIdx!==-1){
+          setTimeout(()=>triggerPrinceCounterAttack(attackerIdx,targetIdx,done),400);
+        }else{done();}
+      }else if(G.mode==='pvp'){
+        // في PVP، الخصم قد يكون لديه ultra_prince
         let hitUP=targetCell.entity&&targetCell.entity.isUltraPrince&&targetCell.entity.hp>0;
-        if (hitUP) { setTimeout(()=>triggerUltraPrinceCounterAttack(targetIdx,enemyField,attackerIdx,activeField,done),400); }
-        else { done(); }
-      } else { done(); }
+        if(hitUP){setTimeout(()=>triggerUltraPrinceCounterAttack(targetIdx,'p2',attackerIdx,'p1',done),400);}
+        else{done();}
+      }else{done();}
     }
   });
 }
 
-function harvestGold() {
-  if (G.locked||!isMyTurnNow()) return;
-  if (getCurrentPlayer().actions<=0) { pushLog("طاقة غير كافية!"); return; }
-  if (getCurrentPlayer().harvestedThisTurn) { pushLog("لا يمكنك الحصاد مرتين في نفس الدور!"); return; }
+function harvestGold(){
+  if(G.locked||!isMyTurnNow())return;
+  if(getCurrentPlayer().actions<=0){pushLog("طاقة غير كافية!");return;}
+  if(getCurrentPlayer().harvestedThisTurn){pushLog("لا يمكنك الحصاد مرتين في نفس الدور!");return;}
   AudioFX.play('click');
-  let hasMine=G.grid['p'+G.turn].some(c=>c.entity&&c.entity.type==='mine');
+  let hasMine=G.grid.p1.some(c=>c.entity&&c.entity.type==='mine');
   let income=hasMine?15:5;
-  getCurrentPlayer().gold+=income; getCurrentPlayer().actions--; getCurrentPlayer().harvestedThisTurn=true;
-  pushLog('🌾 تم حصاد '+income+' 🪙!'); updateUIHub(); if (G.mode==='pvp') uploadGameStateToFirebase(); checkAutoEndTurn();
+  getCurrentPlayer().gold+=income;getCurrentPlayer().actions--;getCurrentPlayer().harvestedThisTurn=true;
+  pushLog('🌾 تم حصاد '+income+' 🪙!');updateUIHub();if(G.mode==='pvp')uploadGameStateToFirebase();checkAutoEndTurn();
 }
 
-function upgradeKingWithDiamonds() {
-  if (G.locked||PersistentWallet.p1Diamonds<20) return;
-  let kc=G.grid.p1.find(c=>c.entity&&c.entity.type==='main'); if (!kc) return;
-  AudioFX.play('spawn'); PersistentWallet.p1Diamonds-=20; PersistentWallet.save(G.mode);
-  kc.entity.maxHp=Math.floor(kc.entity.maxHp*1.1); kc.entity.hp=Math.floor(kc.entity.hp*1.1);
-  pushLog('👑 تم تقوية الملك 10%!'); updateUIHub(); renderGrids();
+function upgradeKingWithDiamonds(){
+  if(G.locked||PersistentWallet.p1Diamonds<20)return;
+  let kc=G.grid.p1.find(c=>c.entity&&c.entity.type==='main');if(!kc)return;
+  AudioFX.play('spawn');PersistentWallet.p1Diamonds-=20;PersistentWallet.save(G.mode);
+  kc.entity.maxHp=Math.floor(kc.entity.maxHp*1.1);kc.entity.hp=Math.floor(kc.entity.hp*1.1);
+  pushLog('👑 تم تقوية الملك 10%!');updateUIHub();renderGrids();
 }
 
-function getCurrentPlayer() { return G['p'+G.turn]; }
-function checkAutoEndTurn() { if (getCurrentPlayer().actions<=0&&G.turn===1) setTimeout(()=>endTurn(false),600); }
+function getCurrentPlayer(){return G.p1;}
+function checkAutoEndTurn(){if(getCurrentPlayer().actions<=0&&G.turn===1)setTimeout(()=>endTurn(false),600);}
 
-function endTurn(isAI=false) {
-  if (G.locked&&!isAI) return;
-  if (G.mode==='pvc'&&G.turn===2&&!isAI) return;
+// =================== END TURN ===================
+function endTurn(isAI=false){
+  if(G.locked&&!isAI)return;
+  if(G.mode==='pvc'&&G.turn===2&&!isAI)return;
+  if(G.mode==='pvp'&&G.turn!==1)return; // فقط لما يكون دوري
 
-  G.p1.healCooldown=0; G.p2.healCooldown=0;
-  G.p1.harvestedThisTurn=false; G.p2.harvestedThisTurn=false;
-  G.grid['p'+G.turn].forEach(c=>{ if(c.entity&&c.entity.type==='mine') G['p'+G.turn].gold+=2; });
+  // تطبيق دخل المناجم على اللاعب الحالي
+  G.grid['p'+G.turn].forEach(c=>{if(c.entity&&c.entity.type==='mine')G['p'+G.turn].gold+=2;});
 
+  G.p1.healCooldown=0;G.p2.healCooldown=0;
+  G.p1.harvestedThisTurn=false;G.p2.harvestedThisTurn=false;
+
+  if(G.mode==='pvp'){
+    // رفع الحالة وتحويل الدور للخصم
+    uploadGameStateToFirebase();
+    disableControls(true);
+    G.turn=2; // الآن ننتظر الخصم
+    G.phase='waiting';
+    pushLog("⏳ انتظار هجوم الخصم...");
+    cancelAction();updateUIHub();
+    return;
+  }
+
+  // PVC
   G.turn=G.turn===1?2:1;
-  if (G.turn===1) { G.round++; disableControls(false); } else { disableControls(true); }
+  if(G.turn===1){G.round++;disableControls(false);}else{disableControls(true);}
 
-  recalculateMaxActions('p1'); recalculateMaxActions('p2');
-  G.p1.actions=G.p1.maxActions; G.p2.actions=G.p2.maxActions;
+  recalculateMaxActions('p1');recalculateMaxActions('p2');
+  G.p1.actions=G.p1.maxActions;G.p2.actions=G.p2.maxActions;
 
-  cancelAction(); updateUIHub();
-  if (G.mode==='pvp') { uploadGameStateToFirebase(); return; }
+  cancelAction();updateUIHub();
 
-  if (G.mode==='pvc'&&G.turn===2) {
+  if(G.mode==='pvc'&&G.turn===2){
     let vi=G.grid.p2.some(c=>c.entity&&c.entity.type==='vizier');
-    if (vi) { setTimeout(()=>vizierDoSupport(()=>setTimeout(runAdvancedAISystem,400)),600); }
-    else { setTimeout(runAdvancedAISystem,800); }
+    if(vi){setTimeout(()=>vizierDoSupport(()=>setTimeout(runAdvancedAISystem,400)),600);}
+    else{setTimeout(runAdvancedAISystem,800);}
   }
 }
 
 // =================== AI ===================
-function runAdvancedAISystem() {
-  if (G.turn!==2||G.mode!=='pvc') return;
-  if (G.p2.actions<=0) { endTurn(true); return; }
+function runAdvancedAISystem(){
+  if(G.turn!==2||G.mode!=='pvc')return;
+  if(G.p2.actions<=0){
+    // نهاية دور الكمبيوتر
+    G.grid.p2.forEach(c=>{if(c.entity&&c.entity.type==='mine')G.p2.gold+=2;});
+    G.turn=1;G.round++;
+    recalculateMaxActions('p1');recalculateMaxActions('p2');
+    G.p1.actions=G.p1.maxActions;G.p2.actions=G.p2.maxActions;
+    G.p1.healCooldown=0;G.p2.healCooldown=0;
+    G.p1.harvestedThisTurn=false;G.p2.harvestedThisTurn=false;
+    disableControls(false);cancelAction();updateUIHub();pushLog("⚔️ دورك!");return;
+  }
 
-  let regular=[], guardians=[];
-  G.grid.p2.forEach((c,idx)=>{ if(c.entity&&c.entity.atk>0) { if(c.entity.isGuardian) guardians.push({...c,idx}); else regular.push({...c,idx}); }});
+  let regular=[],guardians=[];
+  G.grid.p2.forEach((c,idx)=>{if(c.entity&&c.entity.atk>0){if(c.entity.isGuardian)guardians.push({...c,idx});else regular.push({...c,idx});}});
 
   let frontRow=getFrontmostOccupiedRowP1();
   let targets=[];
-  if (frontRow!==-1) G.grid.p1.forEach((c,idx)=>{ if(c.entity&&c.entity.type!=='mine'&&getRowOf(idx)===frontRow) targets.push({...c,idx}); });
+  if(frontRow!==-1)G.grid.p1.forEach((c,idx)=>{if(c.entity&&c.entity.type!=='mine'&&getRowOf(idx)===frontRow)targets.push({...c,idx});});
 
   let best=null;
   let gca=canGuardianAttack();
-  if (regular.length>0&&targets.length>0) { regular.sort((a,b)=>b.entity.atk-a.entity.atk); best=regular[0]; }
-  else if (gca&&guardians.length>0&&targets.length>0) {
+  if(regular.length>0&&targets.length>0){regular.sort((a,b)=>b.entity.atk-a.entity.atk);best=regular[0];}
+  else if(gca&&guardians.length>0&&targets.length>0){
     let ag=guardians.filter(g=>!g.entity.isHealer);
-    if (ag.length>0) { ag.sort((a,b)=>b.entity.atk-a.entity.atk); best=ag[0]; }
+    if(ag.length>0){ag.sort((a,b)=>b.entity.atk-a.entity.atk);best=ag[0];}
   }
 
-  if (best&&targets.length>0) {
+  if(best&&targets.length>0){
     targets.sort((a,b)=>a.entity.hp-b.entity.hp);
-    let t=targets[0]; G.p2.actions--; playAttackSound(best.entity.type);
+    let t=targets[0];G.p2.actions--;playAttackSound(best.entity.type);
     shootProjectile('cell-p2-'+best.idx,'cell-p1-'+t.idx,best.entity.proj||'🗡️',()=>{
       let rc=G.grid.p1[t.idx];
-      if (G.p1.hasWall) {
-        G.p1.hasWall=false; AudioFX.play('hit'); pushLog('🧱 جدارك صد هجوم العدو!');
-        updateUIHub(); renderGrids(); setTimeout(runAdvancedAISystem,600); return;
-      }
-      if (rc.entity&&rc.entity.shield>0) {
-        rc.entity.shield--; if(rc.entity.shield<=0) delete rc.entity.shield;
-        pushLog('🛡️ الدرع صد الهجوم!'); updateUIHub(); renderGrids(); setTimeout(runAdvancedAISystem,600); return;
-      }
-      if (rc.entity) {
+      if(G.p1.hasWall){G.p1.hasWall=false;AudioFX.play('hit');pushLog('🧱 جدارك صد هجوم العدو!');updateUIHub();renderGrids();setTimeout(runAdvancedAISystem,600);return;}
+      if(rc.entity&&rc.entity.shield>0){rc.entity.shield--;if(rc.entity.shield<=0)delete rc.entity.shield;pushLog('🛡️ الدرع صد الهجوم!');updateUIHub();renderGrids();setTimeout(runAdvancedAISystem,600);return;}
+      if(rc.entity){
         rc.entity.hp-=best.entity.atk;
-        if (rc.entity.hp<=0) {
-          AudioFX.play('explosion'); let dt=rc.entity.type; rc.entity=null;
-          if (dt==='main') { triggerWinOutcome(2); return; }
-          PersistentWallet.p2Silver+=50; PersistentWallet.p2Diamonds+=5;
+        if(rc.entity.hp<=0){
+          AudioFX.play('explosion');let dt=rc.entity.type;rc.entity=null;
+          if(dt==='main'){triggerWinOutcome(2);return;}
+          PersistentWallet.p2Silver+=50;PersistentWallet.p2Diamonds+=5;
           pushLog('⚔️ العدو دمر جندياً من قواتك!');
-          updateUIHub(); renderGrids(); setTimeout(runAdvancedAISystem,600);
-        } else {
+          updateUIHub();renderGrids();setTimeout(runAdvancedAISystem,600);
+        }else{
           AudioFX.play('hit');
           let hitUP=rc.entity&&rc.entity.isUltraPrince&&rc.entity.hp>0;
-          if (hitUP) {
+          if(hitUP){
             setTimeout(()=>triggerUltraPrinceCounterAttack(t.idx,'p1',best.idx,'p2',()=>{
-              updateUIHub(); renderGrids(); setTimeout(runAdvancedAISystem,600);
+              updateUIHub();renderGrids();setTimeout(runAdvancedAISystem,600);
             }),400);
-          } else { updateUIHub(); renderGrids(); setTimeout(runAdvancedAISystem,600); }
+          }else{updateUIHub();renderGrids();setTimeout(runAdvancedAISystem,600);}
         }
-      } else { updateUIHub(); renderGrids(); setTimeout(runAdvancedAISystem,600); }
+      }else{updateUIHub();renderGrids();setTimeout(runAdvancedAISystem,600);}
     });
     return;
   }
 
   let empty=G.grid.p2.map((c,i)=>c.entity?-1:i).filter(x=>x!==-1);
-  if (empty.length>0) {
-    let ri=empty[Math.floor(Math.random()*empty.length)]; let bought=false;
-    if (PersistentWallet.p2Silver>=500&&Math.random()>0.4) { PersistentWallet.p2Silver-=500; G.grid.p2[ri].entity={...DATA_TYPES.cannon,type:'cannon'}; AudioFX.play('explosion'); bought=true; }
-    else if (PersistentWallet.p2Silver>=200&&Math.random()>0.5) { PersistentWallet.p2Silver-=200; G.grid.p2[ri].entity={...DATA_TYPES.catapult,type:'catapult'}; AudioFX.play('explosion'); bought=true; }
-    else if (G.p2.gold>=15&&!G.p2.hasWall&&Math.random()>0.5) { G.p2.gold-=15; G.p2.hasWall=true; AudioFX.play('spawn'); bought=true; }
-    else if (G.p2.gold>=15&&Math.random()>0.4) { G.p2.gold-=15; G.grid.p2[ri].entity={...DATA_TYPES.archer,type:'archer'}; AudioFX.play('spawn'); bought=true; }
-    else if (G.p2.gold>=10) { G.p2.gold-=10; G.grid.p2[ri].entity={...DATA_TYPES.infantry,type:'infantry'}; AudioFX.play('spawn'); bought=true; }
-    if (!bought) { let hm=G.grid.p2.some(c=>c.entity&&c.entity.type==='mine'); G.p2.gold+=hm?15:5; }
-    G.p2.actions--; updateUIHub(); renderGrids(); setTimeout(runAdvancedAISystem,600); return;
+  if(empty.length>0){
+    let ri=empty[Math.floor(Math.random()*empty.length)];let bought=false;
+    if(PersistentWallet.p2Silver>=500&&Math.random()>0.4){PersistentWallet.p2Silver-=500;G.grid.p2[ri].entity={...DATA_TYPES.cannon,type:'cannon'};AudioFX.play('explosion');bought=true;}
+    else if(PersistentWallet.p2Silver>=200&&Math.random()>0.5){PersistentWallet.p2Silver-=200;G.grid.p2[ri].entity={...DATA_TYPES.catapult,type:'catapult'};AudioFX.play('explosion');bought=true;}
+    else if(G.p2.gold>=15&&!G.p2.hasWall&&Math.random()>0.5){G.p2.gold-=15;G.p2.hasWall=true;AudioFX.play('spawn');bought=true;}
+    else if(G.p2.gold>=15&&Math.random()>0.4){G.p2.gold-=15;G.grid.p2[ri].entity={...DATA_TYPES.archer,type:'archer'};AudioFX.play('spawn');bought=true;}
+    else if(G.p2.gold>=10){G.p2.gold-=10;G.grid.p2[ri].entity={...DATA_TYPES.infantry,type:'infantry'};AudioFX.play('spawn');bought=true;}
+    if(!bought){let hm=G.grid.p2.some(c=>c.entity&&c.entity.type==='mine');G.p2.gold+=hm?15:5;}
+    G.p2.actions--;updateUIHub();renderGrids();setTimeout(runAdvancedAISystem,600);return;
   }
-  G.p2.actions=0; setTimeout(runAdvancedAISystem,100);
+  G.p2.actions=0;setTimeout(runAdvancedAISystem,100);
 }
 
 // =================== UI ===================
-function updateUIHub() {
+function updateUIHub(){
   document.getElementById('p1-gold').textContent=G.p1.gold;
   document.getElementById('p2-gold').textContent=G.p2.gold;
   document.getElementById('p1-acts').textContent=G.p1.actions;
@@ -1563,83 +1583,91 @@ function updateUIHub() {
   document.getElementById('p1-diamonds').textContent=PersistentWallet.p1Diamonds;
   document.getElementById('p2-diamonds').textContent=PersistentWallet.p2Diamonds;
   let ub=document.getElementById('btn-upgrade-king');
-  if (ub) ub.style.display=(PersistentWallet.p1Diamonds>=20&&G.turn===1&&G.mode==='pvc')?'inline-block':'none';
+  if(ub)ub.style.display=(PersistentWallet.p1Diamonds>=20&&G.turn===1&&G.mode==='pvc')?'inline-block':'none';
   let bs=document.getElementById('btn-shield');
-  if (bs) bs.style.display=((G.mode==='pvc'&&G.level>=5)||G.mode==='pvp')?'block':'none';
+  if(bs)bs.style.display=((G.mode==='pvc'&&G.level>=5)||G.mode==='pvp')?'block':'none';
   document.getElementById('p1-grid').classList.toggle('grid-wall-active',G.p1.hasWall);
   document.getElementById('p2-grid').classList.toggle('grid-wall-active',G.p2.hasWall);
-  // تحديث المحفظة في القائمة
   let mw=document.getElementById('menu-wallet');
-  if (mw) mw.textContent=`🥈${PersistentWallet.p1Silver} | 💎${PersistentWallet.p1Diamonds}`;
+  if(mw)mw.textContent=`🥈${PersistentWallet.p1Silver} | 💎${PersistentWallet.p1Diamonds}`;
 }
 
-function updateShopButtonsStyle() {
-  let s=PersistentWallet.p1Silver, d=PersistentWallet.p1Diamonds;
+function updateShopButtonsStyle(){
+  let s=PersistentWallet.p1Silver,d=PersistentWallet.p1Diamonds;
   let myTurn=isMyTurnNow();
   ['super_infantry','witch','catapult','cannon'].forEach(t=>{
-    let btn=document.getElementById('shop-'+t); if (!btn) return;
-    btn.classList.toggle('disabled', s<DATA_TYPES[t].cost||!myTurn);
+    let btn=document.getElementById('shop-'+t);if(!btn)return;
+    btn.classList.toggle('disabled',s<DATA_TYPES[t].cost||!myTurn);
   });
   let ub=document.getElementById('shop-ultra_prince');
-  if (ub) ub.classList.toggle('disabled', d<500||!myTurn);
+  if(ub)ub.classList.toggle('disabled',d<500||!myTurn);
 }
 
-function pushLog(msg) { document.getElementById('log-bar').textContent=String(msg); }
-function toggleScreen(id) { document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
-function toggleModal(id, close=false) { document.getElementById(id).classList.toggle('hidden', close===true||close===undefined?true:false); if (!close&&close!==undefined) document.getElementById(id).classList.remove('hidden'); }
-function disableControls(status) { const a=document.querySelector('.actions-grid'); a.style.opacity=status?'0.4':'1'; a.style.pointerEvents=status?'none':'auto'; }
+function pushLog(msg){document.getElementById('log-bar').textContent=String(msg);}
+function toggleScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
 
-// Fix toggleModal to work simply
-function toggleModal(id, doClose) {
+function toggleModal(id,doClose){
   let el=document.getElementById(id);
-  if (doClose===true) el.classList.add('hidden');
-  else if (doClose===false) el.classList.remove('hidden');
+  if(doClose===true)el.classList.add('hidden');
+  else if(doClose===false)el.classList.remove('hidden');
   else el.classList.toggle('hidden');
 }
 
-// =================== الفوز / الخسارة ===================
-function triggerWinOutcome(winner) {
-  disableControls(false);
-  let title=document.getElementById('win-title'), body=document.getElementById('win-body'), btn=document.getElementById('modal-action-btn');
+function disableControls(status){
+  const a=document.querySelector('.actions-grid');
+  a.style.opacity=status?'0.4':'1';a.style.pointerEvents=status?'none':'auto';
+  let endBtn=document.getElementById('btn-end-turn');
+  if(endBtn){endBtn.style.opacity=status?'0.4':'1';endBtn.style.pointerEvents=status?'none':'auto';}
+}
 
-  if (winner===1) {
-    if (G.mode==='pvc') {
+// =================== WIN/LOSS ===================
+function triggerWinOutcome(winner){
+  disableControls(false);
+  let title=document.getElementById('win-title'),body=document.getElementById('win-body'),btn=document.getElementById('modal-action-btn');
+
+  if(winner===1){
+    // اللاعب فاز
+    if(G.mode==='pvc'){
       SurvivorsSystem.saveFromGrid('p1');
       SurvivorsSystem.p2=[];
-      G.grid.p2.forEach(c=>{ if(c.entity&&!['main','mine','prince','vizier','king_guard'].includes(c.entity.type)) SurvivorsSystem.p2.push({...c.entity,isSurvivor:true}); });
+      G.grid.p2.forEach(c=>{if(c.entity&&!['main','mine','prince','vizier','king_guard'].includes(c.entity.type))SurvivorsSystem.p2.push({...c.entity,isSurvivor:true});});
     }
     let reward=G.mode==='pvp'?250:(G.level>=20?500:(G.level>=8?250:(G.level>=6?100:50)));
     title.innerHTML='نصر ساحق! 🏆';
-    PersistentWallet.p1Silver+=reward; PersistentWallet.save(G.mode);
-    if (G.mode==='pvc') {
+    PersistentWallet.p1Silver+=reward;PersistentWallet.save(G.mode);
+    if(G.mode==='pvc'){
       let sc=SurvivorsSystem.p1.length;
       body.innerHTML=`سحقت ملك الأعداء!<br>مكافأة: +${reward}🥈${sc>0?`<br>⭐ ${sc} جندي سينتقل معك!`:''}`;
       btn.textContent='التالي ➡️';
-      btn.onclick=()=>{ toggleModal('win-modal',true); G.level++; localStorage.setItem('mw_highest_pvc_level_'+window.myUID,G.level); initGame(G.mode); };
-    } else {
+      btn.onclick=()=>{toggleModal('win-modal',true);G.level++;localStorage.setItem('mw_highest_pvc_level_'+window.myUID,G.level);initGame(G.mode);};
+    }else{
       body.innerHTML=`دمرت ملك الخصم!<br>مكافأة: +${reward}🥈`;
-      btn.textContent='تحدي جديد'; btn.onclick=retryLevel;
+      btn.textContent='القائمة الرئيسية';btn.onclick=exitToMenu;
     }
-  } else {
-    if (G.mode==='pvc') SurvivorsSystem.clear();
+  }else{
+    // الخصم فاز
+    if(G.mode==='pvc')SurvivorsSystem.clear();
     title.innerHTML='خسارة 💀';
     body.innerHTML='تم تدمير ملكك. حاول مجدداً!';
-    btn.textContent='إعادة'; btn.onclick=retryLevel;
+    btn.textContent='إعادة';btn.onclick=retryLevel;
   }
-  toggleModal('win-modal',false); renderGrids();
+  toggleModal('win-modal',false);renderGrids();
 }
 
-function retryLevel() {
+function retryLevel(){
   toggleModal('win-modal',true);
-  if (G.mode==='pvp') { exitToMenu(); } else { initGame(G.mode); }
+  if(G.mode==='pvp'){exitToMenu();}else{initGame(G.mode);}
 }
 
-function exitToMenu() {
+function exitToMenu(){
   toggleModal('win-modal',true);
-  if (window._roomWatcherOff) { window._roomWatcherOff(); window._roomWatcherOff=null; }
-  G.turn=1; G.round=1;
-  showMenuScreen();
-  toggleScreen('menu-screen');
+  if(window._roomWatcherOff){window._roomWatcherOff();window._roomWatcherOff=null;}
+  if(window.currentRoomId){
+    window._update(window._ref(window._db,`rooms/${window.currentRoomId}`),{status:'ended'});
+    window.currentRoomId=null;
+  }
+  G.turn=1;G.round=1;G.mode='pvc';G.myPlayerNum=1;
+  showMenuScreen();toggleScreen('menu-screen');
 }
 </script>
 </body>
