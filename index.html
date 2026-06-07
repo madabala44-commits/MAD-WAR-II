@@ -164,7 +164,7 @@ window.listenForInvites=function(){
     if(invites){
       const inviteId=Object.keys(invites)[0];
       window.activeInvite={id:inviteId,...invites[inviteId]};
-      document.getElementById('invite-text').innerText=`⚔️ اللاعب (${window.activeInvite.fromName}) يتحداك في مباراة خاصة!`;
+      document.getElementById('invite-text').innerText=`⚔️ اللاعب (${window.activeInvite.fromName}) يتحداك!`;
       toggleModal('invite-popup',false);
     }else{toggleModal('invite-popup',true);window.activeInvite=null;}
   });
@@ -291,7 +291,7 @@ window.listenForInvites=function(){
       <button onclick="addFriendById()" style="background:var(--neon-red);border:none;border-radius:6px;color:#fff;padding:8px 12px;font-weight:bold;cursor:pointer;font-family:Tajawal,sans-serif;">إضافة</button>
     </div>
     <div style="text-align:right;font-size:12px;font-weight:bold;color:#cbd5e0;margin-bottom:6px;">قائمة الأصدقاء:</div>
-    <div id="friends-list" style="max-height:180px;overflow-y:auto;border:1px solid #2d3748;border-radius:6px;padding:6px;margin-bottom:12px;background:rgba(0,0,0,0.3);"><div style="color:#718096;text-align:center;font-size:11px;padding:10px;">جاري التحميل...</div></div>
+    <div id="friends-list" style="max-height:180px;overflow-y:auto;border:1px solid #2d3748;border-radius:6px;padding:6px;margin-bottom:12px;background:rgba(0,0,0,0.3);"></div>
     <button class="menu-btn" style="width:100%;margin:0;" onclick="toggleModal('friends-modal',true)">رجوع</button>
   </div>
 </div>
@@ -367,18 +367,37 @@ const DATA_TYPES={
 };
 
 // =================== GAME STATE ===================
+// ===================================================
+// منطق الشبكة في PVP:
+//
+// Firebase يحتفظ بـ grid_p1 و grid_p2
+// كل شبكة: 12 خلية (3 صفوف × 4)
+// الترتيب في Firebase:
+//   idx 0-3  = صف أمامي (أقرب للخصم)
+//   idx 4-7  = صف أوسط
+//   idx 8-11 = صف خلفي (فيه الملك)
+//
+// كل لاعب يشوف:
+//   - أرضه في الأسفل (p1-grid في الـ DOM) = أرضه كما هي في Firebase
+//   - أرض الخصم في الأعلى (p2-grid في الـ DOM) = مقلوبة (صف الملك يجي فوق مش قدامنا)
+//
+// الانعكاس للعرض فقط:
+//   displayRow0 (أعلى p2-grid) = Firebase row2 (idx 8-11) = خلف الخصم
+//   displayRow1 (وسط p2-grid) = Firebase row1 (idx 4-7)
+//   displayRow2 (أسفل p2-grid) = Firebase row0 (idx 0-3) = أمام الخصم (أقرب لنا)
+//
+// الملك دايماً في Firebase idx 8-11 (الصف الخلفي)
+// عند العرض، الملك يجي في displayRow0 (أعلى p2-grid) = بعيد عنا ✓
+// ===================================================
+
 let G={
   mode:'pvc',level:1,turn:1,round:1,phase:'idle',locked:false,
-  // p1 = اللاعب الأول (أنا في PVC، وأنا في PVP أيضاً من منظوري)
-  // p2 = الخصم (كمبيوتر في PVC، أو الخصم في PVP من منظوري)
   p1:{gold:40,actions:4,maxActions:4,healUses:0,healCooldown:0,harvestedThisTurn:false,hasWall:false},
   p2:{gold:40,actions:4,maxActions:4,healUses:0,healCooldown:0,harvestedThisTurn:false,hasWall:false},
   grid:{p1:[],p2:[]},
-  // في PVP:
-  // myPlayerNum: 1 أو 2 (رقمي الحقيقي في Firebase)
-  // myTurnInFirebase: عندما يكون دوري حسب Firebase
   myPlayerNum:1,
-  selectedCell:null,pendingAction:null,pendingItem:null
+  selectedCell:null,pendingAction:null,pendingItem:null,
+  lastProcessedActionTs:0
 };
 
 let PersistentWallet={
@@ -614,32 +633,17 @@ function cancelMatchmaking(){
 }
 
 // =================== PVP ROOM DATA ===================
-// الإصلاح الجوهري: الشبكة تُخزن موحدة في Firebase
-// p1 في Firebase = اللاعب الأول دائماً
-// كل لاعب يرى أرضه تحت وأرض الخصم فوق
-// الملك في الصف الثالث (الخلفي) = indices 8-11
-// في Firebase: p1_grid[8..11] = صف الخلف لـ p1, p2_grid[0..3] = صف الأمام (قريب من p1) = خلف p2
-//
-// المنظور:
-// p1 يرى: p2-grid فوق (معكوس: صف 0 أعلى شاشته = أمامه), p1-grid تحت (صف 8-11 أسفل شاشته = خلفه)
-// p2 يرى: p1-grid فوق (معكوس), p2-grid تحت
-//
-// الحل: نستخدم "myGrid" و"enemyGrid" دائماً بدلاً من p1/p2
-// ونعكس ترتيب الصفوف لكل لاعب عند العرض
-//
-// خطة العناوين:
-// p1-grid في Firebase: indices 0-3=صف أمامي (نحو p2), 4-7=وسط, 8-11=خلفي (الملك هنا)
-// p2-grid في Firebase: indices 0-3=صف أمامي (نحو p1 = أقرب لـ p1), 4-7=وسط, 8-11=خلفي (الملك هنا)
-//
-// عرض p1: p2-grid مقلوب فوق (عرض: idx 0-3=صف3, 4-7=صف2, 8-11=صف1), p1-grid تحت عادي
-// عرض p2: p1-grid مقلوب فوق, p2-grid تحت عادي
+// الملك في idx=9 (صف خلفي، وسط الشبكة)
+// صف خلفي = idx 8,9,10,11
+// في Firebase يكون الملك دايماً في الصف 8-11
 
 function createPvpRoomData(roomId){
   let makeGrid=()=>Array.from({length:12},(_,i)=>({id:i,entity:null}));
   let g1=makeGrid(),g2=makeGrid();
-  // الملك في الصف الأخير (indices 8-11)، وسط الصف = index 9 أو 10
-  g1[9].entity={...DATA_TYPES.main,type:'main',hp:80,maxHp:80,icon:'🤴'};
-  g2[9].entity={...DATA_TYPES.main,type:'main',hp:80,maxHp:80,icon:'🤴'};
+  // الملك في الصف الخلفي idx 9
+  g1[9]={id:9,entity:{...DATA_TYPES.main,type:'main',hp:80,maxHp:80,icon:'🤴'}};
+  g2[9]={id:9,entity:{...DATA_TYPES.main,type:'main',hp:80,maxHp:80,icon:'🤴'}};
+  G.lastProcessedActionTs=0;
   window._set(window._ref(window._db,`rooms/${roomId}`),{
     status:'waiting_for_p2',
     turn:1,round:1,
@@ -666,25 +670,20 @@ function listenToRoom(roomId){
   window._roomWatcherOff=window._onValue(window._ref(window._db,`rooms/${roomId}`),(snap)=>{
     const data=snap.val();
     if(!data){pushLog("تم إغلاق الغرفة.");exitToMenu();return;}
+    if(data.game_result&&data.status==='ended'){
+      showPvpResult(data);return;
+    }
     if(data.status==='playing'||data.status==='waiting_for_p2'){
       syncDataFromFirebase(data);
-    }
-    if(data.status==='ended'){
-      // إذا كانت اللعبة انتهت وفيه نتيجة
-      if(data.game_result){
-        let winner=data.game_result;
-        // هل أنا الفائز؟
-        let iWon=(G.myPlayerNum===1&&winner===1)||(G.myPlayerNum===2&&winner===2);
-        showPvpResult(iWon,data);
-      }else{
-        pushLog("المباراة انتهت.");disableControls(true);
-      }
     }
   });
 }
 
-function showPvpResult(iWon,data){
+function showPvpResult(data){
+  if(window._roomWatcherOff){window._roomWatcherOff();window._roomWatcherOff=null;}
   disableControls(true);
+  let winner=data.game_result; // 1 أو 2
+  let iWon=(G.myPlayerNum===winner);
   let title=document.getElementById('win-title'),body=document.getElementById('win-body'),btn=document.getElementById('modal-action-btn');
   if(iWon){
     title.innerHTML='نصر ساحق! 🏆';
@@ -699,216 +698,241 @@ function showPvpResult(iWon,data){
 }
 
 // =================== SYNC FROM FIREBASE ===================
-// الإصلاح الأساسي للمنظور والطاقة والتزامن
+// كل لاعب يشوف:
+//   G.grid.p1 = أرضه (تحت الشاشة) = مباشرة من Firebase
+//   G.grid.p2 = أرض الخصم (فوق الشاشة) = مقلوبة الصفوف للعرض فقط
+//
+// الـ actions والـ gold: كل لاعب يأخذ بياناته هو فقط من Firebase
+// عشان نضمن إن الـ actions مش بتتصفر بسبب بيانات الخصم
+
 function syncDataFromFirebase(data){
-  // استخراج البيانات الخام
-  let fb_turn=data.turn; // 1=دور p1, 2=دور p2 في Firebase
+  let fb_turn=data.turn; // 1=دور p1 في Firebase, 2=دور p2 في Firebase
+
   G.round=data.round||1;
 
-  // الشبكات من Firebase
-  let raw_p1_grid=data.grid_p1||[];
-  let raw_p2_grid=data.grid_p2||[];
-
-  // --- إصلاح المنظور ---
-  // أنا دائماً "أسفل" الشاشة = myGrid
-  // الخصم دائماً "أعلى" الشاشة = enemyGrid
-  // لكن enemyGrid يجب أن يُعكس (صف الخلف يظهر أعلى، صف الأمام أقرب لنا)
+  let raw_p1=data.grid_p1||makeEmptyGrid();
+  let raw_p2=data.grid_p2||makeEmptyGrid();
 
   if(G.myPlayerNum===1){
-    // أنا p1: أرضي p1-grid تحت، أرض الخصم p2-grid فوق مقلوبة
-    G.grid.p1=raw_p1_grid;
-    G.grid.p2=reverseGridRows(raw_p2_grid); // عكس صفوف الخصم للعرض
+    // أنا p1: أرضي = grid_p1، خصمي = grid_p2 (مقلوبة للعرض)
+    G.grid.p1=raw_p1;
+    G.grid.p2=flipGridForDisplay(raw_p2);
 
-    // إحصائياتي (p1)
-    G.p1.gold=data.p1_gold;G.p1.actions=data.p1_actions;
+    // بياناتي (p1) فقط
+    G.p1.gold=data.p1_gold||0;
+    G.p1.actions=data.p1_actions||0;
     G.p1.maxActions=data.p1_maxActions||4;
-    G.p1.healUses=data.p1_healUses||0;G.p1.healCooldown=data.p1_healCooldown||0;
-    G.p1.hasWall=data.p1_wall||false;G.p1.harvestedThisTurn=data.p1_harvested||false;
+    G.p1.healUses=data.p1_healUses||0;
+    G.p1.healCooldown=data.p1_healCooldown||0;
+    G.p1.hasWall=data.p1_wall||false;
+    G.p1.harvestedThisTurn=data.p1_harvested||false;
 
-    // إحصائيات الخصم (p2)
-    G.p2.gold=data.p2_gold;G.p2.actions=data.p2_actions;
+    // بيانات الخصم (p2) للعرض فقط
+    G.p2.gold=data.p2_gold||0;
+    G.p2.actions=data.p2_actions||0;
     G.p2.maxActions=data.p2_maxActions||4;
-    G.p2.healUses=data.p2_healUses||0;G.p2.healCooldown=data.p2_healCooldown||0;
-    G.p2.hasWall=data.p2_wall||false;G.p2.harvestedThisTurn=data.p2_harvested||false;
+    G.p2.hasWall=data.p2_wall||false;
 
     // المحفظة
     PersistentWallet.p1Silver=data.p1_silver||0;
-    PersistentWallet.p2Silver=data.p2_silver||0;
     PersistentWallet.p1Diamonds=data.p1_diamonds||0;
+    PersistentWallet.p2Silver=data.p2_silver||0;
     PersistentWallet.p2Diamonds=data.p2_diamonds||0;
 
     // الأسماء
     document.getElementById('p1-lbl').textContent=(data.p1_name||'أنت')+' (أنت)';
     document.getElementById('p2-lbl').textContent=data.p2_name||'الخصم';
 
-    // الدور من وجهة نظري
-    G.turn=fb_turn; // 1=دوري, 2=دور الخصم
+    // هل دوري؟
+    G.turn=(fb_turn===1)?1:2;
 
   }else{
-    // أنا p2: أرضي p2-grid تحت (G.grid.p1 = أرضي للعرض)
-    // أرض الخصم p1-grid فوق مقلوبة (G.grid.p2 = أرض الخصم مقلوبة)
-    G.grid.p1=raw_p2_grid; // أرضي (تحت)
-    G.grid.p2=reverseGridRows(raw_p1_grid); // أرض الخصم (فوق، مقلوبة)
+    // أنا p2: أرضي = grid_p2، خصمي = grid_p1 (مقلوبة للعرض)
+    G.grid.p1=raw_p2;              // أرضي تحت
+    G.grid.p2=flipGridForDisplay(raw_p1); // أرض الخصم فوق (مقلوبة)
 
-    // إحصائياتي (p2 في Firebase = p1 في واجهتي)
-    G.p1.gold=data.p2_gold;G.p1.actions=data.p2_actions;
+    // بياناتي (p2) فقط
+    G.p1.gold=data.p2_gold||0;
+    G.p1.actions=data.p2_actions||0;
     G.p1.maxActions=data.p2_maxActions||4;
-    G.p1.healUses=data.p2_healUses||0;G.p1.healCooldown=data.p2_healCooldown||0;
-    G.p1.hasWall=data.p2_wall||false;G.p1.harvestedThisTurn=data.p2_harvested||false;
+    G.p1.healUses=data.p2_healUses||0;
+    G.p1.healCooldown=data.p2_healCooldown||0;
+    G.p1.hasWall=data.p2_wall||false;
+    G.p1.harvestedThisTurn=data.p2_harvested||false;
 
-    // إحصائيات الخصم (p1 في Firebase = p2 في واجهتي)
-    G.p2.gold=data.p1_gold;G.p2.actions=data.p1_actions;
+    // بيانات الخصم (p1) للعرض فقط
+    G.p2.gold=data.p1_gold||0;
+    G.p2.actions=data.p1_actions||0;
     G.p2.maxActions=data.p1_maxActions||4;
-    G.p2.healUses=data.p1_healUses||0;G.p2.healCooldown=data.p1_healCooldown||0;
-    G.p2.hasWall=data.p1_wall||false;G.p2.harvestedThisTurn=data.p1_harvested||false;
+    G.p2.hasWall=data.p1_wall||false;
 
-    // المحفظة (معكوسة)
+    // المحفظة
     PersistentWallet.p1Silver=data.p2_silver||0;
-    PersistentWallet.p2Silver=data.p1_silver||0;
     PersistentWallet.p1Diamonds=data.p2_diamonds||0;
+    PersistentWallet.p2Silver=data.p1_silver||0;
     PersistentWallet.p2Diamonds=data.p1_diamonds||0;
 
     // الأسماء
     document.getElementById('p1-lbl').textContent=(data.p2_name||'أنت')+' (أنت)';
     document.getElementById('p2-lbl').textContent=data.p1_name||'الخصم';
 
-    // الدور: إذا fb_turn=2 فدوري (أنا p2)، إذا fb_turn=1 فدور الخصم
-    // أحول: دوري=1 في واجهتي، دور الخصم=2
+    // هل دوري؟ fb_turn=2 يعني دور p2 = دوري
     G.turn=(fb_turn===2)?1:2;
   }
 
-  document.getElementById('level-display').textContent='⚔️ أونلاين';
+  document.getElementById('level-display').textContent='⚔️';
   document.getElementById('round-display').textContent=G.round;
   updateUIHub();renderGrids();
 
-  // هل دوري؟
-  let isMyTurn=G.turn===1;
-  if(isMyTurn){
-    pushLog("🎯 دورك الحالي! العب بحكمة.");
-    disableControls(false);G.phase='idle';
-  }else{
-    pushLog("⏳ انتظار هجوم الخصم...");
-    disableControls(true);G.phase='waiting';
-  }
-
-  // تحقق من الـ last_action لعرض animation
+  // تشغيل animation الهجوم إذا في action جديدة من الخصم
   if(data.last_action&&data.last_action.ts){
     let action=data.last_action;
-    // عرض animation الضربة إذا كانت جديدة (آخر 3 ثوان)
-    if(Date.now()-action.ts<3000&&action.type==='attack'){
-      showAttackAnimationFromFirebase(action);
+    if(action.ts>G.lastProcessedActionTs){
+      G.lastProcessedActionTs=action.ts;
+      if(action.type==='attack'){
+        // الـ action مرسلة من الخصم
+        // action.from_player = رقم اللاعب المهاجم في Firebase (1 أو 2)
+        // عرضها فقط لو المهاجم هو الخصم
+        let attackerIsMe=(action.from_player===G.myPlayerNum);
+        if(!attackerIsMe){
+          // الخصم ضرب، نعرض الـ animation
+          // attacker_idx = index في Firebase في شبكة المهاجم
+          // target_idx = index في Firebase في شبكتي
+          // نحول للـ display indices
+          let attDisplayIdx=fbIdxToDisplayEnemyIdx(action.attacker_idx);
+          let tgtDisplayIdx=action.target_idx; // الهدف في شبكتي = مباشر
+          showEnemyAttackAnimation(attDisplayIdx,tgtDisplayIdx,action.proj||'🗡️');
+        }
+      }
     }
+  }
+
+  let isMyTurn=G.turn===1;
+  if(isMyTurn){
+    pushLog("🎯 دورك! العب بحكمة.");
+    disableControls(false);G.phase='idle';
+  }else{
+    pushLog("⏳ انتظار دور الخصم...");
+    disableControls(true);G.phase='waiting';
   }
 }
 
-// عكس صفوف الشبكة للعرض (3 صفوف × 4)
-function reverseGridRows(grid){
-  if(!grid||grid.length===0)return grid;
+function makeEmptyGrid(){
+  return Array.from({length:12},(_,i)=>({id:i,entity:null}));
+}
+
+// قلب صفوف الشبكة للعرض فقط
+// Firebase: row0=idx0-3 (أمامي=أقرب للخصم), row2=idx8-11 (خلفي=الملك)
+// للعرض: row0 يظهر في الأعلى (بعيد عنا) = يجب أن يكون الصف الخلفي (الملك)
+// إذن: display[0-3]=fb[8-11], display[4-7]=fb[4-7], display[8-11]=fb[0-3]
+function flipGridForDisplay(grid){
+  if(!grid||grid.length<12)return makeEmptyGrid();
   let result=[];
-  // صف 2 (indices 8-11) يصبح أعلى (indices 0-3)
-  // صف 1 (indices 4-7) يبقى في الوسط (indices 4-7)
-  // صف 0 (indices 0-3) يصبح أسفل (indices 8-11)
-  for(let i=0;i<4;i++) result.push({...grid[8+i],id:i,_origId:grid[8+i].id});
-  for(let i=0;i<4;i++) result.push({...grid[4+i],id:4+i,_origId:grid[4+i].id});
-  for(let i=0;i<4;i++) result.push({...grid[i],id:8+i,_origId:grid[i].id});
+  // display row0 (أعلى) = fb row2 (خلفي، الملك) = fb idx 8-11
+  for(let i=0;i<4;i++)result.push({...(grid[8+i]||{id:8+i,entity:null}),id:i});
+  // display row1 (وسط) = fb row1 (وسط) = fb idx 4-7
+  for(let i=0;i<4;i++)result.push({...(grid[4+i]||{id:4+i,entity:null}),id:4+i});
+  // display row2 (أسفل، أقرب لنا) = fb row0 (أمامي) = fb idx 0-3
+  for(let i=0;i<4;i++)result.push({...(grid[i]||{id:i,entity:null}),id:8+i});
   return result;
 }
 
-// تحويل index المعكوس إلى index الحقيقي في Firebase
-function unreverseIdx(displayIdx){
-  if(displayIdx<4) return 8+displayIdx;
-  if(displayIdx<8) return displayIdx;
+// تحويل display index (p2-grid المقلوبة) إلى Firebase index
+// display[0-3] = fb[8-11] => fb_idx = display_idx + 8
+// display[4-7] = fb[4-7] => fb_idx = display_idx
+// display[8-11] = fb[0-3] => fb_idx = display_idx - 8
+function displayIdxToFbIdx(displayIdx){
+  if(displayIdx<4)return displayIdx+8;
+  if(displayIdx<8)return displayIdx;
   return displayIdx-8;
 }
 
-// عرض animation الضربة من Firebase
-function showAttackAnimationFromFirebase(action){
-  // action: {type:'attack', attackerField, attackerIdx, targetField, targetIdx, proj, ts}
-  // نحول الـ indices حسب منظوري
-  let myField='p'+G.myPlayerNum;
-  let enemyField=G.myPlayerNum===1?'p2':'p1';
-
-  let startCellId,endCellId;
-
-  if(action.attackerField===myField){
-    // أنا المهاجم - الهجوم من أرضي (p1-grid في واجهتي)
-    startCellId='cell-p1-'+action.attackerIdx;
-    // الهدف في أرض الخصم - لكنها معكوسة
-    let displayTargetIdx=action.targetIdx<4?action.targetIdx+8:(action.targetIdx<8?action.targetIdx:action.targetIdx-8);
-    endCellId='cell-p2-'+displayTargetIdx;
-  }else{
-    // الخصم يهاجم - من أرض الخصم (p2-grid في واجهتي)
-    let displayAttackerIdx=action.attackerIdx<4?action.attackerIdx+8:(action.attackerIdx<8?action.attackerIdx:action.attackerIdx-8);
-    startCellId='cell-p2-'+displayAttackerIdx;
-    // الهدف في أرضي
-    endCellId='cell-p1-'+action.targetIdx;
-  }
-  shootProjectile(startCellId,endCellId,action.proj||'🗡️',()=>{});
+// تحويل Firebase index إلى display index (للعرض في p2-grid المقلوبة)
+// fb[0-3] => display[8-11] => fb_idx + 8
+// fb[4-7] => display[4-7] => fb_idx
+// fb[8-11] => display[0-3] => fb_idx - 8
+function fbIdxToDisplayEnemyIdx(fbIdx){
+  if(fbIdx<4)return fbIdx+8;
+  if(fbIdx<8)return fbIdx;
+  return fbIdx-8;
 }
 
-// =================== UPLOAD STATE TO FIREBASE ===================
+// عرض animation هجوم الخصم علينا
+function showEnemyAttackAnimation(enemyDisplayIdx, myDisplayIdx, proj){
+  let startId='cell-p2-'+enemyDisplayIdx;
+  let endId='cell-p1-'+myDisplayIdx;
+  AudioFX.play('hit');
+  shootProjectile(startId,endId,proj,()=>{});
+}
+
+// =================== UPLOAD TO FIREBASE ===================
 function uploadGameStateToFirebase(extraPayload){
   if(G.mode!=='pvp'||!window.currentRoomId)return;
 
   // تحويل الشبكات المحلية إلى تنسيق Firebase
-  let fb_p1_grid,fb_p2_grid;
+  // G.grid.p1 = أرضي (كما هي في Firebase)
+  // G.grid.p2 = أرض الخصم مقلوبة للعرض، نعيدها لـ Firebase (نقلبها مرة ثانية)
+  let myFbGrid=G.grid.p1;
+  let enemyFbGrid=flipGridForDisplay(G.grid.p2); // نرجعها الأصلية
 
-  if(G.myPlayerNum===1){
-    fb_p1_grid=G.grid.p1; // أرضي كما هي
-    fb_p2_grid=reverseGridRows(G.grid.p2); // أرض الخصم أعدنا عكسها
-  }else{
-    // أنا p2: G.grid.p1=أرضي (p2 في Firebase), G.grid.p2=أرض الخصم مقلوبة (p1 في Firebase)
-    fb_p2_grid=G.grid.p1; // أرضي → p2 في Firebase
-    fb_p1_grid=reverseGridRows(G.grid.p2); // أرض الخصم → p1 في Firebase
-  }
-
-  // الدور التالي في Firebase
-  // حالياً G.turn===1 = دوري. بعد انتهاء دوري، يصبح دور الخصم.
-  // إذا أنا p1: الدور التالي = 2
-  // إذا أنا p2: الدور التالي = 1
-  let next_fb_turn=G.myPlayerNum===1?2:1;
+  let next_fb_turn=G.myPlayerNum===1?2:1; // بعد انتهاء دوري يصبح دور الخصم
 
   let payload={
     turn:next_fb_turn,
-    round:G.round,
-    grid_p1:fb_p1_grid,
-    grid_p2:fb_p2_grid
+    round:G.round
   };
 
   if(G.myPlayerNum===1){
-    payload.p1_gold=G.p1.gold;payload.p1_actions=G.p1.actions;
+    payload.grid_p1=myFbGrid;
+    payload.grid_p2=enemyFbGrid;
+    // بياناتي كـ p1
+    payload.p1_gold=G.p1.gold;
+    payload.p1_actions=G.p1.actions;
     payload.p1_maxActions=G.p1.maxActions;
-    payload.p1_healUses=G.p1.healUses;payload.p1_healCooldown=G.p1.healCooldown;
-    payload.p1_wall=G.p1.hasWall;payload.p1_harvested=G.p1.harvestedThisTurn;
-    payload.p2_gold=G.p2.gold;payload.p2_actions=G.p2.actions;
-    payload.p2_maxActions=G.p2.maxActions;
-    payload.p2_healUses=G.p2.healUses;payload.p2_healCooldown=G.p2.healCooldown;
-    payload.p2_wall=G.p2.hasWall;payload.p2_harvested=G.p2.harvestedThisTurn;
-    payload.p1_silver=PersistentWallet.p1Silver;payload.p2_silver=PersistentWallet.p2Silver;
-    payload.p1_diamonds=PersistentWallet.p1Diamonds;payload.p2_diamonds=PersistentWallet.p2Diamonds;
+    payload.p1_healUses=G.p1.healUses;
+    payload.p1_healCooldown=G.p1.healCooldown;
+    payload.p1_wall=G.p1.hasWall;
+    payload.p1_harvested=G.p1.harvestedThisTurn;
+    payload.p1_silver=PersistentWallet.p1Silver;
+    payload.p1_diamonds=PersistentWallet.p1Diamonds;
   }else{
-    // أنا p2
-    payload.p2_gold=G.p1.gold;payload.p2_actions=G.p1.actions;
+    payload.grid_p2=myFbGrid;
+    payload.grid_p1=enemyFbGrid;
+    // بياناتي كـ p2
+    payload.p2_gold=G.p1.gold;
+    payload.p2_actions=G.p1.actions;
     payload.p2_maxActions=G.p1.maxActions;
-    payload.p2_healUses=G.p1.healUses;payload.p2_healCooldown=G.p1.healCooldown;
-    payload.p2_wall=G.p1.hasWall;payload.p2_harvested=G.p1.harvestedThisTurn;
-    payload.p1_gold=G.p2.gold;payload.p1_actions=G.p2.actions;
-    payload.p1_maxActions=G.p2.maxActions;
-    payload.p1_healUses=G.p2.healUses;payload.p1_healCooldown=G.p2.healCooldown;
-    payload.p1_wall=G.p2.hasWall;payload.p1_harvested=G.p2.harvestedThisTurn;
-    payload.p2_silver=PersistentWallet.p1Silver;payload.p1_silver=PersistentWallet.p2Silver;
-    payload.p2_diamonds=PersistentWallet.p1Diamonds;payload.p1_diamonds=PersistentWallet.p2Diamonds;
+    payload.p2_healUses=G.p1.healUses;
+    payload.p2_healCooldown=G.p1.healCooldown;
+    payload.p2_wall=G.p1.hasWall;
+    payload.p2_harvested=G.p1.harvestedThisTurn;
+    payload.p2_silver=PersistentWallet.p1Silver;
+    payload.p2_diamonds=PersistentWallet.p1Diamonds;
   }
 
   if(extraPayload)Object.assign(payload,extraPayload);
   window._update(window._ref(window._db,`rooms/${window.currentRoomId}`),payload);
 }
 
-// رفع action للـ Firebase لعرضه عند الخصم
-function uploadActionToFirebase(actionData){
+// رفع حركة الهجوم للـ Firebase
+// attacker_idx = display index في أرضي (p1-grid)
+// target_fb_idx = Firebase index في شبكة الخصم (قبل الانعكاس)
+// يستخدمه الخصم لعرض الـ animation فقط
+function uploadAttackActionToFirebase(attackerDisplayIdx, targetDisplayIdx, proj){
   if(G.mode!=='pvp'||!window.currentRoomId)return;
+  // الخصم يرى أرضه = G.grid.p1 عنده
+  // الهدف في G.grid.p2 عندي = display index targetDisplayIdx
+  // target_firebase_idx = الـ index في Firebase في شبكة الخصم
+  let targetFbIdx=displayIdxToFbIdx(targetDisplayIdx);
   window._update(window._ref(window._db,`rooms/${window.currentRoomId}`),{
-    last_action:{...actionData,ts:Date.now()}
+    last_action:{
+      type:'attack',
+      from_player:G.myPlayerNum,
+      attacker_idx:attackerDisplayIdx, // الخصم يستخدمه مباشرة كـ display idx (لأنه سيكون في شبكة الخصم = p2-grid للخصم)
+      target_idx:targetFbIdx,  // Firebase idx في شبكة الهدف
+      proj:proj,
+      ts:Date.now()
+    }
   });
 }
 
@@ -916,32 +940,37 @@ function leaveOnlineMatch(){
   AudioFX.play('click');
   if(window._roomWatcherOff){window._roomWatcherOff();window._roomWatcherOff=null;}
   if(window.currentRoomId){
-    window._update(window._ref(window._db,`rooms/${window.currentRoomId}`),{status:'ended',game_result:G.myPlayerNum===1?2:1});
+    window._update(window._ref(window._db,`rooms/${window.currentRoomId}`),{
+      status:'ended',
+      game_result:G.myPlayerNum===1?2:1
+    });
     window.currentRoomId=null;
   }
   exitToMenu();
 }
 
 // =================== ROW SYSTEM ===================
+// هذه للشبكات المحلية (بعد الـ flip)
+// p1-grid (أرضي): row0=idx0-3=أمامي (نحو الخصم), row2=idx8-11=خلفي (الملك)
+// p2-grid (خصمي، مقلوبة): row0=idx0-3=خلف الخصم (الملك بعيد), row2=idx8-11=أمام الخصم (أقرب لنا)
+
 function getRowOf(idx){return Math.floor(idx/4);}
 
-// في الشبكة المحلية:
-// p1-grid (أرضي): صف 0 (idx 0-3) = أمامي (نحو الخصم), صف 2 (idx 8-11) = خلفي (الملك)
-// p2-grid (الخصم، معكوس للعرض): صف 0 (idx 0-3) = أمام الخصم (أقرب لي), صف 2 (idx 8-11) = خلف الخصم
-
+// للهجوم على p2-grid المقلوبة:
+// display row0 (idx 0-3) = خلف الخصم (الملك)
+// display row2 (idx 8-11) = أمام الخصم
+// يجب إسقاط أمام الخصم (row2) أولاً ثم الوسط (row1) ثم الخلف (row0)
 function canAttackP2Cell(targetIdx){
-  // p2-grid معكوس: الصف 0 هو أقرب صف للخصم (أمامه)
-  // لمهاجمة صف أعمق، يجب إسقاط الصف الأمامي أولاً
   let r=getRowOf(targetIdx);
-  // صف 0 = أمامي للخصم = يمكن مهاجمته دائماً
-  if(r===0)return true;
-  // صف 1 = وسط الخصم = يستلزم خلو صف 0
-  if(r===1)return!G.grid.p2.some((c,i)=>getRowOf(i)===0&&c.entity&&c.entity.type!=='mine');
-  // صف 2 = خلف الخصم = يستلزم خلو صف 0 و 1
-  if(r===2){
-    let r0=!G.grid.p2.some((c,i)=>getRowOf(i)===0&&c.entity&&c.entity.type!=='mine');
+  // row2 (idx 8-11) = أمام الخصم = يمكن مهاجمته دائماً
+  if(r===2)return true;
+  // row1 (idx 4-7) = وسط الخصم = يستلزم خلو row2
+  if(r===1)return!G.grid.p2.some((c,i)=>getRowOf(i)===2&&c.entity&&c.entity.type!=='mine');
+  // row0 (idx 0-3) = خلف الخصم (الملك) = يستلزم خلو row1 و row2
+  if(r===0){
+    let r2=!G.grid.p2.some((c,i)=>getRowOf(i)===2&&c.entity&&c.entity.type!=='mine');
     let r1=!G.grid.p2.some((c,i)=>getRowOf(i)===1&&c.entity&&c.entity.type!=='mine');
-    return r0&&r1;
+    return r2&&r1;
   }
   return false;
 }
@@ -991,6 +1020,7 @@ function initGame(mode){
   G.locked=false;G.phase='idle';
   G.selectedCell=null;G.pendingAction=null;G.pendingItem=null;
   G.myPlayerNum=1;
+  G.lastProcessedActionTs=0;
 
   PersistentWallet.load(mode);
 
@@ -1004,36 +1034,40 @@ function initGame(mode){
   document.getElementById('p1-field-lbl').textContent='حصنك الدفاعي';
   document.getElementById('p2-field-lbl').textContent=mode==='pvc'?'أرض العدو':'أرض الخصم';
 
-  // في PVC نستخدم نفس منظور: p1=أنا (تحت), p2=الخصم (فوق)
-  // لكن لـ p2 (الكمبيوتر): نرتب الشبكة بحيث الملك في صف الخلف
+  // في PVC: p1-grid تحت (أرضي), p2-grid فوق (الخصم)
+  // الملك في الصف الخلفي (idx 8-11) لكليهما
+  // لكن لـ p2 نعرضها مقلوبة فيظهر الملك في الأعلى (بعيد عنا)
   G.grid.p1=Array.from({length:12},(_,i)=>({id:i,entity:null}));
   G.grid.p2=Array.from({length:12},(_,i)=>({id:i,entity:null}));
 
-  // ملك اللاعب في الصف الخلفي
+  // ملك p1 في الصف الخلفي
   let p1KingIcon=G.level>=7?'👑🔥':(G.level>=4?'👑':'🤴');
   G.grid.p1[9]={id:9,entity:{...DATA_TYPES.main,type:'main',hp:80,maxHp:80,icon:p1KingIcon}};
 
   // ملك الكمبيوتر في الصف الخلفي
+  // لكن الشبكة مش مقلوبة هنا - في PVC نتعامل مع p2-grid مباشرة
+  // الانعكاس فقط للعرض في drawField
   let aiKingHP=80,aiKingIcon='🤴🏻';
   if(mode==='pvc'){
     aiKingHP=Math.floor(80*Math.pow(1.2,Math.floor((G.level-1)/3)));
     if(G.level>=7)aiKingIcon='👑🔥';else if(G.level>=4)aiKingIcon='👑';
   }
+  // في PVC، p2-grid بيتعرض مقلوب في drawField، فالملك في idx 9 سيظهر في display row0 (أعلى)
   G.grid.p2[9]={id:9,entity:{...DATA_TYPES.main,type:'main',hp:aiKingHP,maxHp:aiKingHP,icon:aiKingIcon}};
 
-  // الأمير للكمبيوتر (Lv.5+) في وسط الخلف
+  // الأمير للكمبيوتر (Lv.5+) في idx 8
   if(mode==='pvc'&&G.level>=5){
     let pHP=getPrinceHP();
     G.grid.p2[8]={id:8,entity:{...DATA_TYPES.prince,type:'prince',hp:pHP,maxHp:pHP,icon:'🤴🏽',atk:30,label:'الأمير',proj:'⚔️',isGuardian:true,isCounter:true}};
   }
 
-  // الوزير (Lv.10+)
+  // الوزير (Lv.10+) في idx 10
   if(mode==='pvc'&&G.level>=10){
     let vHP=getVizierHP(),vAtk=getVizierAtk();
     G.grid.p2[10]={id:10,entity:{...DATA_TYPES.vizier,type:'vizier',hp:vHP,maxHp:vHP,icon:'🧙‍♂️',atk:vAtk,label:'الوزير',proj:'🔮',isGuardian:true,isHealer:true}};
   }
 
-  // حراس الملك (Lv.20+)
+  // حراس الملك (Lv.20+) في الصف الأوسط
   if(mode==='pvc'&&G.level>=20){
     let gc=getKingGuardsCount(),gs=getKingGuardStats();
     [4,5,6,7].slice(0,gc).forEach(pos=>{
@@ -1089,14 +1123,27 @@ function placeAIStartingTroops(){
 }
 
 // =================== RENDER ===================
+// drawField مسؤولة عن قلب p2-grid للعرض فقط
 function renderGrids(){drawField('p1');drawField('p2');updateShopButtonsStyle();}
 
 function drawField(pKey){
   const container=document.getElementById(pKey+'-grid');container.innerHTML='';
-  G.grid[pKey].forEach((cell,idx)=>{
+
+  // للـ p2-grid نعرضها مقلوبة (الملك في الأعلى = بعيد عنا)
+  // للـ p1-grid نعرضها كما هي (الملك في الأسفل = خلفنا)
+  let cellsToRender;
+  if(pKey==='p2'&&G.mode==='pvc'){
+    // في PVC، نقلب p2-grid للعرض
+    cellsToRender=flipGridForDisplay(G.grid.p2);
+  }else{
+    // في PVC لـ p1، أو في PVP (السنك بالفعل تكفل بالقلب)
+    cellsToRender=G.grid[pKey];
+  }
+
+  cellsToRender.forEach((cell,displayIdx)=>{
     const div=document.createElement('div');
     div.className='cell '+pKey+'-box';
-    div.id='cell-'+pKey+'-'+idx;
+    div.id='cell-'+pKey+'-'+displayIdx;
     if(cell.entity){
       div.innerHTML=cell.entity.icon+'<span class="hp-badge">'+cell.entity.hp+'</span><span class="type-label">'+cell.entity.label+'</span>';
       if(cell.entity.shield>0)div.innerHTML+='<span class="shield-badge shield-'+cell.entity.shield+'">🛡️'+cell.entity.shield+'</span>';
@@ -1107,15 +1154,30 @@ function drawField(pKey){
       else if(cell.entity.isCounter){div.classList.add('ai-guardian');div.innerHTML+='<span class="counter-badge">↩️</span>';}
       else if(cell.entity.isGuardian){div.classList.add('ai-guardian');}
     }
-    if(G.selectedCell&&G.selectedCell.pKey===pKey&&G.selectedCell.idx===idx)div.classList.add('selected');
-    if(G.phase==='attack'&&pKey!==('p'+G.turn)&&cell.entity&&cell.entity.type!=='mine'){
-      let can=pKey==='p2'?canAttackP2Cell(idx):canAttackP1Cell(idx);
+    if(G.selectedCell&&G.selectedCell.pKey===pKey&&G.selectedCell.idx===displayIdx)div.classList.add('selected');
+    if(G.phase==='attack'&&pKey==='p2'&&cell.entity&&cell.entity.type!=='mine'){
+      let can=canAttackP2Cell(displayIdx);
       div.classList.add(can?'valid-target':'blocked-target');
     }
-    if((G.phase==='placing'||G.phase==='premium_placing')&&pKey===('p'+G.turn)&&!cell.entity)div.classList.add('valid-spawn');
-    div.onclick=()=>handleCellInteraction(pKey,idx);
+    if((G.phase==='placing'||G.phase==='premium_placing')&&pKey==='p1'&&!cell.entity)div.classList.add('valid-spawn');
+    div.onclick=()=>handleCellInteraction(pKey,displayIdx);
     container.appendChild(div);
   });
+}
+
+// تحويل display index في p2-grid إلى index في G.grid.p2 الفعلي
+// هذا يختلف بين PVC و PVP:
+// في PVC: G.grid.p2 غير مقلوبة، drawField يقلبها => displayIdx يناظر flipGridForDisplay
+//   flipGridForDisplay: display[0-3]=fb[8-11], display[4-7]=fb[4-7], display[8-11]=fb[0-3]
+// في PVP: G.grid.p2 هي بالفعل مقلوبة (من syncDataFromFirebase) => displayIdx = idx في G.grid.p2
+function p2DisplayIdxToGridIdx(displayIdx){
+  if(G.mode==='pvc'){
+    // نعكس flipGridForDisplay
+    return displayIdxToFbIdx(displayIdx);
+  }else{
+    // PVP: G.grid.p2 بالفعل مقلوبة
+    return displayIdx;
+  }
 }
 
 function isMyTurnNow(){return G.turn===1;}
@@ -1185,14 +1247,22 @@ function prepareShield(){
   AudioFX.play('click');cancelAction();G.phase='shielding';toggleCancelButton(true);pushLog('اختر جندياً لحمايته!');renderGrids();
 }
 
-function handleCellInteraction(pKey,idx){
+function handleCellInteraction(pKey,displayIdx){
   if(G.locked||!isMyTurnNow())return;
-  const currentField='p1',enemyField='p2';
-  const cell=G.grid[pKey][idx];
 
-  if(G.phase==='placing'&&pKey===currentField){if(cell.entity)return;executePlacement(idx);return;}
-  if(G.phase==='premium_placing'&&pKey===currentField){if(cell.entity)return;executePremiumSpawn(idx);return;}
-  if(G.phase==='healing'&&pKey===currentField){
+  // نحول displayIdx إلى index في G.grid[pKey] الفعلي
+  let gridIdx=displayIdx;
+  if(pKey==='p2'){
+    gridIdx=p2DisplayIdxToGridIdx(displayIdx);
+  }
+
+  const cell=G.grid[pKey][gridIdx];
+  if(!cell)return;
+
+  if(G.phase==='placing'&&pKey==='p1'){if(cell.entity)return;executePlacement(gridIdx,displayIdx);return;}
+  if(G.phase==='premium_placing'&&pKey==='p1'){if(cell.entity)return;executePremiumSpawn(gridIdx,displayIdx);return;}
+
+  if(G.phase==='healing'&&pKey==='p1'){
     if(!cell.entity)return;
     if(cell.entity.hp>=cell.entity.maxHp){pushLog("طاقة الجندي مكتملة!");return;}
     let cfg=DATA_TYPES[G.pendingItem];
@@ -1202,49 +1272,54 @@ function handleCellInteraction(pKey,idx){
     AudioFX.play('heal');pushLog(`💉 تم علاج ${cell.entity.label}!`);
     cancelAction();updateUIHub();if(G.mode==='pvp')uploadGameStateToFirebase();checkAutoEndTurn();return;
   }
-  if(G.phase==='shielding'&&pKey===currentField){
+
+  if(G.phase==='shielding'&&pKey==='p1'){
     if(!cell.entity)return;
     cell.entity.shield=getShieldPower();getCurrentPlayer().actions--;
     AudioFX.play('spawn');pushLog('🛡️ تم تفعيل الدرع!');
     cancelAction();updateUIHub();if(G.mode==='pvp')uploadGameStateToFirebase();checkAutoEndTurn();return;
   }
+
   if(G.phase==='attack'){
-    if(pKey===enemyField&&cell.entity&&cell.entity.type!=='mine'){
-      let can=canAttackP2Cell(idx);
+    if(pKey==='p2'&&cell.entity&&cell.entity.type!=='mine'){
+      let can=canAttackP2Cell(displayIdx);
       if(!can){pushLog("⚠️ يجب إسقاط الصف الأمامي أولاً!");return;}
-      executeAttackStrike(idx);
+      executeAttackStrike(gridIdx,displayIdx);
     }else{pushLog("تم إلغاء الهجوم.");cancelAction();}
     return;
   }
-  if(G.phase==='idle'&&pKey===currentField&&cell.entity){
+
+  if(G.phase==='idle'&&pKey==='p1'&&cell.entity){
     if(cell.entity.atk===0){pushLog("لا يمكن الهجوم بهذا المبنى.");return;}
     if(getCurrentPlayer().actions<=0){pushLog("طاقة غير كافية!");return;}
-    AudioFX.play('click');G.selectedCell={pKey,idx};G.phase='attack';
+    AudioFX.play('click');
+    G.selectedCell={pKey,idx:displayIdx,gridIdx:gridIdx};
+    G.phase='attack';
     toggleCancelButton(true);pushLog('اختر هدفاً للهجوم...');renderGrids();
   }
 }
 
 function recalculateMaxActions(pKey){G[pKey].maxActions=G.mode==='pvp'?4:(G.level>=5?5:4);}
 
-function executePlacement(idx){
+function executePlacement(gridIdx,displayIdx){
   const cfg=DATA_TYPES[G.pendingItem];
   if(getCurrentPlayer().gold<cfg.cost)return;
   AudioFX.play('spawn');getCurrentPlayer().gold-=cfg.cost;getCurrentPlayer().actions--;
-  G.grid.p1[idx].entity={...cfg,type:G.pendingItem};
+  G.grid.p1[gridIdx].entity={...cfg,type:G.pendingItem};
   pushLog('تم بناء '+cfg.label+'!');cancelAction();updateUIHub();if(G.mode==='pvp')uploadGameStateToFirebase();checkAutoEndTurn();
 }
 
-function executePremiumSpawn(idx){
+function executePremiumSpawn(gridIdx,displayIdx){
   const cfg=DATA_TYPES[G.pendingItem];
   if(G.pendingItem==='ultra_prince'){
     PersistentWallet.p1Diamonds-=cfg.cost;PersistentWallet.save(G.mode);
     getCurrentPlayer().actions--;
-    G.grid.p1[idx].entity={...cfg,type:G.pendingItem,isUltraPrince:true,isCounter:true};
+    G.grid.p1[gridIdx].entity={...cfg,type:G.pendingItem,isUltraPrince:true,isCounter:true};
     AudioFX.play('ultra_counter');pushLog('👑⚔️ الأمير الخارق انضم للمعركة!');
   }else{
     PersistentWallet.p1Silver-=cfg.cost;PersistentWallet.save(G.mode);
     getCurrentPlayer().actions--;
-    G.grid.p1[idx].entity={...cfg,type:G.pendingItem};
+    G.grid.p1[gridIdx].entity={...cfg,type:G.pendingItem};
     AudioFX.play('spawn');pushLog('تم إنزال '+cfg.label+'!');
   }
   cancelAction();updateUIHub();if(G.mode==='pvp')uploadGameStateToFirebase();checkAutoEndTurn();
@@ -1281,15 +1356,24 @@ function shootProjectile(startId,endId,icon,callback){
 }
 
 // =================== COUNTER ATTACKS ===================
-function triggerPrinceCounterAttack(attackerIdx,princeCellIdx,onDone){
-  let prince=G.grid.p2[princeCellIdx].entity;
-  let attackerCell=G.grid.p1[attackerIdx];
+// في PVC: p2-grid الداخلية (G.grid.p2) غير مقلوبة
+// الأمير في G.grid.p2[8] أو قريب من الملك في idx 8-11
+// عند الـ counter، نحسب display index للـ animation
+
+function triggerPrinceCounterAttack(attackerDisplayIdx, princeFbIdx, onDone){
+  let prince=G.grid.p2[princeFbIdx].entity;
+  let attackerGridIdx=attackerDisplayIdx; // p1 grid idx = display idx (غير مقلوب)
+  let attackerCell=G.grid.p1[attackerGridIdx];
   if(!attackerCell||!attackerCell.entity){onDone();return;}
   AudioFX.play('counter');pushLog(`⚡ الأمير يرد على ${attackerCell.entity.label}!`);
-  let el=document.getElementById('cell-p1-'+attackerIdx);
+  let el=document.getElementById('cell-p1-'+attackerDisplayIdx);
   if(el){el.style.animation='counterFlash 0.3s ease-in-out 2';setTimeout(()=>el.style.animation='',600);}
-  shootProjectile('cell-p2-'+princeCellIdx,'cell-p1-'+attackerIdx,'⚔️',()=>{
-    let rc=G.grid.p1[attackerIdx];
+
+  // display index للأمير في p2-grid (مقلوبة)
+  let princeDisplayIdx=fbIdxToDisplayEnemyIdx(princeFbIdx);
+
+  shootProjectile('cell-p2-'+princeDisplayIdx,'cell-p1-'+attackerDisplayIdx,'⚔️',()=>{
+    let rc=G.grid.p1[attackerGridIdx];
     if(!rc||!rc.entity){onDone();return;}
     rc.entity.hp-=prince.atk;
     if(rc.entity.hp<=0){
@@ -1302,33 +1386,36 @@ function triggerPrinceCounterAttack(attackerIdx,princeCellIdx,onDone){
   });
 }
 
-function triggerUltraPrinceCounterAttack(ultraPrinceIdx,ultraField,attackerIdx,attackerField,onDone){
-  let up=G.grid[ultraField][ultraPrinceIdx].entity;
-  if(!up||up.hp<=0){onDone();return;}
-  let ac=G.grid[attackerField][attackerIdx];
+function triggerUltraPrinceCounterAttack(upDisplayIdx, upField, attackerDisplayIdx, attackerField, onDone){
+  let upGridIdx=upField==='p2'?p2DisplayIdxToGridIdx(upDisplayIdx):upDisplayIdx;
+  let up=G.grid[upField][upGridIdx];
+  if(!up||!up.entity||up.entity.hp<=0){onDone();return;}
+  let acGridIdx=attackerField==='p2'?p2DisplayIdxToGridIdx(attackerDisplayIdx):attackerDisplayIdx;
+  let ac=G.grid[attackerField][acGridIdx];
   if(!ac||!ac.entity){onDone();return;}
   AudioFX.play('ultra_counter');pushLog(`👑⚔️ الأمير الخارق يثأر من ${ac.entity.label}!`);
-  let pel=document.getElementById('cell-'+ultraField+'-'+ultraPrinceIdx);
+  let pel=document.getElementById('cell-'+upField+'-'+upDisplayIdx);
   if(pel){pel.style.boxShadow='inset 0 0 30px rgba(255,204,0,1)';setTimeout(()=>pel.style.boxShadow='',600);}
-  let ael=document.getElementById('cell-'+attackerField+'-'+attackerIdx);
+  let ael=document.getElementById('cell-'+attackerField+'-'+attackerDisplayIdx);
   if(ael){ael.style.animation='counterFlash 0.3s ease-in-out 2';setTimeout(()=>ael.style.animation='',600);}
-  shootProjectile('cell-'+ultraField+'-'+ultraPrinceIdx,'cell-'+attackerField+'-'+attackerIdx,'👑⚔️',()=>{
-    let ra=G.grid[attackerField][attackerIdx];
+  shootProjectile('cell-'+upField+'-'+upDisplayIdx,'cell-'+attackerField+'-'+attackerDisplayIdx,'👑⚔️',()=>{
+    let ra=G.grid[attackerField][acGridIdx];
     if(!ra||!ra.entity){onDone();return;}
-    ra.entity.hp-=up.atk;
+    ra.entity.hp-=up.entity.atk;
     if(ra.entity.hp<=0){
       AudioFX.play('explosion');let dt=ra.entity.type;ra.entity=null;
-      if(dt==='main'){G.locked=false;triggerWinOutcome(ultraField==='p1'?1:2);return;}
+      if(dt==='main'){G.locked=false;triggerWinOutcome(upField==='p1'?1:2);return;}
       if(attackerField==='p1'){PersistentWallet.p1Silver+=50;PersistentWallet.p1Diamonds+=5;PersistentWallet.save(G.mode);}
       else{PersistentWallet.p2Silver+=50;PersistentWallet.p2Diamonds+=5;}
       pushLog('💀 الأمير الخارق أفنى العدو! +50🥈 +5💎');
-    }else{AudioFX.play('hit');pushLog(`👑 الأمير الخارق رد بـ ${up.atk} ضرر!`);}
+    }else{AudioFX.play('hit');pushLog(`👑 الأمير الخارق رد بـ ${up.entity.atk} ضرر!`);}
     renderGrids();updateUIHub();onDone();
   });
 }
 
 // =================== VIZIER ===================
 function vizierDoSupport(onDone){
+  // في PVC، نبحث في G.grid.p2 الغير مقلوبة
   let vi=-1;
   G.grid.p2.forEach((c,i)=>{if(c.entity&&c.entity.type==='vizier'&&c.entity.hp>0)vi=i;});
   if(vi===-1){onDone();return;}
@@ -1345,7 +1432,10 @@ function vizierDoSupport(onDone){
   if(target&&target.entity){
     let old=target.entity.hp;target.entity.hp=Math.min(target.entity.hp+heal,target.entity.maxHp);
     AudioFX.play('heal');pushLog(`🧙‍♂️ الوزير يعالج ${target.entity.label} بـ ${target.entity.hp-old} نقطة!`);
-    let el=document.getElementById('cell-p2-'+(wi!==-1?wi:G.grid.p2.indexOf(target)));
+    // نحسب display index للـ animation
+    let targetFbIdx=G.grid.p2.indexOf(target);
+    let targetDisplayIdx=fbIdxToDisplayEnemyIdx(targetFbIdx);
+    let el=document.getElementById('cell-p2-'+targetDisplayIdx);
     if(el){el.style.boxShadow='inset 0 0 20px rgba(0,255,100,0.9)';setTimeout(()=>el.style.boxShadow='',600);}
     renderGrids();setTimeout(onDone,500);
   }else{onDone();}
@@ -1354,33 +1444,23 @@ function vizierDoSupport(onDone){
 // =================== ATTACK ===================
 function playAttackSound(type){AudioFX.play(type==='infantry'||type==='super_infantry'||type==='prince'||type==='king_guard'?'hit':'explosion');}
 
-function executeAttackStrike(targetIdx){
-  // targetIdx = index في p2-grid (الخصم، كما يظهر على شاشتي)
-  const attacker=G.grid.p1[G.selectedCell.idx].entity;
-  const targetCell=G.grid.p2[targetIdx];
-  const attackerIdx=G.selectedCell.idx;
+// attackerDisplayIdx = display index في p1-grid (= grid index في p1 لأنها غير مقلوبة)
+// targetGridIdx = grid index في G.grid.p2 الفعلي (بعد تحويل display idx)
+// targetDisplayIdx = display index في p2-grid (للـ DOM)
+function executeAttackStrike(targetGridIdx, targetDisplayIdx){
+  const attackerDisplayIdx=G.selectedCell.idx;
+  const attackerGridIdx=attackerDisplayIdx; // p1 غير مقلوبة
+  const attacker=G.grid.p1[attackerGridIdx].entity;
+  const targetCell=G.grid.p2[targetGridIdx];
 
   G.locked=true;getCurrentPlayer().actions--;disableControls(true);playAttackSound(attacker.type);
 
-  // تسجيل الـ action في Firebase لعرضه عند الخصم
-  // في Firebase: إذا أنا p1، الخصم هو p2، والـ targetIdx في Firebase هو معكوس targetIdx المحلي
-  // إذا أنا p2، الخصم هو p1، والـ targetIdx في Firebase = unreverse(targetIdx)
+  // رفع الهجوم للـ Firebase
   if(G.mode==='pvp'){
-    let fb_attackerField='p'+G.myPlayerNum;
-    let fb_targetField=G.myPlayerNum===1?'p2':'p1';
-    // الـ target في Firebase (قبل العكس)
-    let fb_targetIdx=unreverseIdx(targetIdx);
-    uploadActionToFirebase({
-      type:'attack',
-      attackerField:fb_attackerField,
-      attackerIdx:attackerIdx,
-      targetField:fb_targetField,
-      targetIdx:fb_targetIdx,
-      proj:attacker.proj||'🗡️'
-    });
+    uploadAttackActionToFirebase(attackerDisplayIdx, targetDisplayIdx, attacker.proj||'🗡️');
   }
 
-  shootProjectile('cell-p1-'+attackerIdx,'cell-p2-'+targetIdx,attacker.proj||'🗡️',()=>{
+  shootProjectile('cell-p1-'+attackerDisplayIdx,'cell-p2-'+targetDisplayIdx,attacker.proj||'🗡️',()=>{
     // التحقق من الجدار
     if(G.p2.hasWall){
       G.p2.hasWall=false;AudioFX.play('hit');pushLog('🧱 الجدار الدفاعي صد الضربة وتدمر!');
@@ -1396,12 +1476,19 @@ function executeAttackStrike(targetIdx){
     }
 
     targetCell.entity.hp-=attacker.atk;
+    renderGrids();
 
     if(targetCell.entity.hp<=0){
       AudioFX.play('explosion');let dt=targetCell.entity.type;targetCell.entity=null;
       if(dt==='main'){
         G.locked=false;
-        if(G.mode==='pvp')window._update(window._ref(window._db,`rooms/${window.currentRoomId}`),{status:'ended',game_result:G.myPlayerNum});
+        if(G.mode==='pvp'){
+          window._update(window._ref(window._db,`rooms/${window.currentRoomId}`),{
+            status:'ended',game_result:G.myPlayerNum,
+            grid_p1:G.myPlayerNum===1?G.grid.p1:flipGridForDisplay(G.grid.p2),
+            grid_p2:G.myPlayerNum===1?flipGridForDisplay(G.grid.p2):G.grid.p1
+          });
+        }
         triggerWinOutcome(1);return;
       }
       let sr=50,dr=5;
@@ -1417,21 +1504,19 @@ function executeAttackStrike(targetIdx){
       let done=()=>{G.locked=false;disableControls(false);cancelAction();updateUIHub();if(G.mode==='pvp')uploadGameStateToFirebase();checkAutoEndTurn();};
 
       if(G.mode==='pvc'){
-        // تحقق من الأمير (في p2-grid)
-        let princeIdx=-1;
-        G.grid.p2.forEach((c,i)=>{if(c.entity&&c.entity.type==='prince'&&c.entity.hp>0)princeIdx=i;});
+        // التحقق من الأمير في G.grid.p2 (غير مقلوبة)
+        let princeFbIdx=-1;
+        G.grid.p2.forEach((c,i)=>{if(c.entity&&c.entity.type==='prince'&&c.entity.hp>0)princeFbIdx=i;});
         let hitKing=targetCell.entity&&targetCell.entity.type==='main';
-        let hitPrince=G.grid.p2[targetIdx]&&G.grid.p2[targetIdx].entity&&G.grid.p2[targetIdx].entity.type==='prince';
+        let hitPrince=targetCell.entity&&targetCell.entity.type==='prince';
 
-        if(hitKing&&princeIdx!==-1){
-          setTimeout(()=>triggerPrinceCounterAttack(attackerIdx,princeIdx,done),400);
-        }else if(hitPrince&&princeIdx!==-1){
-          setTimeout(()=>triggerPrinceCounterAttack(attackerIdx,targetIdx,done),400);
+        if((hitKing||hitPrince)&&princeFbIdx!==-1){
+          let pFbIdx=hitPrince?targetGridIdx:princeFbIdx;
+          setTimeout(()=>triggerPrinceCounterAttack(attackerDisplayIdx,pFbIdx,done),400);
         }else{done();}
       }else if(G.mode==='pvp'){
-        // في PVP، الخصم قد يكون لديه ultra_prince
         let hitUP=targetCell.entity&&targetCell.entity.isUltraPrince&&targetCell.entity.hp>0;
-        if(hitUP){setTimeout(()=>triggerUltraPrinceCounterAttack(targetIdx,'p2',attackerIdx,'p1',done),400);}
+        if(hitUP){setTimeout(()=>triggerUltraPrinceCounterAttack(targetDisplayIdx,'p2',attackerDisplayIdx,'p1',done),400);}
         else{done();}
       }else{done();}
     }
@@ -1464,21 +1549,20 @@ function checkAutoEndTurn(){if(getCurrentPlayer().actions<=0&&G.turn===1)setTime
 function endTurn(isAI=false){
   if(G.locked&&!isAI)return;
   if(G.mode==='pvc'&&G.turn===2&&!isAI)return;
-  if(G.mode==='pvp'&&G.turn!==1)return; // فقط لما يكون دوري
+  if(G.mode==='pvp'&&G.turn!==1)return;
 
-  // تطبيق دخل المناجم على اللاعب الحالي
-  G.grid['p'+G.turn].forEach(c=>{if(c.entity&&c.entity.type==='mine')G['p'+G.turn].gold+=2;});
+  // دخل المناجم للاعب الحالي
+  G.grid['p1'].forEach(c=>{if(c.entity&&c.entity.type==='mine')G.p1.gold+=2;});
 
-  G.p1.healCooldown=0;G.p2.healCooldown=0;
-  G.p1.harvestedThisTurn=false;G.p2.harvestedThisTurn=false;
+  G.p1.healCooldown=0;
+  G.p1.harvestedThisTurn=false;
 
   if(G.mode==='pvp'){
-    // رفع الحالة وتحويل الدور للخصم
     uploadGameStateToFirebase();
     disableControls(true);
-    G.turn=2; // الآن ننتظر الخصم
+    G.turn=2;
     G.phase='waiting';
-    pushLog("⏳ انتظار هجوم الخصم...");
+    pushLog("⏳ انتظار دور الخصم...");
     cancelAction();updateUIHub();
     return;
   }
@@ -1489,21 +1573,24 @@ function endTurn(isAI=false){
 
   recalculateMaxActions('p1');recalculateMaxActions('p2');
   G.p1.actions=G.p1.maxActions;G.p2.actions=G.p2.maxActions;
+  G.p1.healCooldown=0;G.p2.healCooldown=0;
+  G.p1.harvestedThisTurn=false;G.p2.harvestedThisTurn=false;
 
   cancelAction();updateUIHub();
 
   if(G.mode==='pvc'&&G.turn===2){
-    let vi=G.grid.p2.some(c=>c.entity&&c.entity.type==='vizier');
-    if(vi){setTimeout(()=>vizierDoSupport(()=>setTimeout(runAdvancedAISystem,400)),600);}
+    let hasVi=G.grid.p2.some(c=>c.entity&&c.entity.type==='vizier');
+    if(hasVi){setTimeout(()=>vizierDoSupport(()=>setTimeout(runAdvancedAISystem,400)),600);}
     else{setTimeout(runAdvancedAISystem,800);}
   }
 }
 
 // =================== AI ===================
+// AI يتعامل مع G.grid.p2 مباشرة (غير مقلوبة)
+// الهجوم على p1 = canAttackP1Cell الذي يعتمد على G.grid.p1 (غير مقلوبة)
 function runAdvancedAISystem(){
   if(G.turn!==2||G.mode!=='pvc')return;
   if(G.p2.actions<=0){
-    // نهاية دور الكمبيوتر
     G.grid.p2.forEach(c=>{if(c.entity&&c.entity.type==='mine')G.p2.gold+=2;});
     G.turn=1;G.round++;
     recalculateMaxActions('p1');recalculateMaxActions('p2');
@@ -1531,7 +1618,12 @@ function runAdvancedAISystem(){
   if(best&&targets.length>0){
     targets.sort((a,b)=>a.entity.hp-b.entity.hp);
     let t=targets[0];G.p2.actions--;playAttackSound(best.entity.type);
-    shootProjectile('cell-p2-'+best.idx,'cell-p1-'+t.idx,best.entity.proj||'🗡️',()=>{
+
+    // نحسب display indices للـ animation
+    let bestDisplayIdx=fbIdxToDisplayEnemyIdx(best.idx);
+    let tDisplayIdx=t.idx; // p1 غير مقلوبة
+
+    shootProjectile('cell-p2-'+bestDisplayIdx,'cell-p1-'+tDisplayIdx,best.entity.proj||'🗡️',()=>{
       let rc=G.grid.p1[t.idx];
       if(G.p1.hasWall){G.p1.hasWall=false;AudioFX.play('hit');pushLog('🧱 جدارك صد هجوم العدو!');updateUIHub();renderGrids();setTimeout(runAdvancedAISystem,600);return;}
       if(rc.entity&&rc.entity.shield>0){rc.entity.shield--;if(rc.entity.shield<=0)delete rc.entity.shield;pushLog('🛡️ الدرع صد الهجوم!');updateUIHub();renderGrids();setTimeout(runAdvancedAISystem,600);return;}
@@ -1547,7 +1639,7 @@ function runAdvancedAISystem(){
           AudioFX.play('hit');
           let hitUP=rc.entity&&rc.entity.isUltraPrince&&rc.entity.hp>0;
           if(hitUP){
-            setTimeout(()=>triggerUltraPrinceCounterAttack(t.idx,'p1',best.idx,'p2',()=>{
+            setTimeout(()=>triggerUltraPrinceCounterAttack(tDisplayIdx,'p1',bestDisplayIdx,'p2',()=>{
               updateUIHub();renderGrids();setTimeout(runAdvancedAISystem,600);
             }),400);
           }else{updateUIHub();renderGrids();setTimeout(runAdvancedAISystem,600);}
@@ -1626,7 +1718,6 @@ function triggerWinOutcome(winner){
   let title=document.getElementById('win-title'),body=document.getElementById('win-body'),btn=document.getElementById('modal-action-btn');
 
   if(winner===1){
-    // اللاعب فاز
     if(G.mode==='pvc'){
       SurvivorsSystem.saveFromGrid('p1');
       SurvivorsSystem.p2=[];
@@ -1645,7 +1736,6 @@ function triggerWinOutcome(winner){
       btn.textContent='القائمة الرئيسية';btn.onclick=exitToMenu;
     }
   }else{
-    // الخصم فاز
     if(G.mode==='pvc')SurvivorsSystem.clear();
     title.innerHTML='خسارة 💀';
     body.innerHTML='تم تدمير ملكك. حاول مجدداً!';
