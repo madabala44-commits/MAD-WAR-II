@@ -78,9 +78,15 @@ body{background:var(--dark-bg);color:#e2e8f0;height:100dvh;width:100vw;overflow:
 .cell.ultra-prince-cell{box-shadow:inset 0 0 18px rgba(255,140,0,0.8);border-color:#ff8c00!important;animation:ultraPrincePulse 1.5s infinite;}
 .cell.vizier-cell{box-shadow:inset 0 0 14px rgba(0,255,200,0.7);border-color:#00ffc8!important;animation:vizierPulse 2s infinite;}
 .cell.king-guard-cell{box-shadow:inset 0 0 14px rgba(255,165,0,0.7);border-color:#ff8c00!important;}
+/* ===== ELITE INFANTRY CELL ===== */
+.cell.elite-infantry-cell{box-shadow:inset 0 0 14px rgba(255,51,68,0.7);border-color:#ff3344!important;animation:eliteInfantryPulse 2s infinite;}
+@keyframes eliteInfantryPulse{0%,100%{box-shadow:inset 0 0 8px rgba(255,51,68,0.4);}50%{box-shadow:inset 0 0 20px rgba(255,80,80,0.9);}}
+/* =============================== */
 .counter-badge{position:absolute;top:1px;right:2px;font-size:8px;background:rgba(138,43,226,0.9);color:#fff;padding:1px 3px;border-radius:3px;font-weight:900;z-index:5;}
 .ultra-counter-badge{position:absolute;top:1px;right:2px;font-size:8px;background:linear-gradient(135deg,#ff8c00,#ffcc00);color:#000;padding:1px 3px;border-radius:3px;font-weight:900;z-index:5;}
 .heal-aura-badge{position:absolute;bottom:14px;left:2px;font-size:8px;background:rgba(0,255,200,0.9);color:#000;padding:1px 3px;border-radius:3px;font-weight:900;z-index:5;}
+/* elite infantry badge */
+.elite-badge{position:absolute;bottom:14px;right:2px;font-size:8px;background:rgba(255,51,68,0.9);color:#fff;padding:1px 3px;border-radius:3px;font-weight:900;z-index:5;}
 .control-panel{background:var(--panel-bg);border-radius:8px;padding:5px;border:1px solid var(--grid-border);z-index:10;flex-shrink:0;}
 .log-bar{background:var(--dark-bg);padding:5px;border-radius:4px;text-align:center;font-size:12px;font-weight:bold;color:var(--cyber-gold);margin-bottom:5px;border:1px solid var(--grid-border);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .actions-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;}
@@ -260,7 +266,7 @@ window.listenForInvites=function(){
         <button class="act-btn full-width" id="btn-shield" onclick="prepareShield()" style="display:none;background:linear-gradient(135deg,#1D4ED8,#1E40AF);margin-top:2px;grid-column:span 4;">🛡️ درع حماية (1⚡)</button>
       </div>
       <div class="submenu" id="sub-spawn">
-        <div class="sub-opt" onclick="prepareAction('spawn','infantry')"><span>⚔️</span>مشاة (10🪙)</div>
+        <div class="sub-opt" id="spawn-infantry-opt" onclick="prepareAction('spawn','infantry')"><span id="infantry-spawn-icon">⚔️</span><span id="infantry-spawn-label">مشاة (10🪙)</span></div>
         <div class="sub-opt" onclick="prepareAction('spawn','archer')"><span>🏹</span>رامي (15🪙)</div>
       </div>
       <div class="submenu" id="sub-build">
@@ -335,6 +341,7 @@ window.listenForInvites=function(){
       - <b>🧱 جدار دفاعي:</b> يصد هجوماً واحداً بالكامل ثم يتدمر.<br>
       - <b>🏗️ منجم:</b> يزيد دخلك من الذهب كل دور.<br>
       - <b>💎 نظام الألماس:</b> كل قتل = 5💎. كل 20💎 تقوي ملكك 10%.<br>
+      - <b>🛡️⚔️ مشاة النخبة (Lv.10+):</b> مشاة مطورون بضربة 40 وصد قوي!<br>
       - <b>🛡️ درع الحماية (Lv.5+):</b> يحمي جندي من ضربات العدو.<br>
       - <b>⭐ الناجون:</b> جنودك الأحياء بعد الفوز ينتقلون معك!<br>
       - <b>🤴🏽 الأمير (Lv.5+):</b> يرد على من يضرب الملك.<br>
@@ -352,6 +359,7 @@ window.listenForInvites=function(){
 const DATA_TYPES={
   main:{icon:'🤴',hp:80,maxHp:80,atk:0,cost:0,label:'الملك'},
   mine:{icon:'⛏️',hp:15,maxHp:15,atk:0,cost:10,label:'منجم'},
+  // infantry: يتغير عند Lv.10+ عبر دالة getInfantryStats()
   infantry:{icon:'⚔️',hp:40,maxHp:40,atk:10,cost:10,label:'مشاة',proj:'🗡️'},
   archer:{icon:'🏹',hp:18,maxHp:18,atk:18,cost:15,label:'رامي',proj:'🏹'},
   super_infantry:{icon:'🪖',hp:90,maxHp:90,atk:16,cost:100,label:'خارق',proj:'🗡️'},
@@ -366,39 +374,77 @@ const DATA_TYPES={
   med_large:{cost:30,heal:60,label:'حقنة كبيرة'}
 };
 
+// =================== ELITE INFANTRY SYSTEM ===================
+// من المستوى 10: مشاة النخبة بشكل وقوة مختلفة
+function isEliteInfantryLevel(){
+  return G.mode==='pvc'&&G.level>=10;
+}
+
+function getInfantryStats(){
+  if(isEliteInfantryLevel()){
+    return {
+      icon:'🛡️⚔️',
+      hp:80,
+      maxHp:80,
+      atk:40,
+      cost:10,
+      label:'مشاة نخبة',
+      proj:'🗡️',
+      isEliteInfantry:true
+    };
+  }
+  return {
+    icon:'⚔️',
+    hp:40,
+    maxHp:40,
+    atk:10,
+    cost:10,
+    label:'مشاة',
+    proj:'🗡️'
+  };
+}
+
+// تحديث زر التدريب حسب المستوى
+function updateInfantrySpawnButton(){
+  let iconEl=document.getElementById('infantry-spawn-icon');
+  let labelEl=document.getElementById('infantry-spawn-label');
+  if(!iconEl||!labelEl)return;
+  if(isEliteInfantryLevel()){
+    iconEl.textContent='🛡️⚔️';
+    labelEl.textContent='نخبة (10🪙)';
+  }else{
+    iconEl.textContent='⚔️';
+    labelEl.textContent='مشاة (10🪙)';
+  }
+}
+
+// =================== STARTING GOLD SYSTEM ===================
+// من Lv.10: 100 ذهب ابتدائي، +30 كل 3 مستويات
+function getPlayerStartingGold(level){
+  if(level<10) return 40;
+  // Lv.10 → 100، Lv.13 → 130، Lv.16 → 160 ...
+  let extra=Math.floor((level-10)/3)*30;
+  return 100+extra;
+}
+
+// نفس المعادلة للـ AI لكن بمضاعف حسب المستوى (كما كانت)
+function getAIStartingGold(level){
+  return 40+(level-1)*12;
+}
+
+// =================== KING HP SYSTEM ===================
+// ملك اللاعب الآن يتقوى بنفس معادلة ملك الكمبيوتر
+function getKingHP(level){
+  return Math.floor(80*Math.pow(1.2,Math.floor((level-1)/3)));
+}
+
+function getKingIcon(level){
+  if(level>=7)return'👑🔥';
+  if(level>=4)return'👑';
+  return'🤴';
+}
+
 // =================== GAME STATE ===================
-/*
-  نظام الشبكة - المبدأ الأساسي:
-  ===================================
-  كل شبكة 12 خلية: 3 صفوف × 4 أعمدة
-  
-  p1-grid (اللاعب - تحت الشاشة):
-    الصف 0 (idx 0-3)  = الصف الأمامي  ← أقرب للخصم (يُهاجَم أولاً من العدو)
-    الصف 1 (idx 4-7)  = الصف الأوسط
-    الصف 2 (idx 8-11) = الصف الخلفي  ← فيه الملك (يُهاجَم آخراً)
-
-  p2-grid (الخصم - فوق الشاشة) - **مخزنة داخلياً بنفس الاتجاه**:
-    الصف 0 (idx 0-3)  = الصف الأمامي للخصم ← أقرب لنا (نهاجمه أولاً)
-    الصف 1 (idx 4-7)  = الصف الأوسط
-    الصف 2 (idx 8-11) = الصف الخلفي  ← فيه ملك الخصم
-
-  للعرض في DOM: نعكس p2-grid بصرياً فقط
-    displayRow 0 (أعلى p2-grid)  ← p2 internal صف 2 (الملك، بعيد عنا)
-    displayRow 1 (وسط p2-grid)   ← p2 internal صف 1
-    displayRow 2 (أسفل p2-grid)  ← p2 internal صف 0 (أمامي الخصم، أقرب لنا)
-
-  قواعد الهجوم:
-  - لمهاجمة خلية في p2: نستخدم internalIdx مباشرة
-    - صف 0 (idx 0-3): يمكن مهاجمته دائماً (الأمامي)
-    - صف 1 (idx 4-7): يستلزم خلو صف 0 من مقاتلين
-    - صف 2 (idx 8-11): يستلزم خلو صف 0 + صف 1 من مقاتلين
-  
-  - لمهاجمة خلية في p1 (من العدو/AI):
-    - صف 0 (idx 0-3): يُهاجَم أولاً دائماً
-    - صف 1 (idx 4-7): يستلزم خلو صف 0
-    - صف 2 (idx 8-11): يستلزم خلو صف 0 + صف 1
-*/
-
 let G={
   mode:'pvc',level:1,turn:1,round:1,phase:'idle',locked:false,
   p1:{gold:40,actions:4,maxActions:4,healUses:0,healCooldown:0,harvestedThisTurn:false,hasWall:false},
@@ -642,13 +688,9 @@ function cancelMatchmaking(){
 }
 
 // =================== PVP ROOM DATA ===================
-// الشبكة موحدة: الصف 0 (idx 0-3) = أمامي، الصف 2 (idx 8-11) = خلفي (الملك)
-// كل لاعب يتعامل مع شبكته بنفس الاتجاه الداخلي
-
 function createPvpRoomData(roomId){
   let makeGrid=()=>Array.from({length:12},(_,i)=>({id:i,entity:null}));
   let g1=makeGrid(),g2=makeGrid();
-  // الملك في idx 9 (صف خلفي)
   g1[9]={id:9,entity:{...DATA_TYPES.main,type:'main',hp:80,maxHp:80,icon:'🤴'}};
   g2[9]={id:9,entity:{...DATA_TYPES.main,type:'main',hp:80,maxHp:80,icon:'🤴'}};
   G.lastProcessedActionTs=0;
@@ -706,17 +748,6 @@ function showPvpResult(data){
 }
 
 // =================== SYNC FROM FIREBASE ===================
-/*
-  في PVP: كلا اللاعبين يخزنان شبكتهما بنفس الاتجاه الداخلي
-  (صف 0 = أمامي، صف 2 = خلفي/ملك)
-  
-  كل لاعب يرى:
-  - G.grid.p1 = شبكته الخاصة (مباشرة من Firebase)
-  - G.grid.p2 = شبكة الخصم (مباشرة من Firebase، **بدون قلب**)
-  
-  للعرض فقط: drawField تعكس p2-grid بصرياً
-  لكن منطق اللعبة (canAttackP2Cell) يعتمد على الـ internal idx مباشرة
-*/
 function syncDataFromFirebase(data){
   let fb_turn=data.turn;
   G.round=data.round||1;
@@ -726,8 +757,7 @@ function syncDataFromFirebase(data){
 
   if(G.myPlayerNum===1){
     G.grid.p1=raw_p1;
-    G.grid.p2=raw_p2; // نحتفظ بالاتجاه الداخلي بدون قلب
-
+    G.grid.p2=raw_p2;
     G.p1.gold=data.p1_gold||0;
     G.p1.actions=data.p1_actions||0;
     G.p1.maxActions=data.p1_maxActions||4;
@@ -735,25 +765,20 @@ function syncDataFromFirebase(data){
     G.p1.healCooldown=data.p1_healCooldown||0;
     G.p1.hasWall=data.p1_wall||false;
     G.p1.harvestedThisTurn=data.p1_harvested||false;
-
     G.p2.gold=data.p2_gold||0;
     G.p2.actions=data.p2_actions||0;
     G.p2.maxActions=data.p2_maxActions||4;
     G.p2.hasWall=data.p2_wall||false;
-
     PersistentWallet.p1Silver=data.p1_silver||0;
     PersistentWallet.p1Diamonds=data.p1_diamonds||0;
     PersistentWallet.p2Silver=data.p2_silver||0;
     PersistentWallet.p2Diamonds=data.p2_diamonds||0;
-
     document.getElementById('p1-lbl').textContent=(data.p1_name||'أنت')+' (أنت)';
     document.getElementById('p2-lbl').textContent=data.p2_name||'الخصم';
-
     G.turn=(fb_turn===1)?1:2;
   }else{
-    G.grid.p1=raw_p2; // أرضي
-    G.grid.p2=raw_p1; // أرض الخصم (بدون قلب)
-
+    G.grid.p1=raw_p2;
+    G.grid.p2=raw_p1;
     G.p1.gold=data.p2_gold||0;
     G.p1.actions=data.p2_actions||0;
     G.p1.maxActions=data.p2_maxActions||4;
@@ -761,20 +786,16 @@ function syncDataFromFirebase(data){
     G.p1.healCooldown=data.p2_healCooldown||0;
     G.p1.hasWall=data.p2_wall||false;
     G.p1.harvestedThisTurn=data.p2_harvested||false;
-
     G.p2.gold=data.p1_gold||0;
     G.p2.actions=data.p1_actions||0;
     G.p2.maxActions=data.p1_maxActions||4;
     G.p2.hasWall=data.p1_wall||false;
-
     PersistentWallet.p1Silver=data.p2_silver||0;
     PersistentWallet.p1Diamonds=data.p2_diamonds||0;
     PersistentWallet.p2Silver=data.p1_silver||0;
     PersistentWallet.p2Diamonds=data.p1_diamonds||0;
-
     document.getElementById('p1-lbl').textContent=(data.p2_name||'أنت')+' (أنت)';
     document.getElementById('p2-lbl').textContent=data.p1_name||'الخصم';
-
     G.turn=(fb_turn===2)?1:2;
   }
 
@@ -789,11 +810,7 @@ function syncDataFromFirebase(data){
       if(action.type==='attack'){
         let attackerIsMe=(action.from_player===G.myPlayerNum);
         if(!attackerIsMe){
-          // الخصم ضرب: attacker_idx هو internal idx في شبكة الخصم
-          // نحوله لـ display idx في p2-grid
           let attDisplayIdx=internalToDisplayP2(action.attacker_idx);
-          // target_idx هو internal idx في شبكتي (p1)
-          // في p1-grid: display idx = internal idx
           let tgtDisplayIdx=action.target_idx;
           showEnemyAttackAnimation(attDisplayIdx,tgtDisplayIdx,action.proj||'🗡️');
         }
@@ -816,33 +833,17 @@ function makeEmptyGrid(){
 }
 
 // =================== INDEX CONVERSION ===================
-// p2-grid للعرض: نعكس الصفوف بصرياً فقط
-// display row 0 (أعلى، بعيد عنا) = internal row 2 (idx 8-11، الملك/خلف)
-// display row 1 (وسط)             = internal row 1 (idx 4-7)
-// display row 2 (أسفل، قريب منا) = internal row 0 (idx 0-3، أمامي)
-
-// internal idx → display idx (لعرض p2-grid)
 function internalToDisplayP2(internalIdx){
-  // row 2 (8-11) → display row 0 (0-3)
   if(internalIdx>=8)return internalIdx-8;
-  // row 1 (4-7) → display row 1 (4-7)
   if(internalIdx>=4)return internalIdx;
-  // row 0 (0-3) → display row 2 (8-11)
   return internalIdx+8;
 }
 
-// display idx (في p2-grid DOM) → internal idx (في G.grid.p2)
 function displayToInternalP2(displayIdx){
-  // display row 0 (0-3) → internal row 2 (8-11)
   if(displayIdx<4)return displayIdx+8;
-  // display row 1 (4-7) → internal row 1 (4-7)
   if(displayIdx<8)return displayIdx;
-  // display row 2 (8-11) → internal row 0 (0-3)
   return displayIdx-8;
 }
-
-// p1-grid: display idx = internal idx (لا قلب)
-// لا حاجة لتحويل
 
 function showEnemyAttackAnimation(enemyDisplayIdx,myDisplayIdx,proj){
   AudioFX.play('hit');
@@ -852,14 +853,8 @@ function showEnemyAttackAnimation(enemyDisplayIdx,myDisplayIdx,proj){
 // =================== UPLOAD TO FIREBASE ===================
 function uploadGameStateToFirebase(extraPayload){
   if(G.mode!=='pvp'||!window.currentRoomId)return;
-
-  // G.grid.p1 = شبكتي (بدون قلب) → نحفظ مباشرة
-  // G.grid.p2 = شبكة الخصم (بدون قلب) → نحفظ مباشرة
-
   let next_fb_turn=G.myPlayerNum===1?2:1;
-
   let payload={turn:next_fb_turn,round:G.round};
-
   if(G.myPlayerNum===1){
     payload.grid_p1=G.grid.p1;
     payload.grid_p2=G.grid.p2;
@@ -873,8 +868,8 @@ function uploadGameStateToFirebase(extraPayload){
     payload.p1_silver=PersistentWallet.p1Silver;
     payload.p1_diamonds=PersistentWallet.p1Diamonds;
   }else{
-    payload.grid_p2=G.grid.p1; // أنا p2، شبكتي = grid_p2 في Firebase
-    payload.grid_p1=G.grid.p2; // شبكة الخصم (p1) = grid_p1 في Firebase
+    payload.grid_p2=G.grid.p1;
+    payload.grid_p1=G.grid.p2;
     payload.p2_gold=G.p1.gold;
     payload.p2_actions=G.p1.actions;
     payload.p2_maxActions=G.p1.maxActions;
@@ -885,7 +880,6 @@ function uploadGameStateToFirebase(extraPayload){
     payload.p2_silver=PersistentWallet.p1Silver;
     payload.p2_diamonds=PersistentWallet.p1Diamonds;
   }
-
   if(extraPayload)Object.assign(payload,extraPayload);
   window._update(window._ref(window._db,`rooms/${window.currentRoomId}`),payload);
 }
@@ -918,35 +912,22 @@ function leaveOnlineMatch(){
 }
 
 // =================== ROW SYSTEM ===================
-// دالة مساعدة: رقم الصف من الـ internal index
 function getRowOf(idx){return Math.floor(idx/4);}
 
-// =====================================================
-// canAttackP2Cell - تعمل على internal idx في G.grid.p2
-// قاعدة القتال:
-//   صف 0 (idx 0-3)  = أمامي الخصم ← يُهاجَم أولاً
-//   صف 1 (idx 4-7)  = أوسط الخصم  ← بعد تصفية صف 0
-//   صف 2 (idx 8-11) = خلفي الخصم  ← بعد تصفية صف 0 + صف 1
-// =====================================================
 function canAttackP2Cell(internalIdx){
   let r=getRowOf(internalIdx);
-  // المناجم لا تحجب الطريق
   let row0HasFighter=G.grid.p2.some((c,i)=>getRowOf(i)===0&&c.entity&&c.entity.type!=='mine');
   let row1HasFighter=G.grid.p2.some((c,i)=>getRowOf(i)===1&&c.entity&&c.entity.type!=='mine');
-
-  if(r===0)return true; // الصف الأمامي: دائماً يمكن مهاجمته
-  if(r===1)return!row0HasFighter; // الصف الأوسط: يستلزم خلو صف 0
-  if(r===2)return!row0HasFighter&&!row1HasFighter; // الصف الخلفي: يستلزم خلو صف 0 + 1
+  if(r===0)return true;
+  if(r===1)return!row0HasFighter;
+  if(r===2)return!row0HasFighter&&!row1HasFighter;
   return false;
 }
 
-// canAttackP1Cell - تعمل على internal idx في G.grid.p1
-// نفس المنطق: صف 0 = أمامي (يُهاجَم أولاً)
 function canAttackP1Cell(internalIdx){
   let r=getRowOf(internalIdx);
   let row0HasFighter=G.grid.p1.some((c,i)=>getRowOf(i)===0&&c.entity&&c.entity.type!=='mine');
   let row1HasFighter=G.grid.p1.some((c,i)=>getRowOf(i)===1&&c.entity&&c.entity.type!=='mine');
-
   if(r===0)return true;
   if(r===1)return!row0HasFighter;
   if(r===2)return!row0HasFighter&&!row1HasFighter;
@@ -993,8 +974,14 @@ function initGame(mode){
   PersistentWallet.load(mode);
 
   let baseActs=G.level>=5?5:4;
-  G.p1={gold:40,actions:baseActs,maxActions:baseActs,healUses:0,healCooldown:0,harvestedThisTurn:false,hasWall:false};
-  G.p2={gold:40+(mode==='pvc'?(G.level-1)*12:0),actions:baseActs,maxActions:baseActs,healUses:0,healCooldown:0,harvestedThisTurn:false,hasWall:false};
+
+  // ===== الذهب الابتدائي للاعب (جديد) =====
+  let p1StartGold=getPlayerStartingGold(G.level);
+  // ===== الذهب الابتدائي للـ AI =====
+  let p2StartGold=getAIStartingGold(G.level);
+
+  G.p1={gold:p1StartGold,actions:baseActs,maxActions:baseActs,healUses:0,healCooldown:0,harvestedThisTurn:false,hasWall:false};
+  G.p2={gold:mode==='pvc'?p2StartGold:40,actions:baseActs,maxActions:baseActs,healUses:0,healCooldown:0,harvestedThisTurn:false,hasWall:false};
 
   document.getElementById('p1-lbl').textContent=(window.myName||'أنت')+' (أنت)';
   document.getElementById('p2-lbl').textContent=mode==='pvc'?'🤖 الكمبيوتر (Lv.'+G.level+')':'الخصم';
@@ -1002,35 +989,35 @@ function initGame(mode){
   document.getElementById('p1-field-lbl').textContent='حصنك الدفاعي';
   document.getElementById('p2-field-lbl').textContent=mode==='pvc'?'أرض العدو':'أرض الخصم';
 
-  // الشبكتان: صف 0 (idx 0-3) = أمامي، صف 2 (idx 8-11) = خلفي (الملك)
   G.grid.p1=Array.from({length:12},(_,i)=>({id:i,entity:null}));
   G.grid.p2=Array.from({length:12},(_,i)=>({id:i,entity:null}));
 
-  // ملك p1 في الصف الخلفي (idx 9)
-  let p1KingIcon=G.level>=7?'👑🔥':(G.level>=4?'👑':'🤴');
-  G.grid.p1[9]={id:9,entity:{...DATA_TYPES.main,type:'main',hp:80,maxHp:80,icon:p1KingIcon}};
+  // ===== ملك اللاعب (يتقوى مع المستوى مثل الكمبيوتر) =====
+  let p1KingHP=getKingHP(G.level);
+  let p1KingIcon=getKingIcon(G.level);
+  G.grid.p1[9]={id:9,entity:{...DATA_TYPES.main,type:'main',hp:p1KingHP,maxHp:p1KingHP,icon:p1KingIcon}};
 
-  // ملك الكمبيوتر في الصف الخلفي (idx 9) - نفس الاتجاه
+  // ===== ملك الكمبيوتر (نفس المعادلة) =====
   let aiKingHP=80,aiKingIcon='🤴🏻';
   if(mode==='pvc'){
-    aiKingHP=Math.floor(80*Math.pow(1.2,Math.floor((G.level-1)/3)));
+    aiKingHP=getKingHP(G.level);
     if(G.level>=7)aiKingIcon='👑🔥';else if(G.level>=4)aiKingIcon='👑';
   }
   G.grid.p2[9]={id:9,entity:{...DATA_TYPES.main,type:'main',hp:aiKingHP,maxHp:aiKingHP,icon:aiKingIcon}};
 
-  // الأمير (Lv.5+) في idx 8 (الصف الخلفي)
+  // الأمير (Lv.5+)
   if(mode==='pvc'&&G.level>=5){
     let pHP=getPrinceHP();
     G.grid.p2[8]={id:8,entity:{...DATA_TYPES.prince,type:'prince',hp:pHP,maxHp:pHP,icon:'🤴🏽',atk:30,label:'الأمير',proj:'⚔️',isGuardian:true,isCounter:true}};
   }
 
-  // الوزير (Lv.10+) في idx 10 (الصف الخلفي)
+  // الوزير (Lv.10+)
   if(mode==='pvc'&&G.level>=10){
     let vHP=getVizierHP(),vAtk=getVizierAtk();
     G.grid.p2[10]={id:10,entity:{...DATA_TYPES.vizier,type:'vizier',hp:vHP,maxHp:vHP,icon:'🧙‍♂️',atk:vAtk,label:'الوزير',proj:'🔮',isGuardian:true,isHealer:true}};
   }
 
-  // حراس الملك (Lv.20+) في الصف الأوسط (idx 4-7)
+  // حراس الملك (Lv.20+)
   if(mode==='pvc'&&G.level>=20){
     let gc=getKingGuardsCount(),gs=getKingGuardStats();
     [4,5,6,7].slice(0,gc).forEach(pos=>{
@@ -1040,7 +1027,7 @@ function initGame(mode){
 
   if(mode==='pvc')placeAIStartingTroops();
 
-  // وضع الناجين
+  // الناجون
   if(mode==='pvc'&&SurvivorsSystem.p1.length>0){
     placeSurvivorsInGrid('p1',SurvivorsSystem.p1);SurvivorsSystem.p1=[];
   }
@@ -1048,14 +1035,24 @@ function initGame(mode){
   recalculateMaxActions('p1');recalculateMaxActions('p2');
   G.p1.actions=G.p1.maxActions;G.p2.actions=G.p2.maxActions;
 
+  // تحديث زر المشاة حسب المستوى
+  updateInfantrySpawnButton();
+
   toggleScreen('game-screen');cancelAction();updateUIHub();renderGrids();
 
   let surv=G.grid.p1.filter(c=>c.entity&&c.entity.isSurvivor).length;
-  if(surv>0)pushLog(`⭐ ${surv} من جنودك الناجين انضموا للمعركة!`);
-  else if(G.level>=20)pushLog(`⚠️ Lv.${G.level}: ${getKingGuardsCount()} حراس للملك!`);
-  else if(G.level>=10)pushLog(`⚠️ Lv.${G.level}: الأمير والوزير في الميدان!`);
-  else if(G.level>=5)pushLog(`⚠️ Lv.${G.level}: الأمير الحارس في الميدان!`);
-  else pushLog("⚔️ المعركة بدأت!");
+  let startMsg='';
+  if(surv>0)startMsg=`⭐ ${surv} من جنودك الناجين انضموا للمعركة!`;
+  else if(G.level>=20)startMsg=`⚠️ Lv.${G.level}: ${getKingGuardsCount()} حراس للملك!`;
+  else if(G.level>=10)startMsg=`⚠️ Lv.${G.level}: الأمير والوزير + مشاة النخبة (ATK 40)!`;
+  else if(G.level>=5)startMsg=`⚠️ Lv.${G.level}: الأمير الحارس في الميدان!`;
+  else startMsg="⚔️ المعركة بدأت!";
+
+  // إضافة معلومة الذهب للمستويات العالية
+  if(mode==='pvc'&&G.level>=10){
+    startMsg+=` | 🪙${p1StartGold} ذهب!`;
+  }
+  pushLog(startMsg);
 }
 
 function getVizierAtk(){return G.level>=20?70:(G.level>=15?50:35);}
@@ -1077,7 +1074,6 @@ function placeAIStartingTroops(){
   let cnt=SurvivorsSystem.getAIStartingTroopsCount(G.level);
   if(cnt===0)return;
   if(SurvivorsSystem.p2.length>0){placeSurvivorsInGrid('p2',SurvivorsSystem.p2);return;}
-  // وضع الجنود في الصف الأمامي للـ AI (idx 0-3)
   let empty=[];
   for(let i=0;i<4;i++){if(!G.grid.p2[i].entity)empty.push(i);}
   if(empty.length===0){for(let i=4;i<8;i++){if(!G.grid.p2[i].entity)empty.push(i);}}
@@ -1089,19 +1085,6 @@ function placeAIStartingTroops(){
 }
 
 // =================== RENDER ===================
-/*
-  drawField يعرض الشبكة بصرياً:
-  
-  p1-grid (أرضي - تحت الشاشة):
-    display row 0 (أعلى p1-grid) = internal row 0 (idx 0-3) = أمامي ← أقرب للخصم
-    display row 2 (أسفل p1-grid) = internal row 2 (idx 8-11) = خلفي (الملك)
-    ** لا قلب - نفس الترتيب **
-    
-  p2-grid (خصمي - فوق الشاشة):
-    display row 0 (أعلى p2-grid) = internal row 2 (idx 8-11) = الملك ← بعيد عنا ✓
-    display row 2 (أسفل p2-grid) = internal row 0 (idx 0-3) = أمامي الخصم ← قريب منا ✓
-    ** نعكس الصفوف بصرياً فقط **
-*/
 function renderGrids(){drawField('p1');drawField('p2');updateShopButtonsStyle();}
 
 function drawField(pKey){
@@ -1109,35 +1092,42 @@ function drawField(pKey){
   const internalGrid=G.grid[pKey];
 
   for(let displayIdx=0;displayIdx<12;displayIdx++){
-    // نحول display idx إلى internal idx
     let internalIdx;
     if(pKey==='p2'){
       internalIdx=displayToInternalP2(displayIdx);
     }else{
-      internalIdx=displayIdx; // p1: لا قلب
+      internalIdx=displayIdx;
     }
 
     const cell=internalGrid[internalIdx]||{id:internalIdx,entity:null};
     const div=document.createElement('div');
     div.className='cell '+pKey+'-box';
-    div.id='cell-'+pKey+'-'+displayIdx; // ID يعتمد على display idx
+    div.id='cell-'+pKey+'-'+displayIdx;
 
     if(cell.entity){
       div.innerHTML=cell.entity.icon+'<span class="hp-badge">'+cell.entity.hp+'</span><span class="type-label">'+cell.entity.label+'</span>';
       if(cell.entity.shield>0)div.innerHTML+='<span class="shield-badge shield-'+cell.entity.shield+'">🛡️'+cell.entity.shield+'</span>';
-      if(cell.entity.isSurvivor&&!cell.entity.isGuardian&&!cell.entity.isUltraPrince){div.innerHTML+='<span class="survivor-badge">⭐</span>';div.classList.add('survivor-unit');}
+
+      // ===== Elite Infantry Rendering (Lv.10+, p1 only) =====
+      if(cell.entity.isEliteInfantry){
+        div.classList.add('elite-infantry-cell');
+        div.innerHTML+='<span class="elite-badge">نخبة</span>';
+      }else if(cell.entity.isSurvivor&&!cell.entity.isGuardian&&!cell.entity.isUltraPrince&&!cell.entity.isEliteInfantry){
+        div.innerHTML+='<span class="survivor-badge">⭐</span>';
+        div.classList.add('survivor-unit');
+      }
+
       if(cell.entity.isUltraPrince){div.classList.add('ultra-prince-cell');div.innerHTML+='<span class="ultra-counter-badge">👑↩️</span>';}
       else if(cell.entity.isKingGuard){div.classList.add('king-guard-cell');}
       else if(cell.entity.isHealer){div.classList.add('vizier-cell');div.innerHTML+='<span class="heal-aura-badge">✨</span>';}
-      else if(cell.entity.isCounter){div.classList.add('ai-guardian');div.innerHTML+='<span class="counter-badge">↩️</span>';}
-      else if(cell.entity.isGuardian){div.classList.add('ai-guardian');}
+      else if(cell.entity.isCounter&&!cell.entity.isUltraPrince){div.classList.add('ai-guardian');div.innerHTML+='<span class="counter-badge">↩️</span>';}
+      else if(cell.entity.isGuardian&&!cell.entity.isEliteInfantry){div.classList.add('ai-guardian');}
     }
 
     if(G.selectedCell&&G.selectedCell.pKey===pKey&&G.selectedCell.displayIdx===displayIdx)div.classList.add('selected');
 
     if(G.phase==='attack'&&pKey==='p2'){
       if(cell.entity&&cell.entity.type!=='mine'){
-        // نستخدم internalIdx لفحص إمكانية الهجوم
         let can=canAttackP2Cell(internalIdx);
         div.classList.add(can?'valid-target':'blocked-target');
       }
@@ -1218,14 +1208,9 @@ function prepareShield(){
 }
 
 // =================== CELL INTERACTION ===================
-/*
-  handleCellInteraction يستقبل display idx دائماً
-  نحوله لـ internal idx عند الحاجة للوصول لـ G.grid
-*/
 function handleCellInteraction(pKey,displayIdx){
   if(G.locked||!isMyTurnNow())return;
 
-  // الحصول على internal idx والخلية الفعلية
   let internalIdx=pKey==='p2'?displayToInternalP2(displayIdx):displayIdx;
   const cell=G.grid[pKey][internalIdx];
   if(!cell)return;
@@ -1270,7 +1255,6 @@ function handleCellInteraction(pKey,displayIdx){
     if(cell.entity.atk===0){pushLog("لا يمكن الهجوم بهذا المبنى.");return;}
     if(getCurrentPlayer().actions<=0){pushLog("طاقة غير كافية!");return;}
     AudioFX.play('click');
-    // نحفظ كلا الـ idx: display للـ animation، internal للـ data
     G.selectedCell={pKey,displayIdx,internalIdx};
     G.phase='attack';
     toggleCancelButton(true);pushLog('اختر هدفاً للهجوم...');renderGrids();
@@ -1280,10 +1264,12 @@ function handleCellInteraction(pKey,displayIdx){
 function recalculateMaxActions(pKey){G[pKey].maxActions=G.mode==='pvp'?4:(G.level>=5?5:4);}
 
 function executePlacement(internalIdx){
-  const cfg=DATA_TYPES[G.pendingItem];
+  // ===== استخدام stats المشاة الصحيحة حسب المستوى =====
+  let itemKey=G.pendingItem;
+  let cfg=itemKey==='infantry'?getInfantryStats():DATA_TYPES[itemKey];
   if(getCurrentPlayer().gold<cfg.cost)return;
   AudioFX.play('spawn');getCurrentPlayer().gold-=cfg.cost;getCurrentPlayer().actions--;
-  G.grid.p1[internalIdx].entity={...cfg,type:G.pendingItem};
+  G.grid.p1[internalIdx].entity={...cfg,type:itemKey};
   pushLog('تم بناء '+cfg.label+'!');cancelAction();updateUIHub();if(G.mode==='pvp')uploadGameStateToFirebase();checkAutoEndTurn();
 }
 
@@ -1334,9 +1320,6 @@ function shootProjectile(startId,endId,icon,callback){
 }
 
 // =================== COUNTER ATTACKS ===================
-// attackerInternalIdx = internal idx في p1-grid (= display idx لأن p1 لا تُقلب)
-// princeFbIdx = internal idx للأمير في G.grid.p2
-
 function triggerPrinceCounterAttack(attackerInternalIdx,princeFbIdx,onDone){
   let prince=G.grid.p2[princeFbIdx].entity;
   let attackerCell=G.grid.p1[attackerInternalIdx];
@@ -1344,10 +1327,7 @@ function triggerPrinceCounterAttack(attackerInternalIdx,princeFbIdx,onDone){
   AudioFX.play('counter');pushLog(`⚡ الأمير يرد على ${attackerCell.entity.label}!`);
   let el=document.getElementById('cell-p1-'+attackerInternalIdx);
   if(el){el.style.animation='counterFlash 0.3s ease-in-out 2';setTimeout(()=>el.style.animation='',600);}
-
-  // display idx للأمير في p2-grid
   let princeDisplayIdx=internalToDisplayP2(princeFbIdx);
-
   shootProjectile('cell-p2-'+princeDisplayIdx,'cell-p1-'+attackerInternalIdx,'⚔️',()=>{
     let rc=G.grid.p1[attackerInternalIdx];
     if(!rc||!rc.entity){onDone();return;}
@@ -1418,33 +1398,24 @@ function vizierDoSupport(onDone){
 // =================== ATTACK ===================
 function playAttackSound(type){AudioFX.play(type==='infantry'||type==='super_infantry'||type==='prince'||type==='king_guard'?'hit':'explosion');}
 
-/*
-  executeAttackStrike:
-  - targetInternalIdx = internal idx في G.grid.p2
-  - targetDisplayIdx  = display idx في p2-grid DOM (للـ animation)
-  - attackerInternalIdx = G.selectedCell.internalIdx = internal idx في p1 (= display idx)
-*/
 function executeAttackStrike(targetInternalIdx,targetDisplayIdx){
   const attackerInternalIdx=G.selectedCell.internalIdx;
-  const attackerDisplayIdx=G.selectedCell.displayIdx; // p1: display = internal
+  const attackerDisplayIdx=G.selectedCell.displayIdx;
   const attacker=G.grid.p1[attackerInternalIdx].entity;
   const targetCell=G.grid.p2[targetInternalIdx];
 
   G.locked=true;getCurrentPlayer().actions--;disableControls(true);playAttackSound(attacker.type);
 
-  // رفع الهجوم للـ Firebase (internal indices)
   if(G.mode==='pvp'){
     uploadAttackActionToFirebase(attackerInternalIdx,targetInternalIdx,attacker.proj||'🗡️');
   }
 
   shootProjectile('cell-p1-'+attackerDisplayIdx,'cell-p2-'+targetDisplayIdx,attacker.proj||'🗡️',()=>{
-    // التحقق من الجدار
     if(G.p2.hasWall){
       G.p2.hasWall=false;AudioFX.play('hit');pushLog('🧱 الجدار الدفاعي صد الضربة وتدمر!');
       G.locked=false;disableControls(false);cancelAction();updateUIHub();
       if(G.mode==='pvp')uploadGameStateToFirebase();checkAutoEndTurn();return;
     }
-    // التحقق من الدرع
     if(targetCell.entity&&targetCell.entity.shield>0){
       targetCell.entity.shield--;if(targetCell.entity.shield<=0)delete targetCell.entity.shield;
       AudioFX.play('hit');pushLog('🛡️ الدرع امتص الضربة!');
@@ -1479,7 +1450,6 @@ function executeAttackStrike(targetInternalIdx,targetDisplayIdx){
       let done=()=>{G.locked=false;disableControls(false);cancelAction();updateUIHub();if(G.mode==='pvp')uploadGameStateToFirebase();checkAutoEndTurn();};
 
       if(G.mode==='pvc'){
-        // التحقق من الأمير في G.grid.p2 (internal)
         let princeFbIdx=-1;
         G.grid.p2.forEach((c,i)=>{if(c.entity&&c.entity.type==='prince'&&c.entity.hp>0)princeFbIdx=i;});
         let hitKing=targetCell.entity&&targetCell.entity.type==='main';
@@ -1558,16 +1528,6 @@ function endTurn(isAI=false){
 }
 
 // =================== AI ===================
-/*
-  AI يتعامل مع G.grid.p2 مباشرة (internal, غير مقلوبة)
-  الصف 0 (idx 0-3) = أمامي AI ← هو يهاجم من هنا
-  الصف 2 (idx 8-11) = خلفي AI (الملك، الأمير، الوزير)
-  
-  للهجوم على p1: يستخدم canAttackP1Cell
-  للـ animation: يحول internal idx إلى display idx
-    - AI في p2-grid: display = internalToDisplayP2(internalIdx)
-    - هدف في p1-grid: display = internal (لا قلب)
-*/
 function runAdvancedAISystem(){
   if(G.turn!==2||G.mode!=='pvc')return;
   if(G.p2.actions<=0){
@@ -1608,9 +1568,8 @@ function runAdvancedAISystem(){
     targets.sort((a,b)=>a.entity.hp-b.entity.hp);
     let t=targets[0];G.p2.actions--;playAttackSound(best.entity.type);
 
-    // نحول internal idx إلى display idx للـ animation
     let bestDisplayIdx=internalToDisplayP2(best.idx);
-    let tDisplayIdx=t.idx; // p1: display = internal
+    let tDisplayIdx=t.idx;
 
     shootProjectile('cell-p2-'+bestDisplayIdx,'cell-p1-'+tDisplayIdx,best.entity.proj||'🗡️',()=>{
       let rc=G.grid.p1[t.idx];
@@ -1638,9 +1597,7 @@ function runAdvancedAISystem(){
     return;
   }
 
-  // لا هجوم ممكن: ينفق ذهب أو ينتظر
   let empty=G.grid.p2.map((c,i)=>c.entity?-1:i).filter(x=>x!==-1);
-  // يفضل وضع الجنود في الصف الأمامي أولاً
   let frontEmpty=empty.filter(i=>getRowOf(i)===0);
   let spawnIdx=frontEmpty.length>0?frontEmpty[Math.floor(Math.random()*frontEmpty.length)]:
                (empty.length>0?empty[Math.floor(Math.random()*empty.length)]:-1);
