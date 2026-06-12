@@ -18,11 +18,9 @@ body { font-family:'Tajawal',sans-serif; background:var(--bg); color:var(--txt);
   background-image: radial-gradient(ellipse at 50% -10%, rgba(0,204,255,.06) 0%, transparent 60%),
                     radial-gradient(ellipse at 50% 110%, rgba(255,34,68,.06) 0%, transparent 60%); }
 
-/* ── SCREENS ── */
 .screen { display:none; height:100%; width:100%; flex-direction:column; }
 .screen.active { display:flex; }
 
-/* ── LOGIN ── */
 #login-screen { align-items:center; justify-content:center; gap:18px; padding:24px; }
 .logo { font-family:'Cinzel',serif; font-size:46px; font-weight:900;
   background:linear-gradient(135deg,#fff 30%,var(--gold),#ff6600);
@@ -41,27 +39,23 @@ body { font-family:'Tajawal',sans-serif; background:var(--bg); color:var(--txt);
 .btn-guest  { background:#1e2330; color:#a0aec0; border:1px solid var(--border); }
 .status-txt { font-size:11px; color:var(--gold); text-align:center; min-height:16px; }
 
-/* ── MENU ── */
 #menu-screen { align-items:center; justify-content:center; gap:6px; padding:24px; }
 .user-badge { display:flex; align-items:center; gap:8px; background:var(--panel);
   border:1px solid var(--border); border-radius:8px; padding:8px 14px; font-size:13px; }
 .uname { color:var(--gold); font-weight:900; }
 .menu-btn { width:240px; padding:14px; border:2px solid var(--gold); border-radius:10px;
   background:linear-gradient(135deg,rgba(255,204,0,.08),transparent); color:#fff;
-  font-size:16px; font-weight:900; cursor:pointer; font-family:'Tajawal',sans-serif;
-  transition:.15s; }
+  font-size:16px; font-weight:900; cursor:pointer; font-family:'Tajawal',sans-serif; transition:.15s; }
 .menu-btn.red { border-color:var(--red); background:linear-gradient(135deg,rgba(255,34,68,.12),transparent); }
 .menu-btn.blue { border-color:var(--blue); background:linear-gradient(135deg,rgba(0,204,255,.1),transparent); }
 .menu-btn:active { transform:scale(.97); }
 
-/* ── MATCHMAKING ── */
 #mm-screen { align-items:center; justify-content:center; gap:20px; padding:20px; }
 .mm-box { background:var(--panel); border:2px solid var(--blue); border-radius:14px;
   padding:32px 24px; text-align:center; max-width:300px; width:100%; }
 @keyframes spin { to { transform:rotate(360deg); } }
 .spinner { display:inline-block; font-size:40px; animation:spin 1.2s linear infinite; }
 
-/* ── GAME SCREEN ── */
 #game-screen { overflow:hidden; }
 
 .hdr { display:flex; justify-content:space-between; align-items:center;
@@ -80,12 +74,9 @@ body { font-family:'Tajawal',sans-serif; background:var(--bg); color:var(--txt);
 
 .arena { flex:1; display:flex; flex-direction:column; padding:5px 6px; gap:4px;
   overflow:hidden; max-width:700px; margin:0 auto; width:100%; }
-
 .field-label { font-size:10px; font-weight:800; color:var(--muted); text-align:center;
   background:rgba(0,0,0,.4); border-radius:4px; padding:2px 6px; flex-shrink:0; }
-
 .grid { display:grid; grid-template-columns:repeat(4,1fr); gap:3px; flex:1; min-height:0; }
-
 .cell { background:#10141a; border:1px solid #1a2030; border-radius:7px;
   display:flex; flex-direction:column; align-items:center; justify-content:center;
   font-size:22px; cursor:pointer; position:relative; transition:all .18s;
@@ -96,21 +87,17 @@ body { font-family:'Tajawal',sans-serif; background:var(--bg); color:var(--txt);
 .cell.vtgt { border:2px solid var(--red) !important; animation:blink-red 1s infinite; background:rgba(255,34,68,.08); }
 .cell.vspawn { border:2px solid var(--green) !important; animation:blink-grn 1s infinite; background:rgba(34,197,94,.06); }
 .cell.blocked { opacity:.35; cursor:not-allowed; }
-
 @keyframes blink-red { 0%,100%{border-color:rgba(255,34,68,.5)!important;} 50%{border-color:var(--red)!important;} }
 @keyframes blink-grn { 0%,100%{border-color:rgba(34,197,94,.5)!important;} 50%{border-color:var(--green)!important;} }
-
 .hp-tag { position:absolute; bottom:2px; background:rgba(0,0,0,.85); color:#fff;
   font-size:9px; padding:1px 4px; border-radius:3px; font-weight:700; border:1px solid #2d3748; }
 .lbl-tag { position:absolute; top:1px; font-size:8px; color:#718096;
   background:rgba(0,0,0,.6); padding:0 3px; border-radius:2px; }
 .shld-tag { position:absolute; top:1px; right:2px; font-size:8px; background:#1D4ED8;
   color:#fff; padding:1px 3px; border-radius:3px; font-weight:900; z-index:3; }
-
 .divider { text-align:center; font-size:9px; color:var(--muted);
   font-weight:900; letter-spacing:2px; flex-shrink:0; padding:1px 0; }
 
-/* ── BOTTOM PANEL ── */
 .btm { background:var(--panel); border-radius:10px; border:1px solid var(--border);
   padding:6px; flex-shrink:0; }
 .log { background:var(--bg); padding:5px 8px; border-radius:5px;
@@ -122,11 +109,9 @@ body { font-family:'Tajawal',sans-serif; background:var(--bg); color:var(--txt);
   display:flex; flex-direction:column; align-items:center; gap:1px;
   font-family:'Tajawal',sans-serif; transition:.15s; }
 .abt:disabled { opacity:.3; cursor:not-allowed; }
-.abt.full { grid-column:span 4; padding:8px; font-size:13px; margin-top:3px;
-  border:none; color:#fff; }
+.abt.full { grid-column:span 4; padding:8px; font-size:13px; margin-top:3px; border:none; color:#fff; }
 .abt.end-btn { background:linear-gradient(135deg,#166534,#14532d); border:1px solid #22c55e; }
 .abt.cancel-btn { background:linear-gradient(135deg,#7f1d1d,#991b1b); border:1px solid #f87171; display:none; }
-
 .sub { display:none; grid-template-columns:repeat(2,1fr); gap:4px;
   margin-top:5px; padding-top:5px; border-top:1px dashed var(--border); }
 .sub-opt { background:var(--bg); border:1px solid var(--gold); color:#fff;
@@ -134,29 +119,7 @@ body { font-family:'Tajawal',sans-serif; background:var(--bg); color:var(--txt);
   font-weight:700; font-family:'Tajawal',sans-serif; }
 .sub-opt span { display:block; font-size:16px; margin-bottom:2px; }
 
-/* ── SETUP PHASE OVERLAY ── */
-#setup-overlay { position:fixed; inset:0; z-index:100;
-  display:flex; align-items:stretch; pointer-events:none; }
-.setup-panel { flex:1; display:flex; flex-direction:column; align-items:center;
-  justify-content:flex-end; padding:12px; gap:8px; pointer-events:all;
-  transition:opacity .3s; }
-.setup-panel.p1-side { background:linear-gradient(to top, rgba(255,34,68,.12), transparent); }
-.setup-panel.p2-side { background:linear-gradient(to top, rgba(0,204,255,.12), transparent); }
-.ready-btn { padding:14px 28px; border-radius:12px; font-size:18px; font-weight:900;
-  cursor:pointer; font-family:'Tajawal',sans-serif; border:none; transition:.15s; }
-.ready-btn.p1r { background:linear-gradient(135deg,#ff2244,#991b1b); color:#fff;
-  box-shadow:0 4px 20px rgba(255,34,68,.5); }
-.ready-btn.p2r { background:linear-gradient(135deg,#0066cc,#0284c7); color:#fff;
-  box-shadow:0 4px 20px rgba(0,204,255,.5); }
-.ready-btn:disabled { opacity:.4; cursor:not-allowed; }
-.setup-timer { font-family:'Cinzel',serif; font-size:32px; font-weight:900;
-  color:var(--gold); text-shadow:0 0 20px rgba(255,204,0,.6); }
-.setup-timer.urgent { color:var(--red); animation:pulse-t .5s infinite; }
-@keyframes pulse-t { 0%,100%{opacity:1;} 50%{opacity:.4;} }
-.setup-gold { font-size:13px; color:#a0aec0; }
-.setup-status { font-size:12px; color:var(--green); font-weight:700; }
-
-/* ── SHOP BAR (setup) ── */
+#setup-overlay { position:fixed; inset:0; z-index:50; display:none; flex-direction:column; }
 .shop-bar { display:flex; gap:4px; flex-wrap:wrap; justify-content:center;
   background:rgba(0,0,0,.5); border-radius:8px; padding:5px; }
 .si { background:#10141a; border:1px solid #2d3748; border-radius:6px;
@@ -168,8 +131,16 @@ body { font-family:'Tajawal',sans-serif; background:var(--bg); color:var(--txt);
 .si-info { display:flex; flex-direction:column; align-items:center; }
 .si-name { font-size:9px; font-weight:900; }
 .si-cost { font-size:9px; color:var(--muted); }
+.setup-timer { font-family:'Cinzel',serif; font-size:32px; font-weight:900;
+  color:var(--gold); text-shadow:0 0 20px rgba(255,204,0,.6); }
+.setup-timer.urgent { color:var(--red); animation:pulse-t .5s infinite; }
+@keyframes pulse-t { 0%,100%{opacity:1;} 50%{opacity:.4;} }
+.ready-btn { padding:14px 28px; border-radius:12px; font-size:18px; font-weight:900;
+  cursor:pointer; font-family:'Tajawal',sans-serif; border:none; transition:.15s; }
+.ready-btn.p1r { background:linear-gradient(135deg,#ff2244,#991b1b); color:#fff;
+  box-shadow:0 4px 20px rgba(255,34,68,.5); }
+.ready-btn:disabled { opacity:.4; cursor:not-allowed; }
 
-/* ── MODAL ── */
 .overlay { position:fixed; inset:0; background:rgba(0,0,0,.88); z-index:1000;
   display:flex; align-items:center; justify-content:center; padding:20px; }
 .overlay.off { display:none; }
@@ -179,19 +150,13 @@ body { font-family:'Tajawal',sans-serif; background:var(--bg); color:var(--txt);
 .modal-title { font-size:22px; font-weight:900; color:var(--gold); margin-bottom:10px; }
 .modal-body { font-size:13px; color:#cbd5e0; line-height:1.7; margin-bottom:14px; }
 
-/* ── PROJECTILE ── */
 .proj { position:fixed; font-size:20px; z-index:9999; pointer-events:none;
   transition:all .3s ease-in; filter:drop-shadow(0 0 4px rgba(255,204,0,.8)); }
-
-/* ── TIMER BAR (battle) ── */
 .timer-wrap { height:4px; background:#1e2330; border-radius:2px; overflow:hidden;
   margin-bottom:4px; flex-shrink:0; }
 .timer-fill { height:100%; background:var(--gold); transition:width 1s linear; border-radius:2px; }
 .timer-fill.low { background:var(--red); }
-
-/* ── BATTLE TURN INDICATOR ── */
-.turn-ind { text-align:center; font-size:11px; font-weight:900; padding:3px 0;
-  flex-shrink:0; }
+.turn-ind { text-align:center; font-size:11px; font-weight:900; padding:3px 0; flex-shrink:0; }
 .turn-ind.my-turn { color:var(--green); }
 .turn-ind.opp-turn { color:var(--muted); }
 </style>
@@ -206,11 +171,24 @@ const FC={apiKey:"AIzaSyAyURdlxwUQUh7csVUz8wkkoQVd1XDFlN8",authDomain:"madwargam
   storageBucket:"madwargame-8b1a6.firebasestorage.app",messagingSenderId:"860575335695",appId:"1:860575335695:web:16a300d85b50f611952a7a"};
 const app=initializeApp(FC);
 const DB=getDatabase(app);const Auth=getAuth(app);const GP=new GoogleAuthProvider();
-const R=(...a)=>ref(DB,...a),Up=(r,d)=>update(r,d),Set=(r,d)=>set(r,d);
-const Get=(r)=>get(r),OnV=onValue;
+const R=(...a)=>ref(DB,...a);
+const Up=(r,d)=>update(r,d);
+const Set=(r,d)=>set(r,d);
+const Get=(r)=>get(r);
+const OnV=onValue;
+
+// expose firebase helpers to global scope for non-module scripts
+window._db=DB;
+window._ref=(...a)=>ref(DB,...a);
+window._update=update;
+window._set=set;
+window._get=get;
+window._onValue=onValue;
+window._push=push;
+window._remove=remove;
+
 window.MW={uid:null,name:'مجهول',roomId:null,playerNum:1,roomOff:null,mmOff:null,invOff:null,activeInvite:null};
 
-OnV(R('users/MW_INIT'),()=>{});// warm up
 onAuthStateChanged(Auth,async u=>{
   if(!u)return;
   MW.uid=u.uid;
@@ -229,6 +207,7 @@ async function loadWallet(){
   else{W.silver=0;W.diamonds=0;}
 }
 function saveWallet(){if(MW.uid)Up(R('users/'+MW.uid+'/wallet'),{silver:W.silver,diamonds:W.diamonds});}
+window.saveWallet=saveWallet;
 
 function listenInvites(){
   if(MW.invOff)MW.invOff();
@@ -240,7 +219,6 @@ function listenInvites(){
   });
 }
 
-// ── LOGIN ──────────────────────────────────────
 window.loginGoogle=function(){
   let n=$('dname').value.trim();
   $('lstatus').textContent='جاري...';
@@ -256,7 +234,6 @@ window.loginGuest=function(){
   }).catch(e=>$('lstatus').textContent='خطأ: '+e.message);
 };
 
-// ── MATCHMAKING ────────────────────────────────
 window.initGlobalMatch=async function(){
   SFX.click();screen('mm-screen');
   $('mm-status').textContent='جاري البحث...';
@@ -302,35 +279,38 @@ function syncRoom(d){
   G.grid.p1=[...myG];G.grid.p2=[...opG];
   G.round=d.round||1;
   $('p2-lbl').textContent=opName||'الخصم';
-
   if(!d.battle){
-    // setup phase
     const myReady=me===1?d.p1_ready:d.p2_ready;
     const opReady=me===1?d.p2_ready:d.p1_ready;
-    if(myReady&&opReady){// both ready, start battle
+    if(myReady&&opReady){
       G.phase='battle';G.turn=d.turn||1;
       renderArena();updateBattleUI();
       $('setup-overlay').style.display='none';
+      $('btm-battle').style.display='block';
+      $('timer-wrap').style.display='block';
     }else{
       G.phase='setup';renderArena();
-      if(myReady) log('⏳ في انتظار الخصم...');
+      if(myReady)log('⏳ في انتظار الخصم...');
     }
   }else{
     G.phase='battle';G.turn=d.turn||1;
     $('setup-overlay').style.display='none';
+    $('btm-battle').style.display='block';
+    $('timer-wrap').style.display='block';
     renderArena();updateBattleUI();
-    if(G.turn===me) log('🎯 دورك!'); else log('⏳ انتظار الخصم...');
+    if(G.turn===me){log('🎯 دورك!');startBattleTurnTimer();}
+    else log('⏳ انتظار الخصم...');
   }
 }
 
 function uploadRoom(extra){
   if(!MW.roomId)return;
   const me=MW.playerNum;
-  const payload={[`p${me}_grid`]:G.grid.p1,...(extra||{})};
+  const myGridKey=me===1?'p1_grid':'p2_grid';
+  const payload={[myGridKey]:G.grid.p1,...(extra||{})};
   Up(R('rooms/'+MW.roomId),payload);
 }
 
-// ── FRIENDS ──
 window.openFriends=function(){
   SFX.click();$('my-id').textContent=MW.uid||'—';
   modal('friends-modal',1);loadFriends();
@@ -378,6 +358,13 @@ window.acceptInvite=async function(){
   listenRoom(MW.roomId);modal('inv-pop',0);screen('game-screen');initGamePVP(2);
 };
 window.declineInvite=function(){if(MW.activeInvite){remove(R('users/'+MW.uid+'/invites/'+MW.activeInvite.id));modal('inv-pop',0);}};
+
+window.openEditName=function(){$('new-name').value=MW.name||'';modal('edit-name-modal',1);};
+window.saveName=async function(){
+  const n=$('new-name').value.trim();if(!n)return;
+  MW.name=n;if(MW.uid)await Up(R('users/'+MW.uid+'/profile'),{displayName:n,name:n});
+  showMenu();modal('edit-name-modal',0);
+};
 </script>
 </head>
 <body>
@@ -423,7 +410,6 @@ window.declineInvite=function(){if(MW.activeInvite){remove(R('users/'+MW.uid+'/i
 
 <!-- GAME -->
 <div id="game-screen" class="screen">
-  <!-- Header -->
   <div class="hdr">
     <div class="pcard p1c">
       <div class="pname" id="p1-lbl">أنت</div>
@@ -438,22 +424,17 @@ window.declineInvite=function(){if(MW.activeInvite){remove(R('users/'+MW.uid+'/i
       <div class="pstat">🪙<span id="p2-gold">100</span> ⚡<span id="p2-acts">0</span></div>
     </div>
   </div>
-
-  <!-- Arena -->
   <div class="arena">
     <div class="field-label" id="fl2">أرض العدو</div>
     <div class="grid" id="g-p2"></div>
     <div class="divider">⚡ — خط النار — ⚡</div>
     <div class="grid" id="g-p1"></div>
     <div class="field-label" id="fl1">أرضك</div>
-    <!-- Battle timer bar -->
     <div class="timer-wrap" id="timer-wrap" style="display:none;">
       <div class="timer-fill" id="timer-fill" style="width:100%;"></div>
     </div>
     <div class="turn-ind" id="turn-ind"></div>
   </div>
-
-  <!-- Bottom Controls (Battle Phase) -->
   <div class="btm" id="btm-battle" style="display:none;">
     <div class="log" id="log-bar">استعد!</div>
     <div class="acts">
@@ -472,14 +453,12 @@ window.declineInvite=function(){if(MW.activeInvite){remove(R('users/'+MW.uid+'/i
   </div>
 </div>
 
-<!-- SETUP OVERLAY (shown during setup phase) -->
+<!-- SETUP OVERLAY -->
 <div id="setup-overlay" style="position:fixed;inset:0;z-index:50;display:none;flex-direction:column;">
-  <!-- Top: enemy side (greyed during setup) -->
   <div style="flex:1;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.3);flex-direction:column;gap:6px;">
     <div id="p2-setup-status" style="font-size:14px;font-weight:bold;color:var(--muted);">⏳ انتظار الخصم...</div>
     <div id="p2-setup-timer" style="font-family:Cinzel,serif;font-size:28px;color:var(--blue);"></div>
   </div>
-  <!-- Bottom: my side -->
   <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;background:rgba(255,34,68,.04);padding:10px;gap:8px;">
     <div id="p1-shop-bar" class="shop-bar"></div>
     <div style="display:flex;align-items:center;gap:14px;">
@@ -489,9 +468,8 @@ window.declineInvite=function(){if(MW.activeInvite){remove(R('users/'+MW.uid+'/i
       </div>
       <button id="p1-ready-btn" class="ready-btn p1r" onclick="playerReady()">جاهز ✅</button>
     </div>
-    <div id="p1-setup-status" class="setup-status" style="display:none;">✅ في انتظار الخصم...</div>
+    <div id="p1-setup-status" class="setup-status" style="display:none;font-size:12px;color:var(--green);font-weight:700;">✅ في انتظار الخصم...</div>
   </div>
-  <!-- Cancel setup sub -->
   <button onclick="cancelSetupSub()" id="cancel-setup-sub"
     style="position:absolute;bottom:10px;left:10px;background:var(--red);border:none;border-radius:6px;
     color:#fff;padding:6px 12px;cursor:pointer;font-family:Tajawal,sans-serif;font-weight:bold;font-size:12px;display:none;">
@@ -499,7 +477,7 @@ window.declineInvite=function(){if(MW.activeInvite){remove(R('users/'+MW.uid+'/i
   </button>
 </div>
 
-<!-- ── MODALS ── -->
+<!-- MODALS -->
 <div id="win-modal" class="overlay off">
   <div class="modal">
     <div class="modal-title" id="win-title">النهاية</div>
@@ -508,7 +486,6 @@ window.declineInvite=function(){if(MW.activeInvite){remove(R('users/'+MW.uid+'/i
     <button class="menu-btn" style="width:100%;margin:0;border-color:var(--muted);" onclick="exitMenu()">القائمة الرئيسية</button>
   </div>
 </div>
-
 <div id="friends-modal" class="overlay off">
   <div class="modal">
     <h2 class="modal-title">الأصدقاء 👥</h2>
@@ -524,7 +501,6 @@ window.declineInvite=function(){if(MW.activeInvite){remove(R('users/'+MW.uid+'/i
     <button class="menu-btn" style="width:100%;margin:0;" onclick="modal('friends-modal',0)">رجوع</button>
   </div>
 </div>
-
 <div id="edit-name-modal" class="overlay off">
   <div class="modal">
     <h2 class="modal-title">تغيير الاسم ✏️</h2>
@@ -535,7 +511,6 @@ window.declineInvite=function(){if(MW.activeInvite){remove(R('users/'+MW.uid+'/i
     </div>
   </div>
 </div>
-
 <div id="inv-pop" class="overlay off" style="z-index:2000;">
   <div class="modal" style="border-color:var(--blue);box-shadow:0 0 25px rgba(0,204,255,.3);">
     <h2 class="modal-title" style="color:var(--blue);">تحدي جديد! ⚔️</h2>
@@ -546,7 +521,6 @@ window.declineInvite=function(){if(MW.activeInvite){remove(R('users/'+MW.uid+'/i
     </div>
   </div>
 </div>
-
 <div id="tut-modal" class="overlay off">
   <div class="modal">
     <div class="modal-title">كيف تلعب؟</div>
@@ -562,9 +536,7 @@ window.declineInvite=function(){if(MW.activeInvite){remove(R('users/'+MW.uid+'/i
 </div>
 
 <script>
-// ════════════════════════════════════════════════
-//  CONSTANTS
-// ════════════════════════════════════════════════
+// ════ CONSTANTS ════
 const UNITS={
   infantry:{icon:'⚔️',hp:40,atk:10,cost:10,lbl:'مشاة',proj:'🗡️'},
   archer:  {icon:'🏹',hp:18,atk:18,cost:15,lbl:'رامي',proj:'🏹'},
@@ -573,77 +545,61 @@ const UNITS={
   cannon:  {icon:'🚀',hp:60,atk:50,cost:80,lbl:'مدفع',proj:'💥'},
   main:    {icon:'👑',hp:80,atk:25,cost:0, lbl:'الملك',proj:'👑'}
 };
-const SETUP_TIME=15; // seconds per player
-const BATTLE_TIME=10;// seconds per turn
-const SETUP_GOLD=100;
+const SETUP_TIME=15,BATTLE_TIME=10,SETUP_GOLD=100;
 
-// ════════════════════════════════════════════════
-//  STATE
-// ════════════════════════════════════════════════
+// ════ STATE ════
 const W={silver:0,diamonds:0};
 
 let G={
-  mode:'pvc',// 'pvc'|'pvp'
-  level:1,
-  phase:'setup',// 'setup'|'battle'
-  turn:1,// 1=me, 2=opp
-  round:1,
-  locked:false,
+  mode:'pvc',level:1,phase:'setup',turn:1,round:1,locked:false,
   p1:{gold:SETUP_GOLD,actions:3,maxActs:3,healUsed:0,healCD:0},
   p2:{gold:SETUP_GOLD,actions:3,maxActs:3,healUsed:0,healCD:0},
   grid:{p1:makeGrid(),p2:makeGrid()},
-  sel:null,// {idx}
-  act:null,// 'attack'|'shield'|'heal'
-  healType:null,
+  sel:null,act:null,healType:null,
   setupReady:{p1:false,p2:false},
-  setupTimer:null,
-  battleTimer:null,
-  timerSec:0,
-  pendingSpawn:null,// unit key being placed
+  setupTimer:null,battleTimer:null,timerSec:0,pendingSpawn:null,
 };
 
 function makeGrid(){return Array.from({length:12},(_,i)=>({id:i,entity:null}));}
 const $=id=>document.getElementById(id);
-const log=msg=>$('log-bar').textContent=String(msg);
+const log=msg=>{const el=$('log-bar');if(el)el.textContent=String(msg);};
 function screen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$(id).classList.add('active');}
 function modal(id,show){$(id).classList[show?'remove':'add']('off');}
+
 function showMenu(){
   screen('menu-screen');
   $('menu-name').textContent=MW.name;
   $('menu-wallet').textContent=`🥈${W.silver} | 💎${W.diamonds}`;
-  const lv=parseInt(localStorage.getItem('mwlv_'+MW.uid))||1;
-  if(lv>1)$('menu-name').title='Lv.'+lv;
 }
 
-// ════════════════════════════════════════════════
-//  AUDIO
-// ════════════════════════════════════════════════
+// ════ AUDIO ════
 const SFX={
   _c:null,
   _ctx(){if(!this._c)this._c=new(window.AudioContext||window.webkitAudioContext)();return this._c;},
   _play(type){
     try{
       const c=this._ctx(),n=c.currentTime;
-      const wave=(t,f1,f2,dur,vol,wt='sine')=>{
+      const wave=(wt,f1,f2,dur,vol)=>{
         const o=c.createOscillator(),g=c.createGain();
         o.type=wt;o.frequency.setValueAtTime(f1,n);
         if(f2)o.frequency.exponentialRampToValueAtTime(f2,n+dur);
         g.gain.setValueAtTime(vol,n);g.gain.linearRampToValueAtTime(0,n+dur);
         o.connect(g);g.connect(c.destination);o.start(n);o.stop(n+dur);
       };
-      if(type==='click')wave('',400,700,.04,.08);
-      if(type==='spawn')wave('','triangle',180,550,.15,.12);
-      if(type==='hit')wave('','sawtooth',180,50,.08,.12);
+      if(type==='click')wave('sine',400,700,.04,.08);
+      if(type==='spawn')wave('triangle',180,550,.15,.12);
+      if(type==='hit')wave('sawtooth',180,50,.08,.12);
       if(type==='boom'){
         const buf=c.createBuffer(1,c.sampleRate*.4,c.sampleRate),d=buf.getChannelData(0);
         for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;
         const src=c.createBufferSource(),f=c.createBiquadFilter(),g=c.createGain();
-        src.buffer=buf;f.type='lowpass';f.frequency.setValueAtTime(400,n);f.frequency.exponentialRampToValueAtTime(40,n+.4);
+        src.buffer=buf;f.type='lowpass';f.frequency.setValueAtTime(400,n);
+        f.frequency.exponentialRampToValueAtTime(40,n+.4);
         g.gain.setValueAtTime(.3,n);g.gain.exponentialRampToValueAtTime(.01,n+.4);
         src.connect(f);f.connect(g);g.connect(c.destination);src.start(n);src.stop(n+.4);
       }
-      if(type==='heal')wave('','sine',300,900,.2,.1);
-      if(type==='win')wave('','sine',440,880,.5,.15);
+      if(type==='heal')wave('sine',300,900,.2,.1);
+      if(type==='win')wave('sine',440,880,.5,.15);
     }catch(e){}
   },
   click(){this._play('click');},spawn(){this._play('spawn');},
@@ -651,12 +607,10 @@ const SFX={
   heal(){this._play('heal');},win(){this._play('win');}
 };
 
-// ════════════════════════════════════════════════
-//  SETUP PHASE
-// ════════════════════════════════════════════════
+// ════ PVC / PVP INIT ════
 function startPVC(){
   SFX.click();
-  const lv=parseInt(localStorage.getItem('mwlv_'+MW.uid))||1;
+  const lv=parseInt(localStorage.getItem('mwlv_'+(MW.uid||'x')))||1;
   G.level=lv;G.mode='pvc';
   initGame();
 }
@@ -667,23 +621,34 @@ function initGamePVP(num){
 }
 
 function initGame(){
+  if(G.setupTimer){clearInterval(G.setupTimer);G.setupTimer=null;}
+  if(G.battleTimer){clearInterval(G.battleTimer);G.battleTimer=null;}
+
   G.phase='setup';G.turn=1;G.round=1;G.locked=false;
   G.sel=null;G.act=null;G.pendingSpawn=null;
   G.setupReady={p1:false,p2:false};
   G.p1={gold:SETUP_GOLD,actions:3,maxActs:3,healUsed:0,healCD:0};
   G.p2={gold:SETUP_GOLD,actions:3,maxActs:3,healUsed:0,healCD:0};
-  G.grid.p1=makeGrid();G.grid.p2=makeGrid();
+  G.grid.p1=makeGrid();
+  G.grid.p2=makeGrid();
 
-  // Place kings
-  G.grid.p1[9].entity={...UNITS.main,type:'main',hp:80,maxHp:80};
-  G.grid.p2[9].entity={...UNITS.main,type:'main',hp:80,maxHp:80};
+  // ★ FIX: king at index 10 (row 2, col 2) — visible in both grids
+  G.grid.p1[10].entity={...UNITS.main,type:'main',hp:80,maxHp:80};
+  G.grid.p2[10].entity={...UNITS.main,type:'main',hp:80,maxHp:80};
 
   screen('game-screen');
   $('p1-lbl').textContent=(MW.name||'أنت')+' (أنت)';
   $('p2-lbl').textContent=G.mode==='pvc'?'🤖 كمبيوتر':'الخصم';
   $('fl1').textContent='أرضك';$('fl2').textContent='أرض العدو';
   $('btm-battle').style.display='none';
+  $('timer-wrap').style.display='none';
   $('btn-leave').style.display=G.mode==='pvp'?'block':'none';
+  $('round-disp').textContent='1';
+  $('phase-disp').textContent='تحضير';
+  $('p1-gold').textContent=SETUP_GOLD;
+  $('p2-gold').textContent='';
+  $('p1-acts').textContent='0';
+  $('p2-acts').textContent='0';
 
   buildShopBar();
   renderArena();
@@ -710,12 +675,9 @@ function showSetupOverlay(){
   $('p1-ready-btn').textContent='جاهز ✅';
   $('p1-setup-status').style.display='none';
   $('p1-setup-timer').textContent='';
-  $('p2-setup-status').textContent='⏳ انتظار الخصم...';
+  $('p2-setup-status').textContent=G.mode==='pvc'?'🤖 الكمبيوتر يجهز قواته...':'⏳ انتظار الخصم...';
   $('p2-setup-timer').textContent='';
   $('cancel-setup-sub').style.display='none';
-  if(G.mode==='pvc'){
-    $('p2-setup-status').textContent='🤖 الكمبيوتر يجهز قواته...';
-  }
 }
 
 function pickUnitForSetup(key){
@@ -735,13 +697,13 @@ function cancelSetupSub(){
 
 function updateSetupGoldDisplay(){
   $('p1-setup-gold').textContent='🪙 '+G.p1.gold;
+  $('p1-gold').textContent=G.p1.gold;
   Object.entries(UNITS).forEach(([k,u])=>{
     const btn=$('si-'+k);if(!btn)return;
     btn.classList.toggle('dis',G.p1.gold<u.cost||G.setupReady.p1);
   });
 }
 
-// Player presses Ready
 window.playerReady=function(){
   SFX.click();
   G.setupReady.p1=true;
@@ -751,42 +713,51 @@ window.playerReady=function(){
   $('p1-setup-status').style.display='block';
   $('cancel-setup-sub').style.display='none';
   renderArena();
-  startSetupTimer();
+
+  if(G.mode==='pvc'){
+    // AI does setup immediately, then start countdown
+    aiDoSetup();
+    startSetupCountdown();
+  } else {
+    // PVP: upload ready state and wait
+    startSetupCountdown();
+    if(MW.roomId){
+      const me=MW.playerNum;
+      const myGridKey=me===1?'p1_grid':'p2_grid';
+      window._update(window._ref(window._db,'rooms/'+MW.roomId),{
+        [me===1?'p1_ready':'p2_ready']:true,
+        [myGridKey]:G.grid.p1
+      });
+    }
+  }
 };
 
-function startSetupTimer(){
+function startSetupCountdown(){
   let t=SETUP_TIME;
   $('p1-setup-timer').textContent=t;
   if(G.setupTimer)clearInterval(G.setupTimer);
   G.setupTimer=setInterval(()=>{
     t--;
     const el=$('p1-setup-timer');
-    el.textContent=t;
-    el.className='setup-timer'+(t<=5?' urgent':'');
-    if(t<=0){clearInterval(G.setupTimer);G.setupTimer=null;finishSetup();}
+    if(el){el.textContent=t;el.className='setup-timer'+(t<=5?' urgent':'');}
+    if(t<=0){
+      clearInterval(G.setupTimer);G.setupTimer=null;
+      if(G.mode==='pvc')finishSetup();
+      // PVP: finishSetup triggered by syncRoom when both ready
+    }
   },1000);
-
-  if(G.mode==='pvc') setTimeout(aiDoSetup,500);
-  else if(G.mode==='pvp'){
-    // Upload our ready state
-    const me=MW.playerNum;
-    const field=me===1?'p1':'p2';
-    MW._DB_Up&&MW._DB_Up(field+'_ready',true);
-  }
 }
 
 function aiDoSetup(){
-  // AI fills its grid randomly
   let gold=SETUP_GOLD;
   const types=Object.keys(UNITS).filter(k=>k!=='main');
-  const empty=[];for(let i=0;i<12;i++){if(!G.grid.p2[i].entity)empty.push(i);}
+  const empty=[];
+  for(let i=0;i<12;i++){if(!G.grid.p2[i].entity)empty.push(i);}
   empty.sort(()=>Math.random()-.5);
-  let ei=0;
-  while(gold>0&&ei<empty.length){
+  for(const idx of empty){
+    if(gold<=0)break;
     const affordable=types.filter(k=>UNITS[k].cost<=gold);
     if(!affordable.length)break;
-    // prefer front rows
-    const idx=empty[ei++];
     const pick=affordable[Math.floor(Math.random()*affordable.length)];
     const u=UNITS[pick];
     G.grid.p2[idx].entity={...u,type:pick,hp:u.hp,maxHp:u.hp};
@@ -794,39 +765,43 @@ function aiDoSetup(){
   }
   G.p2.gold=gold;
   G.setupReady.p2=true;
-  // Show AI ready countdown for drama
-  let t2=SETUP_TIME;
-  $('p2-setup-status').textContent='🤖 الكمبيوتر جاهز!';
+  $('p2-setup-status').textContent='🤖 الكمبيوتر جاهز ✅';
 }
 
 function finishSetup(){
-  // Wait for both sides
-  if(G.mode==='pvc'){G.setupReady.p2=true;}
-  if(!G.setupReady.p1||!G.setupReady.p2) return;
+  if(G.phase!=='setup')return;
+  if(G.setupTimer){clearInterval(G.setupTimer);G.setupTimer=null;}
   G.phase='battle';
   $('setup-overlay').style.display='none';
   $('btm-battle').style.display='block';
   $('timer-wrap').style.display='block';
   $('phase-disp').textContent='معركة';
   G.p1.actions=G.p1.maxActs;G.p2.actions=G.p2.maxActs;
-  G.p1.gold=0;G.p2.gold=0;// gold resets; no more spending
+  G.p1.gold=0;G.p2.gold=0;
+  $('p1-gold').textContent='';$('p2-gold').textContent='';
+  G.turn=1;
   renderArena();updateBattleUI();
-  if(G.mode==='pvp'){
-    uploadRoom({battle:true,p1_grid:G.grid[MW.playerNum===1?'p1':'p2'],turn:1});
+  if(G.mode==='pvp'&&MW.roomId){
+    const me=MW.playerNum;
+    const myGridKey=me===1?'p1_grid':'p2_grid';
+    window._update(window._ref(window._db,'rooms/'+MW.roomId),{
+      battle:true,[myGridKey]:G.grid.p1,turn:1
+    });
   }
   startBattleTurnTimer();
-  log('⚔️ المعركة بدأت!');
+  log('⚔️ المعركة بدأت! دورك!');
 }
 
-// Handle grid click during setup
-function setupGridClick(pKey,idx){
+// setup grid click
+function setupGridClick(pKey,dspIdx){
   if(pKey!=='p1'||G.setupReady.p1)return;
-  if(!G.pendingSpawn)return;
-  if(G.grid.p1[idx].entity){log('هذا المربع مشغول!');return;}
+  if(!G.pendingSpawn){log('اختر وحدة أولاً!');return;}
+  const intIdx=dspIdx; // p1 grid: display=internal
+  if(G.grid.p1[intIdx].entity){log('هذا المربع مشغول!');return;}
   const u=UNITS[G.pendingSpawn];
   if(G.p1.gold<u.cost){log('ذهب غير كافٍ!');G.pendingSpawn=null;renderArena();return;}
   SFX.spawn();
-  G.grid.p1[idx].entity={...u,type:G.pendingSpawn,hp:u.hp,maxHp:u.hp};
+  G.grid.p1[intIdx].entity={...u,type:G.pendingSpawn,hp:u.hp,maxHp:u.hp};
   G.p1.gold-=u.cost;
   G.pendingSpawn=null;
   $('cancel-setup-sub').style.display='none';
@@ -835,30 +810,30 @@ function setupGridClick(pKey,idx){
   log('تم! اضغط "جاهز" أو أضف المزيد...');
 }
 
-// ════════════════════════════════════════════════
-//  BATTLE PHASE
-// ════════════════════════════════════════════════
+// ════ BATTLE ════
 function startBattleTurnTimer(){
   G.timerSec=BATTLE_TIME;
   const fill=$('timer-fill');
-  fill.style.width='100%';fill.className='timer-fill';
+  if(fill){fill.style.width='100%';fill.className='timer-fill';}
   if(G.battleTimer)clearInterval(G.battleTimer);
   G.battleTimer=setInterval(()=>{
     G.timerSec--;
     const pct=(G.timerSec/BATTLE_TIME)*100;
-    fill.style.width=pct+'%';
-    if(G.timerSec<=3)fill.className='timer-fill low';
+    if(fill){fill.style.width=pct+'%';if(G.timerSec<=3)fill.className='timer-fill low';}
     if(G.timerSec<=0){clearInterval(G.battleTimer);G.battleTimer=null;autoEndTurn();}
   },1000);
 }
 
 function autoEndTurn(){
   if(G.phase!=='battle')return;
-  log('⏰ انتهى الوقت - تم تمرير الدور!');
+  log('⏰ انتهى الوقت!');
   endTurn();
 }
 
-function isMyTurn(){return G.turn===1;}
+function isMyTurn(){
+  if(G.mode==='pvc')return G.turn===1;
+  return G.turn===MW.playerNum;
+}
 
 function enterAttackMode(){
   if(!isMyTurn()||G.locked)return;
@@ -866,63 +841,64 @@ function enterAttackMode(){
   SFX.click();G.act='attack';G.sel=null;
   showCancelBtn(true);log('اختر جندياً للهجوم...');renderArena();
 }
-
 function enterShieldMode(){
   if(!isMyTurn()||G.locked)return;
   if(G.p1.actions<=0){log('لا يوجد أفعال متبقية!');return;}
   SFX.click();G.act='shield';G.sel=null;
   showCancelBtn(true);log('اختر جندياً لتفعيل الدرع...');renderArena();
 }
-
 function openSub(t){
   if(!isMyTurn()||G.locked)return;
   SFX.click();G.act='heal_menu';
   $('sub-heal').style.display='grid';
   showCancelBtn(true);log('اختر نوع العلاج...');
 }
-
 function prepHeal(t){
   G.act='heal';G.healType=t;
   $('sub-heal').style.display='none';
   log('اختر جندياً لعلاجه...');renderArena();
 }
-
 function cancelAct(){
   G.act=null;G.sel=null;G.healType=null;G.pendingSpawn=null;
   $('sub-heal').style.display='none';
   showCancelBtn(false);
-  log(isMyTurn()?'دورك! اختر حركة...':'⏳ انتظار دور الخصم...');
+  log(isMyTurn()?'دورك! اختر حركة...':'⏳ انتظار...');
   renderArena();
 }
-
 function showCancelBtn(show){
   $('btn-cancel').style.display=show?'block':'none';
   $('btn-end').style.display=show?'none':'block';
 }
-
-function skipTurn(){
-  if(!isMyTurn()||G.locked)return;
-  SFX.click();log('تم تمرير الدور.');endTurn();
-}
+function skipTurn(){if(!isMyTurn()||G.locked)return;SFX.click();log('تم تمرير الدور.');endTurn();}
 
 window.endTurn=function(){
   if(G.phase!=='battle')return;
   if(G.battleTimer){clearInterval(G.battleTimer);G.battleTimer=null;}
   cancelAct();
   if(G.mode==='pvp'){
-    uploadRoom({turn:MW.playerNum===1?2:1,round:G.round+(G.turn===2?1:0)});
-    G.turn=2;disableBattleUI(true);return;
+    const nextTurn=MW.playerNum===1?2:1;
+    const nextRound=G.turn===2?G.round+1:G.round;
+    window._update(window._ref(window._db,'rooms/'+MW.roomId),{turn:nextTurn,round:nextRound});
+    G.turn=nextTurn;disableBattleUI(true);return;
   }
-  // PVC: switch turns
-  if(G.turn===1){G.turn=2;disableBattleUI(true);setTimeout(runAITurn,600);}
-  else{G.turn=1;G.round++;disableBattleUI(false);startBattleTurnTimer();log('⚔️ دورك!');}
-  G.p1.actions=G.p1.maxActs;G.p1.healCD=0;
-  $('round-disp').textContent=G.round;
+  // PVC
+  if(G.turn===1){
+    G.turn=2;disableBattleUI(true);
+    setTimeout(runAITurn,700);
+  }else{
+    G.turn=1;G.round++;
+    G.p1.actions=G.p1.maxActs;G.p1.healCD=0;
+    $('round-disp').textContent=G.round;
+    disableBattleUI(false);
+    startBattleTurnTimer();
+    log('⚔️ دورك!');
+  }
   updateBattleUI();renderArena();
 };
 
 function disableBattleUI(off){
-  const a=$('btm-battle');a.style.opacity=off?.4:1;a.style.pointerEvents=off?'none':'auto';
+  const a=$('btm-battle');
+  if(a){a.style.opacity=off?.4:1;a.style.pointerEvents=off?'none':'auto';}
 }
 
 function updateBattleUI(){
@@ -930,34 +906,32 @@ function updateBattleUI(){
   const isMine=isMyTurn();
   $('p1-acts').textContent=G.p1.actions;
   $('p2-acts').textContent=G.p2.actions;
-  $('p1-gold').textContent='';$('p2-gold').textContent='';
   $('round-disp').textContent=G.round;
   $('phase-disp').textContent='معركة';
   const ti=$('turn-ind');
-  ti.textContent=isMine?'🟢 دورك':'🔴 دور الخصم';
-  ti.className='turn-ind '+(isMine?'my-turn':'opp-turn');
+  if(ti){ti.textContent=isMine?'🟢 دورك':'🔴 دور الخصم';
+    ti.className='turn-ind '+(isMine?'my-turn':'opp-turn');}
   disableBattleUI(!isMine);
 }
 
-// ════════════════════════════════════════════════
-//  GRID INTERACTION
-// ════════════════════════════════════════════════
-function cellClick(pKey,idx){
+// ════ GRID CLICK ════
+function cellClick(pKey,dspIdx){
   if(G.locked)return;
-  if(G.phase==='setup'){setupGridClick(pKey,idx);return;}
+  if(G.phase==='setup'){setupGridClick(pKey,dspIdx);return;}
   if(!isMyTurn())return;
 
-  const cell=G.grid[pKey][idx];
+  const intIdx=pKey==='p2'?displayToInternalP2(dspIdx):dspIdx;
+  const cell=G.grid[pKey][intIdx];
 
   if(G.act==='attack'){
-    if(!G.sel){// select attacker from p1
+    if(!G.sel){
       if(pKey!=='p1'||!cell.entity||cell.entity.atk===0)return;
-      if(!canKingAttack()&&cell.entity.type==='main')return;
-      G.sel={pKey,idx};SFX.click();log('اختر هدفاً...');renderArena();
-    }else{// select target in p2
-      if(pKey!=='p2'||!cell.entity||cell.entity.type==='mine')return;
-      if(!canAttack(idx)){log('⚠️ يجب إسقاط الصف الأمامي أولاً!');return;}
-      doAttack(G.sel.idx,idx);
+      if(cell.entity.type==='main'&&!canKingAttack())return;
+      G.sel={pKey,idx:intIdx};SFX.click();log('اختر هدفاً...');renderArena();
+    }else{
+      if(pKey!=='p2'||!cell.entity)return;
+      if(!canAttack(intIdx)){log('⚠️ يجب إسقاط الصف الأمامي أولاً!');return;}
+      doAttack(G.sel.idx,intIdx);
     }
     return;
   }
@@ -970,59 +944,70 @@ function cellClick(pKey,idx){
   if(G.act==='heal'){
     if(pKey!=='p1'||!cell.entity)return;
     if(cell.entity.hp>=cell.entity.maxHp){log('طاقته مكتملة!');return;}
-    const h=G.healType==='sm'?{cost:10,hp:20}:{cost:30,hp:60};
-    // In battle phase, no gold - use free heals up to 3
     if(G.p1.healUsed>=3){log('استنفدت جميع حقن العلاج!');return;}
     if(G.p1.healCD>0){log('لا يمكن علاج مرتين في نفس الدور!');return;}
-    SFX.heal();cell.entity.hp=Math.min(cell.entity.hp+h.hp,cell.entity.maxHp);
+    const hp=G.healType==='sm'?20:60;
+    SFX.heal();cell.entity.hp=Math.min(cell.entity.hp+hp,cell.entity.maxHp);
     G.p1.actions--;G.p1.healUsed++;G.p1.healCD=1;
     log(`💉 تم علاج ${cell.entity.lbl}!`);cancelAct();updateBattleUI();renderArena();
     if(G.p1.actions<=0)setTimeout(endTurn,400);return;
   }
-  // idle: select for attack
+  // idle tap = auto attack select
   if(G.act===null&&pKey==='p1'&&cell.entity&&cell.entity.atk>0&&isMyTurn()){
     if(G.p1.actions<=0){log('لا يوجد أفعال!');return;}
-    if(!canKingAttack()&&cell.entity.type==='main')return;
-    SFX.click();G.act='attack';G.sel={pKey,idx};
-    showCancelBtn(true);log('اختر هدفاً للهجوم...');renderArena();
+    if(cell.entity.type==='main'&&!canKingAttack())return;
+    SFX.click();G.act='attack';G.sel={pKey,idx:intIdx};
+    showCancelBtn(true);log('اختر هدفاً...');renderArena();
   }
 }
 
-// Row system
+// ════ ROW SYSTEM ════
 function rowOf(idx){return Math.floor(idx/4);}
-function frontRowP2(){for(let r=0;r<=2;r++){if(G.grid.p2.some((c,i)=>rowOf(i)===r&&c.entity&&c.entity.type!=='mine'))return r;}return -1;}
-function canAttack(tgtIdx){
-  const tRow=rowOf(tgtIdx),front=frontRowP2();
+function frontRowP2(){
+  for(let r=0;r<=2;r++){
+    if(G.grid.p2.some((c,i)=>rowOf(i)===r&&c.entity))return r;
+  }
+  return -1;
+}
+function canAttack(tgtIntIdx){
+  const tRow=rowOf(tgtIntIdx),front=frontRowP2();
   return front===-1||tRow===front;
 }
 function canKingAttack(){
-  // King can attack only if no other own troops OR front rows of enemy are gone
   const hasOthers=G.grid.p1.some(c=>c.entity&&c.entity.type!=='main');
   return !hasOthers||frontRowP2()===-1;
 }
 
-function doAttack(atkIdx,tgtIdx){
-  const atk=G.grid.p1[atkIdx].entity,tgt=G.grid.p2[tgtIdx];
-  if(!atk||!tgt.entity)return;
+function doAttack(atkIntIdx,tgtIntIdx){
+  const atk=G.grid.p1[atkIntIdx].entity;
+  const tgtCell=G.grid.p2[tgtIntIdx];
+  if(!atk||!tgtCell.entity)return;
   G.locked=true;G.p1.actions--;disableBattleUI(true);
-  const atkDspIdx=atkIdx,tgtDspIdx=internalToDisplayP2(tgtIdx);
+  const atkDsp=atkIntIdx;
+  const tgtDsp=internalToDisplayP2(tgtIntIdx);
   SFX.hit();
-  shoot('g-p1','g-p2',atkDspIdx,tgtDspIdx,atk.proj||'🗡️',()=>{
-    if(tgt.entity.shield>0){
-      tgt.entity.shield--;if(!tgt.entity.shield)delete tgt.entity.shield;
+  shoot('g-p1','g-p2',atkDsp,tgtDsp,atk.proj||'🗡️',()=>{
+    if(!tgtCell.entity){afterAttack();return;}
+    if(tgtCell.entity.shield>0){
+      tgtCell.entity.shield--;
+      if(tgtCell.entity.shield===0)delete tgtCell.entity.shield;
       log('🛡️ الدرع امتص الضربة!');afterAttack();return;
     }
-    tgt.entity.hp-=atk.atk;
-    if(tgt.entity.hp<=0){
-      SFX.boom();const t=tgt.entity.type;tgt.entity=null;
-      W.silver+=50;
+    tgtCell.entity.hp-=atk.atk;
+    if(tgtCell.entity.hp<=0){
+      SFX.boom();const t=tgtCell.entity.type;tgtCell.entity=null;
+      W.silver+=50;if(window.saveWallet)window.saveWallet();
       if(t==='main'){G.locked=false;triggerWin(1);return;}
-      log('💀 تم إسقاط وحدة العدو!');
+      log('💀 تم إسقاط وحدة العدو! +50🥈');
     }else SFX.hit();
     afterAttack();
   });
   cancelAct();
-  if(G.mode==='pvp')uploadAttackPVP(atkIdx,tgtIdx,atk.proj);
+  if(G.mode==='pvp'&&MW.roomId){
+    window._update(window._ref(window._db,'rooms/'+MW.roomId),{
+      last_action:{type:'attack',from:MW.playerNum,ai:atkIntIdx,ti:tgtIntIdx,proj:atk.proj,ts:Date.now()}
+    });
+  }
 }
 
 function afterAttack(){
@@ -1031,130 +1016,121 @@ function afterAttack(){
   if(G.p1.actions<=0)setTimeout(endTurn,500);
 }
 
-// Display index conversion for p2 (enemy grid shows flipped)
+// ★ FIX: p2 display mapping
+// Enemy grid displayed: top = far back (internal row2=indices 8-11), bottom = front (internal row0=indices 0-3)
 function internalToDisplayP2(i){
-  if(i>=8)return i-8;if(i>=4)return i;return i+8;
+  if(i>=8)return i-8;   // internal 8-11 → display 0-3
+  if(i>=4)return i;     // internal 4-7  → display 4-7
+  return i+8;           // internal 0-3  → display 8-11
 }
 function displayToInternalP2(d){
-  if(d<4)return d+8;if(d<8)return d;return d-8;
+  if(d<4)return d+8;
+  if(d<8)return d;
+  return d-8;
 }
 
-// ════════════════════════════════════════════════
-//  AI TURN
-// ════════════════════════════════════════════════
+// ════ AI TURN ════
 function runAITurn(){
   if(G.phase!=='battle'||G.turn!==2)return;
   G.p2.actions=G.p2.maxActs;
   doAIStep();
 }
-
 function doAIStep(){
-  if(G.p2.actions<=0){G.turn=2;endTurn();return;}
-  // find p1 front row
-  let frontR=-1;for(let r=0;r<=2;r++){if(G.grid.p1.some((c,i)=>rowOf(i)===r&&c.entity&&c.entity.type!=='mine')){frontR=r;break;}}
-  // targets in front row
-  const targets=G.grid.p1.map((c,i)=>({c,i})).filter(({c,i})=>c.entity&&c.entity.type!=='mine'&&rowOf(i)===frontR);
-  // AI attackers: non-main, non-mine units
+  if(G.p2.actions<=0){endTurn();return;}
+  let frontR=-1;
+  for(let r=0;r<=2;r++){
+    if(G.grid.p1.some((c,i)=>rowOf(i)===r&&c.entity)){frontR=r;break;}
+  }
+  const targets=G.grid.p1.map((c,i)=>({c,i})).filter(({c,i})=>c.entity&&rowOf(i)===frontR);
   const atkers=G.grid.p2.map((c,i)=>({c,i})).filter(({c})=>c.entity&&c.entity.atk>0&&c.entity.type!=='main');
-  // king attacks last
-  const kingCell=G.grid.p2.map((c,i)=>({c,i})).find(({c})=>c.entity&&c.entity.type==='main');
-
+  const kingArr=G.grid.p2.map((c,i)=>({c,i})).filter(({c})=>c.entity&&c.entity.type==='main');
   let best=atkers[0]||null;
-  let allEmpty=atkers.length===0;
-  if(allEmpty&&kingCell){best=kingCell;}
-  if(!best||targets.length===0){G.p2.actions=0;setTimeout(()=>endTurn(),400);return;}
-
+  if(!best&&kingArr.length)best=kingArr[0];
+  if(!best||targets.length===0){G.p2.actions=0;setTimeout(endTurn,400);return;}
   const tgt=targets.sort((a,b)=>a.c.entity.hp-b.c.entity.hp)[0];
   G.p2.actions--;
   const bDsp=internalToDisplayP2(best.i);
   SFX.hit();
   shoot('g-p2','g-p1',bDsp,tgt.i,best.c.entity.proj||'🗡️',()=>{
     const rc=G.grid.p1[tgt.i];
-    if(!rc.entity){setTimeout(doAIStep,400);return;}
-    if(rc.entity.shield>0){rc.entity.shield--;if(!rc.entity.shield)delete rc.entity.shield;log('🛡️ الدرع صد هجوم العدو!');updateBattleUI();renderArena();setTimeout(doAIStep,500);return;}
+    if(!rc.entity){setTimeout(()=>{G.p2.actions>0?doAIStep():endTurn();},400);return;}
+    if(rc.entity.shield>0){
+      rc.entity.shield--;if(rc.entity.shield===0)delete rc.entity.shield;
+      log('🛡️ الدرع صد هجوم الخصم!');
+      updateBattleUI();renderArena();
+      setTimeout(()=>{G.p2.actions>0?doAIStep():endTurn();},500);return;
+    }
     rc.entity.hp-=best.c.entity.atk;
-    if(rc.entity.hp<=0){SFX.boom();const t=rc.entity.type;rc.entity=null;if(t==='main'){triggerWin(2);return;}log('⚔️ الكمبيوتر أسقط وحدة!');}
-    else SFX.hit();
+    if(rc.entity.hp<=0){
+      SFX.boom();const t=rc.entity.type;rc.entity=null;
+      if(t==='main'){triggerWin(2);return;}
+      log('⚔️ الخصم أسقط وحدة منك!');
+    }else SFX.hit();
     updateBattleUI();renderArena();
-    setTimeout(G.p2.actions>0?doAIStep:()=>endTurn(),500);
+    setTimeout(()=>{G.p2.actions>0?doAIStep():endTurn();},500);
   });
 }
 
-// ════════════════════════════════════════════════
-//  RENDER
-// ════════════════════════════════════════════════
-function renderArena(){
-  drawField('p1');drawField('p2');
-}
+// ════ RENDER ════
+function renderArena(){drawField('p1');drawField('p2');}
 
 function drawField(pKey){
   const el=$('g-'+pKey);if(!el)return;
   el.innerHTML='';
-  const grid=G.grid[pKey];
-
   for(let dspIdx=0;dspIdx<12;dspIdx++){
-    let intIdx=pKey==='p2'?displayToInternalP2(dspIdx):dspIdx;
-    const cell=grid[intIdx]||{id:intIdx,entity:null};
+    const intIdx=pKey==='p2'?displayToInternalP2(dspIdx):dspIdx;
+    const cell=G.grid[pKey][intIdx]||{id:intIdx,entity:null};
     const div=document.createElement('div');
     div.className='cell '+(pKey==='p1'?'own':'enemy');
-
     if(cell.entity){
-      div.innerHTML=cell.entity.icon;
-      div.innerHTML+=`<span class="hp-tag">${cell.entity.hp}</span>`;
-      div.innerHTML+=`<span class="lbl-tag">${cell.entity.lbl}</span>`;
-      if(cell.entity.shield)div.innerHTML+=`<span class="shld-tag">🛡️${cell.entity.shield}</span>`;
+      div.textContent=cell.entity.icon;
+      const hp=document.createElement('span');hp.className='hp-tag';hp.textContent=cell.entity.hp;div.appendChild(hp);
+      const lb=document.createElement('span');lb.className='lbl-tag';lb.textContent=cell.entity.lbl;div.appendChild(lb);
+      if(cell.entity.shield){const sh=document.createElement('span');sh.className='shld-tag';sh.textContent='🛡️'+cell.entity.shield;div.appendChild(sh);}
     }
-
-    // Highlight states
-    if(G.phase==='setup'&&pKey==='p1'&&!cell.entity&&!G.setupReady.p1&&G.pendingSpawn){
-      div.classList.add('vspawn');
-    }
+    if(G.phase==='setup'&&pKey==='p1'&&!cell.entity&&!G.setupReady.p1&&G.pendingSpawn)div.classList.add('vspawn');
     if(G.phase==='battle'){
       if(G.act==='attack'){
-        if(pKey==='p1'&&G.sel?.idx===intIdx)div.classList.add('sel');
-        if(G.sel&&pKey==='p2'&&cell.entity&&cell.entity.type!=='mine'){
-          div.classList.add(canAttack(intIdx)?'vtgt':'blocked');
-        }
+        if(pKey==='p1'&&G.sel&&G.sel.idx===intIdx)div.classList.add('sel');
+        if(G.sel&&pKey==='p2'&&cell.entity)div.classList.add(canAttack(intIdx)?'vtgt':'blocked');
       }
       if((G.act==='shield'||G.act==='heal')&&pKey==='p1'&&cell.entity)div.classList.add('vtgt');
     }
-
     div.onclick=()=>cellClick(pKey,dspIdx);
     el.appendChild(div);
   }
 }
 
-// ════════════════════════════════════════════════
-//  PROJECTILE
-// ════════════════════════════════════════════════
-function shoot(srcGridId,dstGridId,srcDisplayIdx,dstDisplayIdx,icon,cb){
-  const srcGrid=$(srcGridId),dstGrid=$(dstGridId);
-  if(!srcGrid||!dstGrid){cb();return;}
-  const srcCells=[...srcGrid.children],dstCells=[...dstGrid.children];
-  const s=srcCells[srcDisplayIdx],d=dstCells[dstDisplayIdx];
+// ════ PROJECTILE ════
+function shoot(srcId,dstId,srcDsp,dstDsp,icon,cb){
+  const sg=$(srcId),dg=$(dstId);
+  if(!sg||!dg){cb();return;}
+  const sc=[...sg.children],dc=[...dg.children];
+  const s=sc[srcDsp],d=dc[dstDsp];
   if(!s||!d){cb();return;}
   const rs=s.getBoundingClientRect(),rd=d.getBoundingClientRect();
-  const p=document.createElement('div');p.className='proj';p.innerHTML=icon;
-  p.style.left=(rs.left+rs.width/2-12)+'px';p.style.top=(rs.top+rs.height/2-12)+'px';
+  const p=document.createElement('div');p.className='proj';p.textContent=icon;
+  p.style.cssText=`left:${rs.left+rs.width/2-12}px;top:${rs.top+rs.height/2-12}px;`;
   document.body.appendChild(p);p.getBoundingClientRect();
-  p.style.left=(rd.left+rd.width/2-12)+'px';p.style.top=(rd.top+rd.height/2-12)+'px';
-  setTimeout(()=>{p.remove();cb();},320);
+  p.style.left=(rd.left+rd.width/2-12)+'px';
+  p.style.top=(rd.top+rd.height/2-12)+'px';
+  setTimeout(()=>{p.remove();cb();},340);
 }
 
-// ════════════════════════════════════════════════
-//  WIN / LOSE
-// ════════════════════════════════════════════════
+// ════ WIN/LOSE ════
 function triggerWin(winner){
   if(G.battleTimer){clearInterval(G.battleTimer);G.battleTimer=null;}
+  if(G.setupTimer){clearInterval(G.setupTimer);G.setupTimer=null;}
   G.phase='ended';G.locked=false;disableBattleUI(false);
   const iWon=winner===1;
   const title=$('win-title'),body=$('win-body'),btn=$('win-btn');
   if(iWon){
     SFX.win();title.innerHTML='نصر! 🏆';
-    const reward=50+G.level*20;W.silver+=reward;saveWallet&&saveWallet();
+    const reward=50+G.level*20;W.silver+=reward;
+    if(window.saveWallet)window.saveWallet();
     body.innerHTML=`دمرت ملك الأعداء!<br>🥈+${reward} فضة`;
     if(G.mode==='pvc'){
-      G.level++;localStorage.setItem('mwlv_'+MW.uid,G.level);
+      G.level++;localStorage.setItem('mwlv_'+(MW.uid||'x'),G.level);
       btn.textContent='المستوى التالي ➡️';
       btn.onclick=()=>{modal('win-modal',0);startPVC();};
     }else{btn.textContent='القائمة';btn.onclick=exitMenu;}
@@ -1165,22 +1141,20 @@ function triggerWin(winner){
     btn.onclick=()=>{modal('win-modal',0);G.mode==='pvc'?startPVC():exitMenu();};
   }
   if(G.mode==='pvp'&&MW.roomId){
-    const {update:Upd,ref:Rf}=window._fbUp||{};
     try{window._update(window._ref(window._db,'rooms/'+MW.roomId),{game_result:MW.playerNum,status:'ended'});}catch(e){}
   }
   renderArena();modal('win-modal',1);
 }
 
-function showResult(res){
-  const iWon=res===MW.playerNum;triggerWin(iWon?1:2);}
+function showResult(res){const iWon=res===MW.playerNum;triggerWin(iWon?1:2);}
 
-// ════════════════════════════════════════════════
-//  MISC
-// ════════════════════════════════════════════════
 window.leaveMatch=function(){
   SFX.click();
   if(MW.roomOff){MW.roomOff();MW.roomOff=null;}
-  if(MW.roomId){try{window._update(window._ref(window._db,'rooms/'+MW.roomId),{status:'ended',game_result:MW.playerNum===1?2:1});}catch(e){}MW.roomId=null;}
+  if(MW.roomId){
+    try{window._update(window._ref(window._db,'rooms/'+MW.roomId),{status:'ended',game_result:MW.playerNum===1?2:1});}catch(e){}
+    MW.roomId=null;
+  }
   exitMenu();
 };
 
@@ -1190,18 +1164,6 @@ window.exitMenu=function(){
   modal('win-modal',0);G.phase='idle';
   showMenu();screen('menu-screen');
 };
-
-window.openEditName=function(){$('new-name').value=MW.name||'';modal('edit-name-modal',1);};
-window.saveName=async function(){
-  const n=$('new-name').value.trim();if(!n)return;
-  MW.name=n;if(MW.uid)await window._update(window._ref(window._db,'users/'+MW.uid+'/profile'),{displayName:n,name:n});
-  showMenu();modal('edit-name-modal',0);
-};
-
-function uploadAttackPVP(atkIdx,tgtIdx,proj){
-  if(!MW.roomId)return;
-  try{window._update(window._ref(window._db,'rooms/'+MW.roomId),{last_action:{type:'attack',from:MW.playerNum,ai:atkIdx,ti:tgtIdx,proj,ts:Date.now()}});}catch(e){}
-}
 </script>
 </body>
 </html>
