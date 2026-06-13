@@ -556,7 +556,7 @@ const UNITS={
   cannon:  {icon:'🚀',hp:60,atk:50,cost:80,lbl:'مدفع',proj:'💥'},
   main:    {icon:'👑',hp:80,atk:25,cost:0, lbl:'الملك',proj:'👑'}
 };
-const SETUP_TIME=15,BATTLE_TIME=10,SETUP_GOLD=100;
+const SETUP_TIME=5,BATTLE_TIME=10,SETUP_GOLD=100;
 
 // ════ STATE ════
 const W={silver:0,diamonds:0};
@@ -567,6 +567,7 @@ let G={
   p2:{gold:SETUP_GOLD,actions:3,maxActs:3,healUsed:0,healCD:0},
   grid:{p1:makeGrid(),p2:makeGrid()},
   sel:null,act:null,healType:null,
+  setupActive:false,
   setupReady:{p1:false,p2:false},
   setupTimer:null,battleTimer:null,timerSec:0,pendingSpawn:null,
 };
@@ -636,7 +637,7 @@ function initGame(){
   if(G.battleTimer){clearInterval(G.battleTimer);G.battleTimer=null;}
 
   G.phase='setup';G.turn=1;G.round=1;G.locked=false;
-  G.sel=null;G.act=null;G.pendingSpawn=null;
+  G.sel=null;G.act=null;G.pendingSpawn=null;G.setupActive=false;
   G.setupReady={p1:false,p2:false};
   G.p1={gold:SETUP_GOLD,actions:3,maxActs:3,healUsed:0,healCD:0};
   G.p2={gold:SETUP_GOLD,actions:3,maxActs:3,healUsed:0,healCD:0};
@@ -692,7 +693,7 @@ function showSetupOverlay(){
 }
 
 function pickUnitForSetup(key){
-  if(G.setupReady.p1)return;
+  if(!G.setupActive||G.setupReady.p1)return;
   const u=UNITS[key];
   if(G.p1.gold<u.cost){log('ذهب غير كافٍ!');return;}
   SFX.click();G.pendingSpawn=key;
@@ -717,30 +718,15 @@ function updateSetupGoldDisplay(){
 
 window.playerReady=function(){
   SFX.click();
-  G.setupReady.p1=true;
-  G.pendingSpawn=null;
+  G.setupActive=true;
   $('p1-ready-btn').disabled=true;
-  $('p1-ready-btn').textContent='✅ جاهز!';
-  $('p1-setup-status').style.display='block';
-  $('cancel-setup-sub').style.display='none';
+  $('p1-ready-btn').textContent='⏳ جهّز جنودك!';
   renderArena();
 
   if(G.mode==='pvc'){
-    // AI does setup immediately, then start countdown
     aiDoSetup();
-    startSetupCountdown();
-  } else {
-    // PVP: upload ready state and wait
-    startSetupCountdown();
-    if(MW.roomId){
-      const me=MW.playerNum;
-      const myGridKey=me===1?'p1_grid':'p2_grid';
-      window._update(window._ref(window._db,'rooms/'+MW.roomId),{
-        [me===1?'p1_ready':'p2_ready']:true,
-        [myGridKey]:G.grid.p1
-      });
-    }
   }
+  startSetupCountdown();
 };
 
 function startSetupCountdown(){
@@ -753,8 +739,24 @@ function startSetupCountdown(){
     if(el){el.textContent=t;el.className='setup-timer'+(t<=5?' urgent':'');}
     if(t<=0){
       clearInterval(G.setupTimer);G.setupTimer=null;
-      if(G.mode==='pvc')finishSetup();
-      // PVP: finishSetup triggered by syncRoom when both ready
+      G.setupActive=false;
+      G.pendingSpawn=null;
+      $('cancel-setup-sub').style.display='none';
+      G.setupReady.p1=true;
+      $('p1-setup-status').style.display='block';
+      if(G.mode==='pvc'){
+        finishSetup();
+      }else{
+        if(MW.roomId){
+          const me=MW.playerNum;
+          const myGridKey=me===1?'p1_grid':'p2_grid';
+          window._update(window._ref(window._db,'rooms/'+MW.roomId),{
+            [me===1?'p1_ready':'p2_ready']:true,
+            [myGridKey]:G.grid.p1
+          });
+        }
+        renderArena();
+      }
     }
   },1000);
 }
@@ -805,7 +807,7 @@ function finishSetup(){
 
 // setup grid click
 function setupGridClick(pKey,dspIdx){
-  if(pKey!=='p1'||G.setupReady.p1)return;
+  if(pKey!=='p1'||!G.setupActive||G.setupReady.p1)return;
   if(!G.pendingSpawn){log('اختر وحدة أولاً!');return;}
   const intIdx=dspIdx; // p1 grid: display=internal
   if(G.grid.p1[intIdx].entity){log('هذا المربع مشغول!');return;}
